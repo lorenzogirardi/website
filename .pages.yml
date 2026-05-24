@@ -30,6 +30,18 @@ content:
         label: Content
         type: rich-text
 
+  - name: whoami
+    label: Whoami
+    path: content/whoami.md
+    type: file
+    fields:
+      - name: title
+        label: Title
+        type: string
+      - name: body
+        label: Content
+        type: rich-text
+
 media:
   input: static/images
   output: /images
