@@ -15,12 +15,12 @@
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h2 id="overview"&gt;Overview&lt;/h2&gt;
-&lt;pre tabindex="0"&gt;&lt;code class="language-mermaid" data-lang="mermaid"&gt;flowchart LR
+&lt;div class="mermaid"&gt;flowchart LR
 subgraph Clients
 cc[Claude Code]
 api[API Clients]
 end
-subgraph Gateway[&amp;#34;LiteLLM Gateway&amp;#34;]
+subgraph Gateway["LiteLLM Gateway"]
 auth[API Key Auth]
 budget[Budget Manager]
 router[Model Router]
@@ -29,22 +29,23 @@ end
 subgraph Storage
 pg[(PostgreSQL)]
 end
-subgraph Bedrock[&amp;#34;AWS Bedrock&amp;#34;]
+subgraph Bedrock["AWS Bedrock"]
 haiku[Claude Haiku 4.5]
 sonnet[Claude Sonnet 4.5]
 opus[Claude Opus 4.5]
 end
-cc --&amp;gt; auth
-api --&amp;gt; auth
-auth --&amp;gt; budget
-budget --&amp;gt; router
-router --&amp;gt; haiku &amp;amp; sonnet &amp;amp; opus
-budget &amp;lt;--&amp;gt; pg
-router --&amp;gt; metrics
+cc --&gt; auth
+api --&gt; auth
+auth --&gt; budget
+budget --&gt; router
+router --&gt; haiku &amp; sonnet &amp; opus
+budget &lt;--&gt; pg
+router --&gt; metrics
 style haiku fill:#90EE90
 style sonnet fill:#FFD700
 style opus fill:#FF6B6B
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="features"&gt;Features&lt;/h3&gt;
+&lt;/div&gt;
+&lt;h3 id="features"&gt;Features&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -99,93 +100,96 @@ style opus fill:#FF6B6B
 &lt;hr&gt;
 &lt;h2 id="architecture"&gt;Architecture&lt;/h2&gt;
 &lt;h3 id="request-flow"&gt;Request Flow&lt;/h3&gt;
-&lt;pre tabindex="0"&gt;&lt;code class="language-mermaid" data-lang="mermaid"&gt;sequenceDiagram
+&lt;div class="mermaid"&gt;sequenceDiagram
 participant Client as Claude Code
 participant CF as CloudFront
 participant LiteLLM as LiteLLM Proxy
 participant PG as PostgreSQL
 participant Bedrock as AWS Bedrock
 participant VM as Victoria Metrics
-Client-&amp;gt;&amp;gt;CF: POST /v1/chat/completions
-CF-&amp;gt;&amp;gt;LiteLLM: Forward request
-LiteLLM-&amp;gt;&amp;gt;LiteLLM: Validate API Key
-LiteLLM-&amp;gt;&amp;gt;PG: Check User Budget
+Client-&gt;&gt;CF: POST /v1/chat/completions
+CF-&gt;&gt;LiteLLM: Forward request
+LiteLLM-&gt;&gt;LiteLLM: Validate API Key
+LiteLLM-&gt;&gt;PG: Check User Budget
 alt Budget OK
-LiteLLM-&amp;gt;&amp;gt;Bedrock: InvokeModel (SigV4)
-Bedrock--&amp;gt;&amp;gt;LiteLLM: Response + tokens
-LiteLLM-&amp;gt;&amp;gt;PG: Update spend
-LiteLLM-&amp;gt;&amp;gt;LiteLLM: Record metrics
-LiteLLM--&amp;gt;&amp;gt;Client: 200 OK
+LiteLLM-&gt;&gt;Bedrock: InvokeModel (SigV4)
+Bedrock--&gt;&gt;LiteLLM: Response + tokens
+LiteLLM-&gt;&gt;PG: Update spend
+LiteLLM-&gt;&gt;LiteLLM: Record metrics
+LiteLLM--&gt;&gt;Client: 200 OK
 else Budget Exceeded
-LiteLLM--&amp;gt;&amp;gt;Client: 429 Budget Exceeded
+LiteLLM--&gt;&gt;Client: 429 Budget Exceeded
 end
-VM-&amp;gt;&amp;gt;LiteLLM: Scrape /metrics/
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="deployment-architecture"&gt;Deployment Architecture&lt;/h3&gt;
-&lt;pre tabindex="0"&gt;&lt;code class="language-mermaid" data-lang="mermaid"&gt;flowchart TB
+VM-&gt;&gt;LiteLLM: Scrape /metrics/
+&lt;/div&gt;
+&lt;h3 id="deployment-architecture"&gt;Deployment Architecture&lt;/h3&gt;
+&lt;div class="mermaid"&gt;flowchart TB
 subgraph Internet
 clients[Claude Code / API Clients]
 end
-subgraph AWS[&amp;#34;AWS Cloud (us-west-1)&amp;#34;]
-cf[CloudFront&amp;lt;br/&amp;gt;Admin endpoints blocked]
-subgraph VPC[&amp;#34;VPC 10.10.0.0/16&amp;#34;]
-subgraph Public[&amp;#34;Public Subnets&amp;#34;]
+subgraph AWS["AWS Cloud (us-west-1)"]
+cf[CloudFront&lt;br/&gt;Admin endpoints blocked]
+subgraph VPC["VPC 10.10.0.0/16"]
+subgraph Public["Public Subnets"]
 alb[Application Load Balancer]
 nat[NAT Instance]
 end
-subgraph Private[&amp;#34;Private Subnets&amp;#34;]
-subgraph ECS[&amp;#34;ECS Fargate Cluster&amp;#34;]
-litellm[LiteLLM Proxy&amp;lt;br/&amp;gt;1 vCPU, 2GB]
-langfuse[Langfuse&amp;lt;br/&amp;gt;0.5 vCPU, 1GB]
-grafana[Grafana&amp;lt;br/&amp;gt;0.25 vCPU, 0.5GB]
-victoria[Victoria Metrics&amp;lt;br/&amp;gt;0.25 vCPU, 0.5GB]
+subgraph Private["Private Subnets"]
+subgraph ECS["ECS Fargate Cluster"]
+litellm[LiteLLM Proxy&lt;br/&gt;1 vCPU, 2GB]
+langfuse[Langfuse&lt;br/&gt;0.5 vCPU, 1GB]
+grafana[Grafana&lt;br/&gt;0.25 vCPU, 0.5GB]
+victoria[Victoria Metrics&lt;br/&gt;0.25 vCPU, 0.5GB]
 end
-rds[(RDS PostgreSQL&amp;lt;br/&amp;gt;db.t4g.micro)]
+rds[(RDS PostgreSQL&lt;br/&gt;db.t4g.micro)]
 end
 end
 bedrock[AWS Bedrock]
 secrets[Secrets Manager]
 end
-clients --&amp;gt; cf
-cf --&amp;gt; alb
-alb --&amp;gt; litellm
-alb --&amp;gt; grafana
-alb --&amp;gt; langfuse
-litellm --&amp;gt; bedrock
-litellm &amp;lt;--&amp;gt; rds
-litellm --&amp;gt; langfuse
-langfuse &amp;lt;--&amp;gt; rds
-victoria --&amp;gt; litellm
-grafana --&amp;gt; victoria
-litellm -.-&amp;gt; secrets
+clients --&gt; cf
+cf --&gt; alb
+alb --&gt; litellm
+alb --&gt; grafana
+alb --&gt; langfuse
+litellm --&gt; bedrock
+litellm &lt;--&gt; rds
+litellm --&gt; langfuse
+langfuse &lt;--&gt; rds
+victoria --&gt; litellm
+grafana --&gt; victoria
+litellm -.-&gt; secrets
 style cf fill:#ffcccc,stroke:#ff0000
 style rds fill:#336791,color:#fff
 style langfuse fill:#e6f3ff
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="security-model"&gt;Security Model&lt;/h3&gt;
-&lt;pre tabindex="0"&gt;&lt;code class="language-mermaid" data-lang="mermaid"&gt;flowchart TB
-subgraph Public[&amp;#34;Public Access (CloudFront)&amp;#34;]
-chat[&amp;#34;/v1/chat/completions ✅&amp;#34;]
-models[&amp;#34;/v1/models ✅&amp;#34;]
-health[&amp;#34;/health/* ✅&amp;#34;]
-metrics[&amp;#34;/metrics/ ✅&amp;#34;]
+&lt;/div&gt;
+&lt;h3 id="security-model"&gt;Security Model&lt;/h3&gt;
+&lt;div class="mermaid"&gt;flowchart TB
+subgraph Public["Public Access (CloudFront)"]
+chat["/v1/chat/completions ✅"]
+models["/v1/models ✅"]
+health["/health/* ✅"]
+metrics["/metrics/ ✅"]
 end
-subgraph Blocked[&amp;#34;Blocked from CloudFront (403)&amp;#34;]
-user[&amp;#34;/user/* ❌&amp;#34;]
-key[&amp;#34;/key/* ❌&amp;#34;]
-model[&amp;#34;/model/* ❌&amp;#34;]
-spend[&amp;#34;/spend/* ❌&amp;#34;]
+subgraph Blocked["Blocked from CloudFront (403)"]
+user["/user/* ❌"]
+key["/key/* ❌"]
+model["/model/* ❌"]
+spend["/spend/* ❌"]
 end
-subgraph Internal[&amp;#34;Internal Access Only (ALB)&amp;#34;]
-user_alb[&amp;#34;/user/* ✅&amp;#34;]
-key_alb[&amp;#34;/key/* ✅&amp;#34;]
-model_alb[&amp;#34;/model/* ✅&amp;#34;]
-spend_alb[&amp;#34;/spend/* ✅&amp;#34;]
+subgraph Internal["Internal Access Only (ALB)"]
+user_alb["/user/* ✅"]
+key_alb["/key/* ✅"]
+model_alb["/model/* ✅"]
+spend_alb["/spend/* ✅"]
 end
-cf[CloudFront] --&amp;gt; Public
-cf -.-&amp;gt;|403 Forbidden| Blocked
-alb[ALB Direct] --&amp;gt; Internal
+cf[CloudFront] --&gt; Public
+cf -.-&gt;|403 Forbidden| Blocked
+alb[ALB Direct] --&gt; Internal
 style Blocked fill:#ffcccc
 style Internal fill:#ccffcc
-&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;/div&gt;
+&lt;hr&gt;
 &lt;h2 id="quick-start"&gt;Quick Start&lt;/h2&gt;
 &lt;h3 id="for-claude-code-users"&gt;For Claude Code Users&lt;/h3&gt;
 &lt;p&gt;Add these environment variables to your shell:&lt;/p&gt;</description></item></channel></rss>
