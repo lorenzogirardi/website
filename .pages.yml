@@ -5,7 +5,7 @@ content:
     label: Posts
     path: content/posts
     type: collection
-    filename: "{fields.title|slugify}.md"
+    filename: "{primary}.md"
     fields:
       - name: title
         label: Title
