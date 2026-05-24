@@ -1,0 +1,32 @@
+baseURL = "https://lorenzogirardi.github.io/website/"
+locale = "en-us"
+title = "Lorenzo's Blog"
+theme = "PaperMod"
+paginate = 10
+
+[params]
+  author = "Lorenzo"
+  description = "Personal blog"
+  ShowReadingTime = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowRssButtonInSectionTermList = true
+
+[params.homeInfoParams]
+  Title = "Hi there"
+  Content = "Welcome to my blog"
+
+[[params.socialIcons]]
+  name = "github"
+  url = "https://github.com/lorenzogirardi"
+
+[menu]
+  [[menu.main]]
+    name = "Posts"
+    url = "/posts/"
+    weight = 1
+  [[menu.main]]
+    name = "Tags"
+    url = "/tags/"
+    weight = 2
