@@ -34,6 +34,7 @@ enableEmoji = true
   [params.home]
     [params.home.profile]
       enable = true
+      avatarURL = "/images/hero_image-2xl.webp"
       subtitle = "Any sufficiently advanced technology is indistinguishable from magic."
       typeit = true
       social = true
