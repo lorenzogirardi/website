@@ -26,6 +26,9 @@ content:
         label: Tags
         type: string
         list: true
+      - name: featuredImage
+        label: Cover Image
+        type: image
       - name: body
         label: Content
         type: rich-text
