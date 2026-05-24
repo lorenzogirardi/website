@@ -30,3 +30,7 @@ paginate = 10
     name = "Tags"
     url = "/tags/"
     weight = 2
+  [[menu.main]]
+    name = "Whoami"
+    url = "/whoami/"
+    weight = 3
