@@ -61,8 +61,9 @@ flowchart LR
 
 ### Features
 
+
 | Feature | Status | Description |
-|---------|--------|-------------|
+| ----------------------- | ------ | ------------------------------------------------ |
 | OpenAI-compatible API | ✅ | Drop-in replacement for Claude Code |
 | User Management | ✅ | Create users with budgets and model restrictions |
 | API Key Generation | ✅ | Per-user API keys with limits |
@@ -71,6 +72,7 @@ flowchart LR
 | Langfuse Tracing | ✅ | LLM call logging and analysis |
 | Streaming Support | ✅ | SSE for real-time responses |
 | Admin Endpoint Security | ✅ | Blocked from public access |
+
 
 ---
 
@@ -223,10 +225,12 @@ curl -X POST "$ANTHROPIC_BASE_URL/v1/chat/completions" \
 
 ### View Dashboards
 
+
 | Dashboard | URL |
-|-----------|-----|
-| **Grafana** (Metrics) | https://d18l8nt8fin3hz.cloudfront.net/grafana |
-| **Langfuse** (Traces) | https://d18l8nt8fin3hz.cloudfront.net/langfuse/ |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| **Grafana** (Metrics) | [https://d18l8nt8fin3hz.cloudfront.net/grafana](https://d18l8nt8fin3hz.cloudfront.net/grafana) |
+| **Langfuse** (Traces) | [https://d18l8nt8fin3hz.cloudfront.net/langfuse/](https://d18l8nt8fin3hz.cloudfront.net/langfuse/) |
+
 
 ---
 
@@ -253,11 +257,13 @@ cd scripts/
 
 ### Available Models
 
+
 | Model Name | Description | Status |
-|------------|-------------|--------|
+| ------------------- | -------------------- | ----------------------- |
 | `claude-haiku-4-5` | Fast, cost-effective | ✅ Working |
 | `claude-sonnet-4-5` | Balanced performance | ⚠️ Pending AWS approval |
 | `claude-opus-4-5` | Most capable | ⚠️ Pending AWS approval |
+
 
 ### Model-User Restrictions
 
@@ -294,14 +300,16 @@ See [User Management Guide](docs/user-management.md) for full documentation.
 
 Admin endpoints are **blocked from CloudFront** and only accessible via ALB direct (from VPC):
 
+
 | Endpoint | CloudFront | ALB Direct |
-|----------|------------|------------|
+| ---------------------- | --------------- | ---------- |
 | `/v1/chat/completions` | ✅ Works | ✅ Works |
 | `/v1/models` | ✅ Works | ✅ Works |
 | `/user/*` | ❌ 403 Forbidden | ✅ Works |
 | `/key/*` | ❌ 403 Forbidden | ✅ Works |
 | `/model/*` | ❌ 403 Forbidden | ✅ Works |
 | `/spend/*` | ❌ 403 Forbidden | ✅ Works |
+
 
 ### Managing Users from VPC
 
@@ -359,12 +367,14 @@ flowchart TB
 
 ### Dashboards
 
+
 | Dashboard | Purpose | URL | Status |
-|-----------|---------|-----|--------|
+| ---------------------------- | ------------------------------------------------ | ------------ | --------- |
 | **Grafana** - LLM Usage | Token tracking, costs, latency | `/grafana` | ✅ Working |
 | **Grafana** - Infrastructure | ECS, ALB, CloudFront, Langfuse, Victoria Metrics | `/grafana` | ✅ Working |
 | **Langfuse** - Traces | Request/response logging | `/langfuse/` | ✅ Working |
 | **Langfuse** - Generations | LLM call analysis | `/langfuse/` | ✅ Working |
+
 
 #### Grafana - Infrastructure Metrics
 
@@ -392,13 +402,15 @@ flowchart TB
 
 Grafana dashboards correlate Prometheus metrics with Langfuse traces:
 
+
 | Data Source | Metrics | Use Case |
-|-------------|---------|----------|
+| -------------------- | ------------------------------------- | ----------------------------- |
 | **Victoria Metrics** | `litellm_proxy_total_requests_metric` | Request counts per user |
 | **Victoria Metrics** | `litellm_total_tokens_metric` | Token usage tracking |
 | **Victoria Metrics** | `litellm_spend_metric` | Cost monitoring |
 | **Langfuse** | Traces | Full request/response logging |
 | **Langfuse** | Generations | LLM call details and metadata |
+
 
 ### Key Metrics
 
@@ -418,11 +430,13 @@ histogram_quantile(0.95, sum(rate(litellm_llm_api_latency_metric_bucket[5m])) by
 
 ### Cost Tracking
 
+
 | Model | Input ($/1M tokens) | Output ($/1M tokens) |
-|-------|---------------------|----------------------|
+| ----------------- | ------------------- | -------------------- |
 | Claude Haiku 4.5 | $0.80 | $4.00 |
 | Claude Sonnet 4.5 | $3.00 | $15.00 |
 | Claude Opus 4.5 | $15.00 | $75.00 |
+
 
 ---
 
@@ -430,46 +444,57 @@ histogram_quantile(0.95, sum(rate(litellm_llm_api_latency_metric_bucket[5m])) by
 
 ### Architecture & Design
 
+
 | Document | Description |
-|----------|-------------|
+| ------------------------------------------------------- | ----------------------------------------------- |
 | [C4 Architecture](docs/architecture/c4-architecture.md) | System context, containers, components diagrams |
+
 
 ### Observability
 
+
 | Document | Description |
-|----------|-------------|
+| ---------------------------------------- | --------------------------------------- |
 | [Langfuse Integration](docs/langfuse.md) | LLM tracing, call logging, and analysis |
+
 
 ### Operations
 
+
 | Document | Description |
-|----------|-------------|
+| ------------------------------------------------------------- | ------------------------------- |
 | [User Management](docs/user-management.md) | Create users, API keys, budgets |
 | [High Error Rate Runbook](docs/runbooks/high-error-rate.md) | Troubleshooting 5xx errors |
 | [High Latency Runbook](docs/runbooks/high-latency.md) | Diagnosing slow requests |
 | [Token Quota Exceeded](docs/runbooks/token-quota-exceeded.md) | Managing token usage |
 
+
 ### Configuration
 
+
 | Document | Description |
-|----------|-------------|
+| ------------------------------------------------ | ---------------------------------------- |
 | [Claude Code Config](docs/claude-code-config.md) | Setup guide for Claude Code users |
 | [API Examples](docs/examples/curl-examples.md) | curl commands for all endpoints |
 | [Proxy & Token Metering](docs/PROXY_TOKEN.md) | How the gateway and token tracking works |
 
+
 ### Infrastructure
 
+
 | Directory | Description |
-|-----------|-------------|
+| ---------------------------------- | ------------------------------------- |
 | [infra/terraform](infra/terraform) | Terraform modules and environments |
 | [infra/grafana](infra/grafana) | Grafana dashboards and provisioning |
 | [infra/README.md](infra/README.md) | Local development with Docker Compose |
 | [scripts/](scripts/) | User management scripts |
 
+
 ### GitHub Actions
 
+
 | Workflow | Description |
-|----------|-------------|
+| ---------------------------------------------------------- | ---------------------------------------------- |
 | [ci.yml](.github/workflows/ci.yml) | CI pipeline: security, validate, build, deploy |
 | [terraform-plan.yml](.github/workflows/terraform-plan.yml) | Terraform plan on PRs |
 | [ecs-restart.yml](.github/workflows/ecs-restart.yml) | Restart ECS services |
@@ -479,20 +504,23 @@ histogram_quantile(0.95, sum(rate(litellm_llm_api_latency_metric_bucket[5m])) by
 | [ecs-exec.yml](.github/workflows/ecs-exec.yml) | Execute commands in containers |
 | [rds-status.yml](.github/workflows/rds-status.yml) | Database status and metrics |
 
+
 ---
 
 ## API Reference
 
 ### Endpoints
 
+
 | Endpoint | Method | Access | Description |
-|----------|--------|--------|-------------|
+| ---------------------- | ------ | -------- | ----------------------------------- |
 | `/v1/chat/completions` | POST | Public | Chat completion (OpenAI-compatible) |
 | `/v1/models` | GET | Public | List available models |
 | `/health/liveliness` | GET | Public | Health check |
 | `/metrics/` | GET | Public | Prometheus metrics |
 | `/user/*` | * | Internal | User management |
 | `/key/*` | * | Internal | API key management |
+
 
 ### Request Format
 
@@ -512,19 +540,22 @@ histogram_quantile(0.95, sum(rate(litellm_llm_api_latency_metric_bucket[5m])) by
 ### Authentication
 
 Include API key in Authorization header:
+
 ```
 Authorization: Bearer <your-api-key>
 ```
 
 ### Error Responses
 
+
 | Code | Description |
-|------|-------------|
+| ---- | -------------------------------- |
 | 401 | Invalid or missing API key |
 | 403 | Admin endpoint blocked (use ALB) |
 | 429 | Rate limit or budget exceeded |
 | 500 | Internal server error |
 | 502 | Bedrock service unavailable |
+
 
 ---
 
@@ -543,9 +574,10 @@ docker-compose up -d
 ```
 
 Local services:
-- **LiteLLM**: http://localhost:4000
-- **Grafana**: http://localhost:3000 (admin/admin)
-- **Victoria Metrics**: http://localhost:8428
+
+- **LiteLLM**: [http://localhost:4000](http://localhost:4000)
+- **Grafana**: [http://localhost:3000](http://localhost:3000) (admin/admin)
+- **Victoria Metrics**: [http://localhost:8428](http://localhost:8428)
 
 ### CI/CD Pipeline
 
@@ -572,10 +604,12 @@ flowchart LR
     changes -->|No| skip[Skip]
 ```
 
+
 | Workflow | Description | Trigger |
-|----------|-------------|---------|
+| -------------------- | ------------------------------------------------ | ------------- |
 | `ci.yml` | Security scan, Terraform validate, build, deploy | Push to main |
 | `terraform-plan.yml` | Terraform plan with PR comment | Pull requests |
+
 
 ![GitHub Pipeline](https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png)
 
@@ -583,8 +617,9 @@ flowchart LR
 
 ### Operational Workflows (Manual)
 
+
 | Workflow | Description | Inputs |
-|----------|-------------|--------|
+| ----------------- | -------------------------- | ------------------------- |
 | `ecs-restart.yml` | Restart ECS services | service (or all) |
 | `ecs-logs.yml` | Download container logs | service, duration, filter |
 | `ecs-status.yml` | View cluster status | - |
@@ -592,12 +627,14 @@ flowchart LR
 | `ecs-exec.yml` | Execute debug commands | service, command |
 | `rds-status.yml` | Database metrics | - |
 
+
 > **Note**: Operational workflows require `poc` environment approval for security.
 
 ### Estimated Costs
 
+
 | Component | Monthly Cost |
-|-----------|--------------|
+| ----------------------------------------------------- | ------------ |
 | ECS Fargate (LiteLLM + Langfuse + Grafana + Victoria) | ~$55 |
 | RDS PostgreSQL (db.t4g.micro) | ~$12 |
 | NAT Instance (t3.nano) | ~$3 |
@@ -605,9 +642,9 @@ flowchart LR
 | **Total Fixed** | **~$70-75** |
 | Bedrock Usage | Pay per use |
 
+
 ---
 
 ## License
 
 MIT License - See [LICENSE](LICENSE) for details.
-
