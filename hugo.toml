@@ -15,7 +15,7 @@ paginate = 10
 
 [params.homeInfoParams]
   Title = "Hi there"
-  Content = "Welcome to my blog"
+  Content = "Any sufficiently advanced technology is indistinguishable from magic."
 
 [[params.socialIcons]]
   name = "github"
