@@ -1,4 +1,4 @@
-baseURL = "https://lorenzogirardi.github.io/website/"
+baseURL = "https://lorenzogirardi.github.io/website"
 locale = "en-us"
 title = "Lorenzo's Blog"
 theme = "PaperMod"
