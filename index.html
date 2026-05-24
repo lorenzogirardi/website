@@ -8,133 +8,113 @@
 </a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle" aria-hidden=true></i>
 </a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/website/posts/ title>Posts</a><a class=menu-item href=/website/tags/ title>Tags</a><a class=menu-item href=/website/whoami/ title>Whoami</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
 <i class="fas fa-adjust" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class="page home" data-home=posts><div class=home-profile><div class=home-subtitle><div id=id-1 class=typeit></div></div><div class=links><a href=https://github.com/lorenzogirardi title=GitHub target=_blank rel="noopener noreffer me"><i class="fab fa-github" aria-hidden=true></i></a><a href=/index.xml title=RSS target=_blank rel="noopener noreffer me"><i class="fas fa-rss" aria-hidden=true></i></a></div></div><article class="single summary" itemscope itemtype=http://schema.org/Article><h1 class=single-title itemprop="name headline"><a href=/website/posts/stargate-llm-gateway/>Stargate LLM Gateway</a></h1><div class=post-meta><span class=post-author><a href=https://github.com/lorenzogirardi title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle" aria-hidden=true></i>Lorenzo Girardi</a></span>&nbsp;<span class=post-publish>published on <time datetime=2026-05-24>2026-05-24</time></span></div><div class=content><h1 id=stargate-llm-gateway>Stargate LLM Gateway</h1><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg data-srcset="https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg, https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg 1.5x, https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg 2x" data-sizes=auto alt=https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg title=CI>
-<img class=lazyload src=/website/svg/loading.min.svg data-src=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg data-srcset="https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 1.5x, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 2x" data-sizes=auto alt=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg title=Terraform></p><p>OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.</p><h2 id=table-of-contents>Table of Contents</h2><ul><li><a href=#overview rel>Overview</a></li><li><a href=#architecture rel>Architecture</a></li><li><a href=#quick-start rel>Quick Start</a></li><li><a href=#user-management rel>User Management</a></li><li><a href=#security rel>Security</a></li><li><a href=#monitoring--observability rel>Monitoring & Observability</a></li><li><a href=#documentation-index rel>Documentation Index</a></li><li><a href=#api-reference rel>API Reference</a></li></ul><hr><h2 id=overview>Overview</h2><pre class=mermaid>flowchart LR
-    subgraph Clients
-        cc[Claude Code]
-        api[API Clients]
-    end
-
-    subgraph Gateway[&#34;LiteLLM Gateway&#34;]
-        auth[API Key Auth]
-        budget[Budget Manager]
-        router[Model Router]
-        metrics[Prometheus Metrics]
-    end
-
-    subgraph Storage
-        pg[(PostgreSQL)]
-    end
-
-    subgraph Bedrock[&#34;AWS Bedrock&#34;]
-        haiku[Claude Haiku 4.5]
-        sonnet[Claude Sonnet 4.5]
-        opus[Claude Opus 4.5]
-    end
-
-    cc --&gt; auth
-    api --&gt; auth
-    auth --&gt; budget
-    budget --&gt; router
-    router --&gt; haiku &amp; sonnet &amp; opus
-    budget &lt;--&gt; pg
-    router --&gt; metrics
-
-    style haiku fill:#90EE90
-    style sonnet fill:#FFD700
-    style opus fill:#FF6B6B</pre><h3 id=features>Features</h3><table><thead><tr><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody><tr><td>OpenAI-compatible API</td><td>✅</td><td>Drop-in replacement for Claude Code</td></tr><tr><td>User Management</td><td>✅</td><td>Create users with budgets and model restrictions</td></tr><tr><td>API Key Generation</td><td>✅</td><td>Per-user API keys with limits</td></tr><tr><td>Usage Tracking</td><td>✅</td><td>Token and cost tracking per user</td></tr><tr><td>Prometheus Metrics</td><td>✅</td><td>Full observability stack</td></tr><tr><td>Langfuse Tracing</td><td>✅</td><td>LLM call logging and analysis</td></tr><tr><td>Streaming Support</td><td>✅</td><td>SSE for real-time responses</td></tr><tr><td>Admin Endpoint Security</td><td>✅</td><td>Blocked from public access</td></tr></tbody></table><hr><h2 id=architecture>Architecture</h2><h3 id=request-flow>Request Flow</h3><pre class=mermaid>sequenceDiagram
-    participant Client as Claude Code
-    participant CF as CloudFront
-    participant LiteLLM as LiteLLM Proxy
-    participant PG as PostgreSQL
-    participant Bedrock as AWS Bedrock
-    participant VM as Victoria Metrics
-
-    Client-&gt;&gt;CF: POST /v1/chat/completions
-    CF-&gt;&gt;LiteLLM: Forward request
-
-    LiteLLM-&gt;&gt;LiteLLM: Validate API Key
-    LiteLLM-&gt;&gt;PG: Check User Budget
-
-    alt Budget OK
-        LiteLLM-&gt;&gt;Bedrock: InvokeModel (SigV4)
-        Bedrock--&gt;&gt;LiteLLM: Response &#43; tokens
-        LiteLLM-&gt;&gt;PG: Update spend
-        LiteLLM-&gt;&gt;LiteLLM: Record metrics
-        LiteLLM--&gt;&gt;Client: 200 OK
-    else Budget Exceeded
-        LiteLLM--&gt;&gt;Client: 429 Budget Exceeded
-    end
-
-    VM-&gt;&gt;LiteLLM: Scrape /metrics/</pre><h3 id=deployment-architecture>Deployment Architecture</h3><pre class=mermaid>flowchart TB
-    subgraph Internet
-        clients[Claude Code / API Clients]
-    end
-
-    subgraph AWS[&#34;AWS Cloud (us-west-1)&#34;]
-        cf[CloudFront&lt;br/&gt;Admin endpoints blocked]
-
-        subgraph VPC[&#34;VPC 10.10.0.0/16&#34;]
-            subgraph Public[&#34;Public Subnets&#34;]
-                alb[Application Load Balancer]
-                nat[NAT Instance]
-            end
-
-            subgraph Private[&#34;Private Subnets&#34;]
-                subgraph ECS[&#34;ECS Fargate Cluster&#34;]
-                    litellm[LiteLLM Proxy&lt;br/&gt;1 vCPU, 2GB]
-                    langfuse[Langfuse&lt;br/&gt;0.5 vCPU, 1GB]
-                    grafana[Grafana&lt;br/&gt;0.25 vCPU, 0.5GB]
-                    victoria[Victoria Metrics&lt;br/&gt;0.25 vCPU, 0.5GB]
-                end
-
-                rds[(RDS PostgreSQL&lt;br/&gt;db.t4g.micro)]
-            end
-        end
-
-        bedrock[AWS Bedrock]
-        secrets[Secrets Manager]
-    end
-
-    clients --&gt; cf
-    cf --&gt; alb
-    alb --&gt; litellm
-    alb --&gt; grafana
-    alb --&gt; langfuse
-    litellm --&gt; bedrock
-    litellm &lt;--&gt; rds
-    litellm --&gt; langfuse
-    langfuse &lt;--&gt; rds
-    victoria --&gt; litellm
-    grafana --&gt; victoria
-    litellm -.-&gt; secrets
-
-    style cf fill:#ffcccc,stroke:#ff0000
-    style rds fill:#336791,color:#fff
-    style langfuse fill:#e6f3ff</pre><h3 id=security-model>Security Model</h3><pre class=mermaid>flowchart TB
-    subgraph Public[&#34;Public Access (CloudFront)&#34;]
-        chat[&#34;/v1/chat/completions ✅&#34;]
-        models[&#34;/v1/models ✅&#34;]
-        health[&#34;/health/* ✅&#34;]
-        metrics[&#34;/metrics/ ✅&#34;]
-    end
-
-    subgraph Blocked[&#34;Blocked from CloudFront (403)&#34;]
-        user[&#34;/user/* ❌&#34;]
-        key[&#34;/key/* ❌&#34;]
-        model[&#34;/model/* ❌&#34;]
-        spend[&#34;/spend/* ❌&#34;]
-    end
-
-    subgraph Internal[&#34;Internal Access Only (ALB)&#34;]
-        user_alb[&#34;/user/* ✅&#34;]
-        key_alb[&#34;/key/* ✅&#34;]
-        model_alb[&#34;/model/* ✅&#34;]
-        spend_alb[&#34;/spend/* ✅&#34;]
-    end
-
-    cf[CloudFront] --&gt; Public
-    cf -.-&gt;|403 Forbidden| Blocked
-    alb[ALB Direct] --&gt; Internal
-
-    style Blocked fill:#ffcccc
-    style Internal fill:#ccffcc</pre><hr><h2 id=quick-start>Quick Start</h2><h3 id=for-claude-code-users>For Claude Code Users</h3><p>Add these environment variables to your shell:</p></div><div class=post-footer><a href=/website/posts/stargate-llm-gateway/>Read More</a><div class=post-tags><i class="fas fa-tags" aria-hidden=true></i>&nbsp;<a href=/website/tags/ai/>Ai</a>,&nbsp;<a href=/website/tags/gateway/>Gateway</a>,&nbsp;<a href=/website/tags/llm/>Llm</a></div></div></article></div></div></main><footer class=footer><div class=footer-container><div class=footer-line>Powered by <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.161.1">Hugo</a> | Theme - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright" aria-hidden=true></i><span itemprop=copyrightYear>2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/lorenzogirardi target=_blank>Lorenzo Girardi</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up" aria-hidden=true></i></a></div><div id=fixed-buttons-hidden><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment" aria-hidden=true></i></a></div><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js></script><script src=https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js></script><script>window.config={data:{"id-1":"Any sufficiently advanced technology is indistinguishable from magic."},search:{highlightTag:"em",lunrIndexURL:"/website/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:30,type:"lunr"},typeit:{cursorChar:"|",cursorSpeed:1e3,data:{"id-1":["id-1"]},duration:-1,speed:100}}</script><script src=/website/js/theme.js></script></body></html>
+<img class=lazyload src=/website/svg/loading.min.svg data-src=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg data-srcset="https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 1.5x, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 2x" data-sizes=auto alt=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg title=Terraform></p><p>OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.</p><h2 id=table-of-contents>Table of Contents</h2><ul><li><a href=#overview rel>Overview</a></li><li><a href=#architecture rel>Architecture</a></li><li><a href=#quick-start rel>Quick Start</a></li><li><a href=#user-management rel>User Management</a></li><li><a href=#security rel>Security</a></li><li><a href=#monitoring--observability rel>Monitoring & Observability</a></li><li><a href=#documentation-index rel>Documentation Index</a></li><li><a href=#api-reference rel>API Reference</a></li></ul><hr><h2 id=overview>Overview</h2><div class=mermaid id=id-1>flowchart LR
+subgraph Clients
+cc[Claude Code]
+api[API Clients]
+end
+subgraph Gateway["LiteLLM Gateway"]
+auth[API Key Auth]
+budget[Budget Manager]
+router[Model Router]
+metrics[Prometheus Metrics]
+end
+subgraph Storage
+pg[(PostgreSQL)]
+end
+subgraph Bedrock["AWS Bedrock"]
+haiku[Claude Haiku 4.5]
+sonnet[Claude Sonnet 4.5]
+opus[Claude Opus 4.5]
+end
+cc --> auth
+api --> auth
+auth --> budget
+budget --> router
+router --> haiku & sonnet & opus
+budget &lt;--> pg
+router --> metrics
+style haiku fill:#90EE90
+style sonnet fill:#FFD700
+style opus fill:#FF6B6B</div><h3 id=features>Features</h3><table><thead><tr><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody><tr><td>OpenAI-compatible API</td><td>✅</td><td>Drop-in replacement for Claude Code</td></tr><tr><td>User Management</td><td>✅</td><td>Create users with budgets and model restrictions</td></tr><tr><td>API Key Generation</td><td>✅</td><td>Per-user API keys with limits</td></tr><tr><td>Usage Tracking</td><td>✅</td><td>Token and cost tracking per user</td></tr><tr><td>Prometheus Metrics</td><td>✅</td><td>Full observability stack</td></tr><tr><td>Langfuse Tracing</td><td>✅</td><td>LLM call logging and analysis</td></tr><tr><td>Streaming Support</td><td>✅</td><td>SSE for real-time responses</td></tr><tr><td>Admin Endpoint Security</td><td>✅</td><td>Blocked from public access</td></tr></tbody></table><hr><h2 id=architecture>Architecture</h2><h3 id=request-flow>Request Flow</h3><div class=mermaid id=id-2>sequenceDiagram
+participant Client as Claude Code
+participant CF as CloudFront
+participant LiteLLM as LiteLLM Proxy
+participant PG as PostgreSQL
+participant Bedrock as AWS Bedrock
+participant VM as Victoria Metrics
+Client->>CF: POST /v1/chat/completions
+CF->>LiteLLM: Forward request
+LiteLLM->>LiteLLM: Validate API Key
+LiteLLM->>PG: Check User Budget
+alt Budget OK
+LiteLLM->>Bedrock: InvokeModel (SigV4)
+Bedrock-->>LiteLLM: Response + tokens
+LiteLLM->>PG: Update spend
+LiteLLM->>LiteLLM: Record metrics
+LiteLLM-->>Client: 200 OK
+else Budget Exceeded
+LiteLLM-->>Client: 429 Budget Exceeded
+end
+VM->>LiteLLM: Scrape /metrics/</div><h3 id=deployment-architecture>Deployment Architecture</h3><div class=mermaid id=id-3>flowchart TB
+subgraph Internet
+clients[Claude Code / API Clients]
+end
+subgraph AWS["AWS Cloud (us-west-1)"]
+cf[CloudFront&lt;br/>Admin endpoints blocked]
+subgraph VPC["VPC 10.10.0.0/16"]
+subgraph Public["Public Subnets"]
+alb[Application Load Balancer]
+nat[NAT Instance]
+end
+subgraph Private["Private Subnets"]
+subgraph ECS["ECS Fargate Cluster"]
+litellm[LiteLLM Proxy&lt;br/>1 vCPU, 2GB]
+langfuse[Langfuse&lt;br/>0.5 vCPU, 1GB]
+grafana[Grafana&lt;br/>0.25 vCPU, 0.5GB]
+victoria[Victoria Metrics&lt;br/>0.25 vCPU, 0.5GB]
+end
+rds[(RDS PostgreSQL&lt;br/>db.t4g.micro)]
+end
+end
+bedrock[AWS Bedrock]
+secrets[Secrets Manager]
+end
+clients --> cf
+cf --> alb
+alb --> litellm
+alb --> grafana
+alb --> langfuse
+litellm --> bedrock
+litellm &lt;--> rds
+litellm --> langfuse
+langfuse &lt;--> rds
+victoria --> litellm
+grafana --> victoria
+litellm -.-> secrets
+style cf fill:#ffcccc,stroke:#ff0000
+style rds fill:#336791,color:#fff
+style langfuse fill:#e6f3ff</div><h3 id=security-model>Security Model</h3><div class=mermaid id=id-4>flowchart TB
+subgraph Public["Public Access (CloudFront)"]
+chat["/v1/chat/completions ✅"]
+models["/v1/models ✅"]
+health["/health/* ✅"]
+metrics["/metrics/ ✅"]
+end
+subgraph Blocked["Blocked from CloudFront (403)"]
+user["/user/* ❌"]
+key["/key/* ❌"]
+model["/model/* ❌"]
+spend["/spend/* ❌"]
+end
+subgraph Internal["Internal Access Only (ALB)"]
+user_alb["/user/* ✅"]
+key_alb["/key/* ✅"]
+model_alb["/model/* ✅"]
+spend_alb["/spend/* ✅"]
+end
+cf[CloudFront] --> Public
+cf -.->|403 Forbidden| Blocked
+alb[ALB Direct] --> Internal
+style Blocked fill:#ffcccc
+style Internal fill:#ccffcc</div><hr><h2 id=quick-start>Quick Start</h2><h3 id=for-claude-code-users>For Claude Code Users</h3><p>Add these environment variables to your shell:</p></div><div class=post-footer><a href=/website/posts/stargate-llm-gateway/>Read More</a><div class=post-tags><i class="fas fa-tags" aria-hidden=true></i>&nbsp;<a href=/website/tags/ai/>Ai</a>,&nbsp;<a href=/website/tags/gateway/>Gateway</a>,&nbsp;<a href=/website/tags/llm/>Llm</a></div></div></article></div></div></main><footer class=footer><div class=footer-container><div class=footer-line>Powered by <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.161.1">Hugo</a> | Theme - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright" aria-hidden=true></i><span itemprop=copyrightYear>2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/lorenzogirardi target=_blank>Lorenzo Girardi</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up" aria-hidden=true></i></a></div><div id=fixed-buttons-hidden><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment" aria-hidden=true></i></a></div><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js></script><script src=https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js></script><script>window.config={data:{"id-1":"Any sufficiently advanced technology is indistinguishable from magic."},search:{highlightTag:"em",lunrIndexURL:"/website/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:30,type:"lunr"},typeit:{cursorChar:"|",cursorSpeed:1e3,data:{"id-1":["id-1"]},duration:-1,speed:100}}</script><script src=/website/js/theme.js></script></body></html>

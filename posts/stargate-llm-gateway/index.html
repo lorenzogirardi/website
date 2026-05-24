@@ -1,6 +1,6 @@
 <!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Stargate LLM Gateway - Lorenzo's Blog</title><meta name=Description content="Personal blog"><meta property="og:url" content="https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/"><meta property="og:site_name" content="Lorenzo's Blog"><meta property="og:title" content="Stargate LLM Gateway"><meta property="og:description" content='Stargate LLM Gateway OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.
-Table of Contents Overview Architecture Quick Start User Management Security Monitoring & Observability Documentation Index API Reference Overview flowchart LR subgraph Clients cc[Claude Code] api[API Clients] end subgraph Gateway["LiteLLM Gateway"] auth[API Key Auth] budget[Budget Manager] router[Model Router] metrics[Prometheus Metrics] end subgraph Storage pg[(PostgreSQL)] end subgraph Bedrock["AWS Bedrock"] haiku[Claude Haiku 4.5] sonnet[Claude Sonnet 4.5] opus[Claude Opus 4.5] end cc --> auth api --> auth auth --> budget budget --> router router --> haiku & sonnet & opus budget <--> pg router --> metrics style haiku fill:#90EE90 style sonnet fill:#FFD700 style opus fill:#FF6B6B Features Feature Status Description OpenAI-compatible API ✅ Drop-in replacement for Claude Code User Management ✅ Create users with budgets and model restrictions API Key Generation ✅ Per-user API keys with limits Usage Tracking ✅ Token and cost tracking per user Prometheus Metrics ✅ Full observability stack Langfuse Tracing ✅ LLM call logging and analysis Streaming Support ✅ SSE for real-time responses Admin Endpoint Security ✅ Blocked from public access Architecture Request Flow sequenceDiagram participant Client as Claude Code participant CF as CloudFront participant LiteLLM as LiteLLM Proxy participant PG as PostgreSQL participant Bedrock as AWS Bedrock participant VM as Victoria Metrics Client->>CF: POST /v1/chat/completions CF->>LiteLLM: Forward request LiteLLM->>LiteLLM: Validate API Key LiteLLM->>PG: Check User Budget alt Budget OK LiteLLM->>Bedrock: InvokeModel (SigV4) Bedrock-->>LiteLLM: Response + tokens LiteLLM->>PG: Update spend LiteLLM->>LiteLLM: Record metrics LiteLLM-->>Client: 200 OK else Budget Exceeded LiteLLM-->>Client: 429 Budget Exceeded end VM->>LiteLLM: Scrape /metrics/ Deployment Architecture flowchart TB subgraph Internet clients[Claude Code / API Clients] end subgraph AWS["AWS Cloud (us-west-1)"] cf[CloudFront<br/>Admin endpoints blocked] subgraph VPC["VPC 10.10.0.0/16"] subgraph Public["Public Subnets"] alb[Application Load Balancer] nat[NAT Instance] end subgraph Private["Private Subnets"] subgraph ECS["ECS Fargate Cluster"] litellm[LiteLLM Proxy<br/>1 vCPU, 2GB] langfuse[Langfuse<br/>0.5 vCPU, 1GB] grafana[Grafana<br/>0.25 vCPU, 0.5GB] victoria[Victoria Metrics<br/>0.25 vCPU, 0.5GB] end rds[(RDS PostgreSQL<br/>db.t4g.micro)] end end bedrock[AWS Bedrock] secrets[Secrets Manager] end clients --> cf cf --> alb alb --> litellm alb --> grafana alb --> langfuse litellm --> bedrock litellm <--> rds litellm --> langfuse langfuse <--> rds victoria --> litellm grafana --> victoria litellm -.-> secrets style cf fill:#ffcccc,stroke:#ff0000 style rds fill:#336791,color:#fff style langfuse fill:#e6f3ff Security Model flowchart TB subgraph Public["Public Access (CloudFront)"] chat["/v1/chat/completions ✅"] models["/v1/models ✅"] health["/health/* ✅"] metrics["/metrics/ ✅"] end subgraph Blocked["Blocked from CloudFront (403)"] user["/user/* ❌"] key["/key/* ❌"] model["/model/* ❌"] spend["/spend/* ❌"] end subgraph Internal["Internal Access Only (ALB)"] user_alb["/user/* ✅"] key_alb["/key/* ✅"] model_alb["/model/* ✅"] spend_alb["/spend/* ✅"] end cf[CloudFront] --> Public cf -.->|403 Forbidden| Blocked alb[ALB Direct] --> Internal style Blocked fill:#ffcccc style Internal fill:#ccffcc Quick Start For Claude Code Users Add these environment variables to your shell:'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-05-24T00:00:00+00:00"><meta property="article:modified_time" content="2026-05-24T00:00:00+00:00"><meta property="article:tag" content="Ai"><meta property="article:tag" content="Gateway"><meta property="article:tag" content="Llm"><meta name=twitter:card content="summary"><meta name=twitter:title content="Stargate LLM Gateway"><meta name=twitter:description content='Stargate LLM Gateway OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.
-Table of Contents Overview Architecture Quick Start User Management Security Monitoring & Observability Documentation Index API Reference Overview flowchart LR subgraph Clients cc[Claude Code] api[API Clients] end subgraph Gateway["LiteLLM Gateway"] auth[API Key Auth] budget[Budget Manager] router[Model Router] metrics[Prometheus Metrics] end subgraph Storage pg[(PostgreSQL)] end subgraph Bedrock["AWS Bedrock"] haiku[Claude Haiku 4.5] sonnet[Claude Sonnet 4.5] opus[Claude Opus 4.5] end cc --> auth api --> auth auth --> budget budget --> router router --> haiku & sonnet & opus budget <--> pg router --> metrics style haiku fill:#90EE90 style sonnet fill:#FFD700 style opus fill:#FF6B6B Features Feature Status Description OpenAI-compatible API ✅ Drop-in replacement for Claude Code User Management ✅ Create users with budgets and model restrictions API Key Generation ✅ Per-user API keys with limits Usage Tracking ✅ Token and cost tracking per user Prometheus Metrics ✅ Full observability stack Langfuse Tracing ✅ LLM call logging and analysis Streaming Support ✅ SSE for real-time responses Admin Endpoint Security ✅ Blocked from public access Architecture Request Flow sequenceDiagram participant Client as Claude Code participant CF as CloudFront participant LiteLLM as LiteLLM Proxy participant PG as PostgreSQL participant Bedrock as AWS Bedrock participant VM as Victoria Metrics Client->>CF: POST /v1/chat/completions CF->>LiteLLM: Forward request LiteLLM->>LiteLLM: Validate API Key LiteLLM->>PG: Check User Budget alt Budget OK LiteLLM->>Bedrock: InvokeModel (SigV4) Bedrock-->>LiteLLM: Response + tokens LiteLLM->>PG: Update spend LiteLLM->>LiteLLM: Record metrics LiteLLM-->>Client: 200 OK else Budget Exceeded LiteLLM-->>Client: 429 Budget Exceeded end VM->>LiteLLM: Scrape /metrics/ Deployment Architecture flowchart TB subgraph Internet clients[Claude Code / API Clients] end subgraph AWS["AWS Cloud (us-west-1)"] cf[CloudFront<br/>Admin endpoints blocked] subgraph VPC["VPC 10.10.0.0/16"] subgraph Public["Public Subnets"] alb[Application Load Balancer] nat[NAT Instance] end subgraph Private["Private Subnets"] subgraph ECS["ECS Fargate Cluster"] litellm[LiteLLM Proxy<br/>1 vCPU, 2GB] langfuse[Langfuse<br/>0.5 vCPU, 1GB] grafana[Grafana<br/>0.25 vCPU, 0.5GB] victoria[Victoria Metrics<br/>0.25 vCPU, 0.5GB] end rds[(RDS PostgreSQL<br/>db.t4g.micro)] end end bedrock[AWS Bedrock] secrets[Secrets Manager] end clients --> cf cf --> alb alb --> litellm alb --> grafana alb --> langfuse litellm --> bedrock litellm <--> rds litellm --> langfuse langfuse <--> rds victoria --> litellm grafana --> victoria litellm -.-> secrets style cf fill:#ffcccc,stroke:#ff0000 style rds fill:#336791,color:#fff style langfuse fill:#e6f3ff Security Model flowchart TB subgraph Public["Public Access (CloudFront)"] chat["/v1/chat/completions ✅"] models["/v1/models ✅"] health["/health/* ✅"] metrics["/metrics/ ✅"] end subgraph Blocked["Blocked from CloudFront (403)"] user["/user/* ❌"] key["/key/* ❌"] model["/model/* ❌"] spend["/spend/* ❌"] end subgraph Internal["Internal Access Only (ALB)"] user_alb["/user/* ✅"] key_alb["/key/* ✅"] model_alb["/model/* ✅"] spend_alb["/spend/* ✅"] end cf[CloudFront] --> Public cf -.->|403 Forbidden| Blocked alb[ALB Direct] --> Internal style Blocked fill:#ffcccc style Internal fill:#ccffcc Quick Start For Claude Code Users Add these environment variables to your shell:'><meta name=application-name content="My cool site"><meta name=apple-mobile-web-app-title content="My cool site"><meta name=referrer content="no-referrer"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/><link rel=stylesheet href=/website/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Stargate LLM Gateway","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/lorenzogirardi.github.io\/website\/posts\/stargate-llm-gateway\/"},"genre":"posts","keywords":"ai, gateway, llm","wordcount":1419,"url":"https:\/\/lorenzogirardi.github.io\/website\/posts\/stargate-llm-gateway\/","datePublished":"2026-05-24T00:00:00+00:00","dateModified":"2026-05-24T00:00:00+00:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"Lorenzo Girardi"},"description":""}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script>const query=window.matchMedia("(prefers-color-scheme: dark)");function applyTheme(){let e=window.localStorage?.getItem("theme")||"auto",t=e==="dark"||e==="auto"&&query.matches;document.body.setAttribute("theme",t?"dark":"light"),document.body.setAttribute("cfg-theme",e)}applyTheme(),query.addEventListener("change",applyTheme)</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/website/ title="Lorenzo's Blog">Lorenzo's Blog</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/website/posts/>Posts </a><a class=menu-item href=/website/tags/>Tags </a><a class=menu-item href=/website/whoami/>Whoami </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+Table of Contents Overview Architecture Quick Start User Management Security Monitoring & Observability Documentation Index API Reference Overview flowchart LR subgraph Clients cc[Claude Code] api[API Clients] end subgraph Gateway["LiteLLM Gateway"] auth[API Key Auth] budget[Budget Manager] router[Model Router] metrics[Prometheus Metrics] end subgraph Storage pg[(PostgreSQL)] end subgraph Bedrock["AWS Bedrock"] haiku[Claude Haiku 4.5] sonnet[Claude Sonnet 4.5] opus[Claude Opus 4.5] end cc --> auth api --> auth auth --> budget budget --> router router --> haiku & sonnet & opus budget <--> pg router --> metrics style haiku fill:#90EE90 style sonnet fill:#FFD700 style opus fill:#FF6B6BFeatures Feature Status Description OpenAI-compatible API ✅ Drop-in replacement for Claude Code User Management ✅ Create users with budgets and model restrictions API Key Generation ✅ Per-user API keys with limits Usage Tracking ✅ Token and cost tracking per user Prometheus Metrics ✅ Full observability stack Langfuse Tracing ✅ LLM call logging and analysis Streaming Support ✅ SSE for real-time responses Admin Endpoint Security ✅ Blocked from public access Architecture Request Flow sequenceDiagram participant Client as Claude Code participant CF as CloudFront participant LiteLLM as LiteLLM Proxy participant PG as PostgreSQL participant Bedrock as AWS Bedrock participant VM as Victoria Metrics Client->>CF: POST /v1/chat/completions CF->>LiteLLM: Forward request LiteLLM->>LiteLLM: Validate API Key LiteLLM->>PG: Check User Budget alt Budget OK LiteLLM->>Bedrock: InvokeModel (SigV4) Bedrock-->>LiteLLM: Response + tokens LiteLLM->>PG: Update spend LiteLLM->>LiteLLM: Record metrics LiteLLM-->>Client: 200 OK else Budget Exceeded LiteLLM-->>Client: 429 Budget Exceeded end VM->>LiteLLM: Scrape /metrics/Deployment Architecture flowchart TB subgraph Internet clients[Claude Code / API Clients] end subgraph AWS["AWS Cloud (us-west-1)"] cf[CloudFront<br/>Admin endpoints blocked] subgraph VPC["VPC 10.10.0.0/16"] subgraph Public["Public Subnets"] alb[Application Load Balancer] nat[NAT Instance] end subgraph Private["Private Subnets"] subgraph ECS["ECS Fargate Cluster"] litellm[LiteLLM Proxy<br/>1 vCPU, 2GB] langfuse[Langfuse<br/>0.5 vCPU, 1GB] grafana[Grafana<br/>0.25 vCPU, 0.5GB] victoria[Victoria Metrics<br/>0.25 vCPU, 0.5GB] end rds[(RDS PostgreSQL<br/>db.t4g.micro)] end end bedrock[AWS Bedrock] secrets[Secrets Manager] end clients --> cf cf --> alb alb --> litellm alb --> grafana alb --> langfuse litellm --> bedrock litellm <--> rds litellm --> langfuse langfuse <--> rds victoria --> litellm grafana --> victoria litellm -.-> secrets style cf fill:#ffcccc,stroke:#ff0000 style rds fill:#336791,color:#fff style langfuse fill:#e6f3ffSecurity Model flowchart TB subgraph Public["Public Access (CloudFront)"] chat["/v1/chat/completions ✅"] models["/v1/models ✅"] health["/health/* ✅"] metrics["/metrics/ ✅"] end subgraph Blocked["Blocked from CloudFront (403)"] user["/user/* ❌"] key["/key/* ❌"] model["/model/* ❌"] spend["/spend/* ❌"] end subgraph Internal["Internal Access Only (ALB)"] user_alb["/user/* ✅"] key_alb["/key/* ✅"] model_alb["/model/* ✅"] spend_alb["/spend/* ✅"] end cf[CloudFront] --> Public cf -.->|403 Forbidden| Blocked alb[ALB Direct] --> Internal style Blocked fill:#ffcccc style Internal fill:#ccffcc Quick Start For Claude Code Users Add these environment variables to your shell:'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-05-24T00:00:00+00:00"><meta property="article:modified_time" content="2026-05-24T00:00:00+00:00"><meta property="article:tag" content="Ai"><meta property="article:tag" content="Gateway"><meta property="article:tag" content="Llm"><meta name=twitter:card content="summary"><meta name=twitter:title content="Stargate LLM Gateway"><meta name=twitter:description content='Stargate LLM Gateway OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.
+Table of Contents Overview Architecture Quick Start User Management Security Monitoring & Observability Documentation Index API Reference Overview flowchart LR subgraph Clients cc[Claude Code] api[API Clients] end subgraph Gateway["LiteLLM Gateway"] auth[API Key Auth] budget[Budget Manager] router[Model Router] metrics[Prometheus Metrics] end subgraph Storage pg[(PostgreSQL)] end subgraph Bedrock["AWS Bedrock"] haiku[Claude Haiku 4.5] sonnet[Claude Sonnet 4.5] opus[Claude Opus 4.5] end cc --> auth api --> auth auth --> budget budget --> router router --> haiku & sonnet & opus budget <--> pg router --> metrics style haiku fill:#90EE90 style sonnet fill:#FFD700 style opus fill:#FF6B6BFeatures Feature Status Description OpenAI-compatible API ✅ Drop-in replacement for Claude Code User Management ✅ Create users with budgets and model restrictions API Key Generation ✅ Per-user API keys with limits Usage Tracking ✅ Token and cost tracking per user Prometheus Metrics ✅ Full observability stack Langfuse Tracing ✅ LLM call logging and analysis Streaming Support ✅ SSE for real-time responses Admin Endpoint Security ✅ Blocked from public access Architecture Request Flow sequenceDiagram participant Client as Claude Code participant CF as CloudFront participant LiteLLM as LiteLLM Proxy participant PG as PostgreSQL participant Bedrock as AWS Bedrock participant VM as Victoria Metrics Client->>CF: POST /v1/chat/completions CF->>LiteLLM: Forward request LiteLLM->>LiteLLM: Validate API Key LiteLLM->>PG: Check User Budget alt Budget OK LiteLLM->>Bedrock: InvokeModel (SigV4) Bedrock-->>LiteLLM: Response + tokens LiteLLM->>PG: Update spend LiteLLM->>LiteLLM: Record metrics LiteLLM-->>Client: 200 OK else Budget Exceeded LiteLLM-->>Client: 429 Budget Exceeded end VM->>LiteLLM: Scrape /metrics/Deployment Architecture flowchart TB subgraph Internet clients[Claude Code / API Clients] end subgraph AWS["AWS Cloud (us-west-1)"] cf[CloudFront<br/>Admin endpoints blocked] subgraph VPC["VPC 10.10.0.0/16"] subgraph Public["Public Subnets"] alb[Application Load Balancer] nat[NAT Instance] end subgraph Private["Private Subnets"] subgraph ECS["ECS Fargate Cluster"] litellm[LiteLLM Proxy<br/>1 vCPU, 2GB] langfuse[Langfuse<br/>0.5 vCPU, 1GB] grafana[Grafana<br/>0.25 vCPU, 0.5GB] victoria[Victoria Metrics<br/>0.25 vCPU, 0.5GB] end rds[(RDS PostgreSQL<br/>db.t4g.micro)] end end bedrock[AWS Bedrock] secrets[Secrets Manager] end clients --> cf cf --> alb alb --> litellm alb --> grafana alb --> langfuse litellm --> bedrock litellm <--> rds litellm --> langfuse langfuse <--> rds victoria --> litellm grafana --> victoria litellm -.-> secrets style cf fill:#ffcccc,stroke:#ff0000 style rds fill:#336791,color:#fff style langfuse fill:#e6f3ffSecurity Model flowchart TB subgraph Public["Public Access (CloudFront)"] chat["/v1/chat/completions ✅"] models["/v1/models ✅"] health["/health/* ✅"] metrics["/metrics/ ✅"] end subgraph Blocked["Blocked from CloudFront (403)"] user["/user/* ❌"] key["/key/* ❌"] model["/model/* ❌"] spend["/spend/* ❌"] end subgraph Internal["Internal Access Only (ALB)"] user_alb["/user/* ✅"] key_alb["/key/* ✅"] model_alb["/model/* ✅"] spend_alb["/spend/* ✅"] end cf[CloudFront] --> Public cf -.->|403 Forbidden| Blocked alb[ALB Direct] --> Internal style Blocked fill:#ffcccc style Internal fill:#ccffcc Quick Start For Claude Code Users Add these environment variables to your shell:'><meta name=application-name content="My cool site"><meta name=apple-mobile-web-app-title content="My cool site"><meta name=referrer content="no-referrer"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/><link rel=stylesheet href=/website/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Stargate LLM Gateway","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/lorenzogirardi.github.io\/website\/posts\/stargate-llm-gateway\/"},"genre":"posts","keywords":"ai, gateway, llm","wordcount":1414,"url":"https:\/\/lorenzogirardi.github.io\/website\/posts\/stargate-llm-gateway\/","datePublished":"2026-05-24T00:00:00+00:00","dateModified":"2026-05-24T00:00:00+00:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"Lorenzo Girardi"},"description":""}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script>const query=window.matchMedia("(prefers-color-scheme: dark)");function applyTheme(){let e=window.localStorage?.getItem("theme")||"auto",t=e==="dark"||e==="auto"&&query.matches;document.body.setAttribute("theme",t?"dark":"light"),document.body.setAttribute("cfg-theme",e)}applyTheme(),query.addEventListener("change",applyTheme)</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/website/ title="Lorenzo's Blog">Lorenzo's Blog</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/website/posts/>Posts </a><a class=menu-item href=/website/tags/>Tags </a><a class=menu-item href=/website/whoami/>Whoami </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
 <input type=text placeholder="Search titles or contents..." id=search-input-desktop>
 <a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search" aria-hidden=true></i>
 </a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle" aria-hidden=true></i>
@@ -9,139 +9,119 @@ Table of Contents Overview Architecture Quick Start User Management Security Mon
 <a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search" aria-hidden=true></i>
 </a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle" aria-hidden=true></i>
 </a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/website/posts/ title>Posts</a><a class=menu-item href=/website/tags/ title>Tags</a><a class=menu-item href=/website/whoami/ title>Whoami</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
-<i class="fas fa-adjust" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Stargate LLM Gateway</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://github.com/lorenzogirardi title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle" aria-hidden=true></i>Lorenzo Girardi</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt" aria-hidden=true></i>&nbsp;<time datetime=2026-05-24>2026-05-24</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden=true></i>&nbsp;1419 words&nbsp;
+<i class="fas fa-adjust" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Stargate LLM Gateway</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://github.com/lorenzogirardi title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle" aria-hidden=true></i>Lorenzo Girardi</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt" aria-hidden=true></i>&nbsp;<time datetime=2026-05-24>2026-05-24</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden=true></i>&nbsp;1414 words&nbsp;
 <i class="far fa-clock" aria-hidden=true></i>&nbsp;7 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
 <span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#table-of-contents>Table of Contents</a></li><li><a href=#overview>Overview</a><ul><li><a href=#features>Features</a></li></ul></li><li><a href=#architecture>Architecture</a><ul><li><a href=#request-flow>Request Flow</a></li><li><a href=#deployment-architecture>Deployment Architecture</a></li><li><a href=#security-model>Security Model</a></li></ul></li><li><a href=#quick-start>Quick Start</a><ul><li><a href=#for-claude-code-users>For Claude Code Users</a></li><li><a href=#test-api-access>Test API Access</a></li><li><a href=#view-dashboards>View Dashboards</a></li></ul></li><li><a href=#user-management>User Management</a><ul><li><a href=#using-the-management-script>Using the Management Script</a></li><li><a href=#available-models>Available Models</a></li><li><a href=#model-user-restrictions>Model-User Restrictions</a></li></ul></li><li><a href=#security>Security</a><ul><li><a href=#admin-endpoint-protection>Admin Endpoint Protection</a></li><li><a href=#managing-users-from-vpc>Managing Users from VPC</a></li></ul></li><li><a href=#monitoring--observability>Monitoring & Observability</a><ul><li><a href=#observability-stack-verified->Observability Stack (Verified ✅)</a></li><li><a href=#dashboards>Dashboards</a><ul><li><a href=#grafana---infrastructure-metrics>Grafana - Infrastructure Metrics</a></li><li><a href=#grafana---token-usage--costs>Grafana - Token Usage & Costs</a></li><li><a href=#grafana---architecture-flow>Grafana - Architecture Flow</a></li><li><a href=#grafana---postgresql-metrics>Grafana - PostgreSQL Metrics</a></li><li><a href=#langfuse---llm-traces>Langfuse - LLM Traces</a></li></ul></li><li><a href=#metrics--traces-integration>Metrics & Traces Integration</a></li><li><a href=#key-metrics>Key Metrics</a></li><li><a href=#cost-tracking>Cost Tracking</a></li></ul></li><li><a href=#documentation-index>Documentation Index</a><ul><li><a href=#architecture--design>Architecture & Design</a></li><li><a href=#observability>Observability</a></li><li><a href=#operations>Operations</a></li><li><a href=#configuration>Configuration</a></li><li><a href=#infrastructure>Infrastructure</a></li><li><a href=#github-actions>GitHub Actions</a></li></ul></li><li><a href=#api-reference>API Reference</a><ul><li><a href=#endpoints>Endpoints</a></li><li><a href=#request-format>Request Format</a></li><li><a href=#authentication>Authentication</a></li><li><a href=#error-responses>Error Responses</a></li></ul></li><li><a href=#development>Development</a><ul><li><a href=#local-development>Local Development</a></li><li><a href=#cicd-pipeline>CI/CD Pipeline</a></li><li><a href=#operational-workflows-manual>Operational Workflows (Manual)</a></li><li><a href=#estimated-costs>Estimated Costs</a></li></ul></li><li><a href=#license>License</a></li></ul></nav></div></div><div class=content id=content><h1 id=stargate-llm-gateway>Stargate LLM Gateway</h1><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg data-srcset="https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg, https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg 1.5x, https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg 2x" data-sizes=auto alt=https://github.com/lorenzogirardi/gw_llm/actions/workflows/ci.yml/badge.svg title=CI>
-<img class=lazyload src=/website/svg/loading.min.svg data-src=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg data-srcset="https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 1.5x, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 2x" data-sizes=auto alt=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg title=Terraform></p><p>OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.</p><h2 id=table-of-contents>Table of Contents</h2><ul><li><a href=#overview rel>Overview</a></li><li><a href=#architecture rel>Architecture</a></li><li><a href=#quick-start rel>Quick Start</a></li><li><a href=#user-management rel>User Management</a></li><li><a href=#security rel>Security</a></li><li><a href=#monitoring--observability rel>Monitoring & Observability</a></li><li><a href=#documentation-index rel>Documentation Index</a></li><li><a href=#api-reference rel>API Reference</a></li></ul><hr><h2 id=overview>Overview</h2><pre class=mermaid>flowchart LR
-    subgraph Clients
-        cc[Claude Code]
-        api[API Clients]
-    end
-
-    subgraph Gateway[&#34;LiteLLM Gateway&#34;]
-        auth[API Key Auth]
-        budget[Budget Manager]
-        router[Model Router]
-        metrics[Prometheus Metrics]
-    end
-
-    subgraph Storage
-        pg[(PostgreSQL)]
-    end
-
-    subgraph Bedrock[&#34;AWS Bedrock&#34;]
-        haiku[Claude Haiku 4.5]
-        sonnet[Claude Sonnet 4.5]
-        opus[Claude Opus 4.5]
-    end
-
-    cc --&gt; auth
-    api --&gt; auth
-    auth --&gt; budget
-    budget --&gt; router
-    router --&gt; haiku &amp; sonnet &amp; opus
-    budget &lt;--&gt; pg
-    router --&gt; metrics
-
-    style haiku fill:#90EE90
-    style sonnet fill:#FFD700
-    style opus fill:#FF6B6B</pre><h3 id=features>Features</h3><table><thead><tr><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody><tr><td>OpenAI-compatible API</td><td>✅</td><td>Drop-in replacement for Claude Code</td></tr><tr><td>User Management</td><td>✅</td><td>Create users with budgets and model restrictions</td></tr><tr><td>API Key Generation</td><td>✅</td><td>Per-user API keys with limits</td></tr><tr><td>Usage Tracking</td><td>✅</td><td>Token and cost tracking per user</td></tr><tr><td>Prometheus Metrics</td><td>✅</td><td>Full observability stack</td></tr><tr><td>Langfuse Tracing</td><td>✅</td><td>LLM call logging and analysis</td></tr><tr><td>Streaming Support</td><td>✅</td><td>SSE for real-time responses</td></tr><tr><td>Admin Endpoint Security</td><td>✅</td><td>Blocked from public access</td></tr></tbody></table><hr><h2 id=architecture>Architecture</h2><h3 id=request-flow>Request Flow</h3><pre class=mermaid>sequenceDiagram
-    participant Client as Claude Code
-    participant CF as CloudFront
-    participant LiteLLM as LiteLLM Proxy
-    participant PG as PostgreSQL
-    participant Bedrock as AWS Bedrock
-    participant VM as Victoria Metrics
-
-    Client-&gt;&gt;CF: POST /v1/chat/completions
-    CF-&gt;&gt;LiteLLM: Forward request
-
-    LiteLLM-&gt;&gt;LiteLLM: Validate API Key
-    LiteLLM-&gt;&gt;PG: Check User Budget
-
-    alt Budget OK
-        LiteLLM-&gt;&gt;Bedrock: InvokeModel (SigV4)
-        Bedrock--&gt;&gt;LiteLLM: Response &#43; tokens
-        LiteLLM-&gt;&gt;PG: Update spend
-        LiteLLM-&gt;&gt;LiteLLM: Record metrics
-        LiteLLM--&gt;&gt;Client: 200 OK
-    else Budget Exceeded
-        LiteLLM--&gt;&gt;Client: 429 Budget Exceeded
-    end
-
-    VM-&gt;&gt;LiteLLM: Scrape /metrics/</pre><h3 id=deployment-architecture>Deployment Architecture</h3><pre class=mermaid>flowchart TB
-    subgraph Internet
-        clients[Claude Code / API Clients]
-    end
-
-    subgraph AWS[&#34;AWS Cloud (us-west-1)&#34;]
-        cf[CloudFront&lt;br/&gt;Admin endpoints blocked]
-
-        subgraph VPC[&#34;VPC 10.10.0.0/16&#34;]
-            subgraph Public[&#34;Public Subnets&#34;]
-                alb[Application Load Balancer]
-                nat[NAT Instance]
-            end
-
-            subgraph Private[&#34;Private Subnets&#34;]
-                subgraph ECS[&#34;ECS Fargate Cluster&#34;]
-                    litellm[LiteLLM Proxy&lt;br/&gt;1 vCPU, 2GB]
-                    langfuse[Langfuse&lt;br/&gt;0.5 vCPU, 1GB]
-                    grafana[Grafana&lt;br/&gt;0.25 vCPU, 0.5GB]
-                    victoria[Victoria Metrics&lt;br/&gt;0.25 vCPU, 0.5GB]
-                end
-
-                rds[(RDS PostgreSQL&lt;br/&gt;db.t4g.micro)]
-            end
-        end
-
-        bedrock[AWS Bedrock]
-        secrets[Secrets Manager]
-    end
-
-    clients --&gt; cf
-    cf --&gt; alb
-    alb --&gt; litellm
-    alb --&gt; grafana
-    alb --&gt; langfuse
-    litellm --&gt; bedrock
-    litellm &lt;--&gt; rds
-    litellm --&gt; langfuse
-    langfuse &lt;--&gt; rds
-    victoria --&gt; litellm
-    grafana --&gt; victoria
-    litellm -.-&gt; secrets
-
-    style cf fill:#ffcccc,stroke:#ff0000
-    style rds fill:#336791,color:#fff
-    style langfuse fill:#e6f3ff</pre><h3 id=security-model>Security Model</h3><pre class=mermaid>flowchart TB
-    subgraph Public[&#34;Public Access (CloudFront)&#34;]
-        chat[&#34;/v1/chat/completions ✅&#34;]
-        models[&#34;/v1/models ✅&#34;]
-        health[&#34;/health/* ✅&#34;]
-        metrics[&#34;/metrics/ ✅&#34;]
-    end
-
-    subgraph Blocked[&#34;Blocked from CloudFront (403)&#34;]
-        user[&#34;/user/* ❌&#34;]
-        key[&#34;/key/* ❌&#34;]
-        model[&#34;/model/* ❌&#34;]
-        spend[&#34;/spend/* ❌&#34;]
-    end
-
-    subgraph Internal[&#34;Internal Access Only (ALB)&#34;]
-        user_alb[&#34;/user/* ✅&#34;]
-        key_alb[&#34;/key/* ✅&#34;]
-        model_alb[&#34;/model/* ✅&#34;]
-        spend_alb[&#34;/spend/* ✅&#34;]
-    end
-
-    cf[CloudFront] --&gt; Public
-    cf -.-&gt;|403 Forbidden| Blocked
-    alb[ALB Direct] --&gt; Internal
-
-    style Blocked fill:#ffcccc
-    style Internal fill:#ccffcc</pre><hr><h2 id=quick-start>Quick Start</h2><h3 id=for-claude-code-users>For Claude Code Users</h3><p>Add these environment variables to your shell:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<img class=lazyload src=/website/svg/loading.min.svg data-src=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg data-srcset="https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 1.5x, https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg 2x" data-sizes=auto alt=https://github.com/lorenzogirardi/gw_llm/actions/workflows/terraform-plan.yml/badge.svg title=Terraform></p><p>OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.</p><h2 id=table-of-contents>Table of Contents</h2><ul><li><a href=#overview rel>Overview</a></li><li><a href=#architecture rel>Architecture</a></li><li><a href=#quick-start rel>Quick Start</a></li><li><a href=#user-management rel>User Management</a></li><li><a href=#security rel>Security</a></li><li><a href=#monitoring--observability rel>Monitoring & Observability</a></li><li><a href=#documentation-index rel>Documentation Index</a></li><li><a href=#api-reference rel>API Reference</a></li></ul><hr><h2 id=overview>Overview</h2><div class=mermaid id=id-1>flowchart LR
+subgraph Clients
+cc[Claude Code]
+api[API Clients]
+end
+subgraph Gateway["LiteLLM Gateway"]
+auth[API Key Auth]
+budget[Budget Manager]
+router[Model Router]
+metrics[Prometheus Metrics]
+end
+subgraph Storage
+pg[(PostgreSQL)]
+end
+subgraph Bedrock["AWS Bedrock"]
+haiku[Claude Haiku 4.5]
+sonnet[Claude Sonnet 4.5]
+opus[Claude Opus 4.5]
+end
+cc --> auth
+api --> auth
+auth --> budget
+budget --> router
+router --> haiku & sonnet & opus
+budget &lt;--> pg
+router --> metrics
+style haiku fill:#90EE90
+style sonnet fill:#FFD700
+style opus fill:#FF6B6B</div><h3 id=features>Features</h3><table><thead><tr><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody><tr><td>OpenAI-compatible API</td><td>✅</td><td>Drop-in replacement for Claude Code</td></tr><tr><td>User Management</td><td>✅</td><td>Create users with budgets and model restrictions</td></tr><tr><td>API Key Generation</td><td>✅</td><td>Per-user API keys with limits</td></tr><tr><td>Usage Tracking</td><td>✅</td><td>Token and cost tracking per user</td></tr><tr><td>Prometheus Metrics</td><td>✅</td><td>Full observability stack</td></tr><tr><td>Langfuse Tracing</td><td>✅</td><td>LLM call logging and analysis</td></tr><tr><td>Streaming Support</td><td>✅</td><td>SSE for real-time responses</td></tr><tr><td>Admin Endpoint Security</td><td>✅</td><td>Blocked from public access</td></tr></tbody></table><hr><h2 id=architecture>Architecture</h2><h3 id=request-flow>Request Flow</h3><div class=mermaid id=id-2>sequenceDiagram
+participant Client as Claude Code
+participant CF as CloudFront
+participant LiteLLM as LiteLLM Proxy
+participant PG as PostgreSQL
+participant Bedrock as AWS Bedrock
+participant VM as Victoria Metrics
+Client->>CF: POST /v1/chat/completions
+CF->>LiteLLM: Forward request
+LiteLLM->>LiteLLM: Validate API Key
+LiteLLM->>PG: Check User Budget
+alt Budget OK
+LiteLLM->>Bedrock: InvokeModel (SigV4)
+Bedrock-->>LiteLLM: Response + tokens
+LiteLLM->>PG: Update spend
+LiteLLM->>LiteLLM: Record metrics
+LiteLLM-->>Client: 200 OK
+else Budget Exceeded
+LiteLLM-->>Client: 429 Budget Exceeded
+end
+VM->>LiteLLM: Scrape /metrics/</div><h3 id=deployment-architecture>Deployment Architecture</h3><div class=mermaid id=id-3>flowchart TB
+subgraph Internet
+clients[Claude Code / API Clients]
+end
+subgraph AWS["AWS Cloud (us-west-1)"]
+cf[CloudFront&lt;br/>Admin endpoints blocked]
+subgraph VPC["VPC 10.10.0.0/16"]
+subgraph Public["Public Subnets"]
+alb[Application Load Balancer]
+nat[NAT Instance]
+end
+subgraph Private["Private Subnets"]
+subgraph ECS["ECS Fargate Cluster"]
+litellm[LiteLLM Proxy&lt;br/>1 vCPU, 2GB]
+langfuse[Langfuse&lt;br/>0.5 vCPU, 1GB]
+grafana[Grafana&lt;br/>0.25 vCPU, 0.5GB]
+victoria[Victoria Metrics&lt;br/>0.25 vCPU, 0.5GB]
+end
+rds[(RDS PostgreSQL&lt;br/>db.t4g.micro)]
+end
+end
+bedrock[AWS Bedrock]
+secrets[Secrets Manager]
+end
+clients --> cf
+cf --> alb
+alb --> litellm
+alb --> grafana
+alb --> langfuse
+litellm --> bedrock
+litellm &lt;--> rds
+litellm --> langfuse
+langfuse &lt;--> rds
+victoria --> litellm
+grafana --> victoria
+litellm -.-> secrets
+style cf fill:#ffcccc,stroke:#ff0000
+style rds fill:#336791,color:#fff
+style langfuse fill:#e6f3ff</div><h3 id=security-model>Security Model</h3><div class=mermaid id=id-4>flowchart TB
+subgraph Public["Public Access (CloudFront)"]
+chat["/v1/chat/completions ✅"]
+models["/v1/models ✅"]
+health["/health/* ✅"]
+metrics["/metrics/ ✅"]
+end
+subgraph Blocked["Blocked from CloudFront (403)"]
+user["/user/* ❌"]
+key["/key/* ❌"]
+model["/model/* ❌"]
+spend["/spend/* ❌"]
+end
+subgraph Internal["Internal Access Only (ALB)"]
+user_alb["/user/* ✅"]
+key_alb["/key/* ✅"]
+model_alb["/model/* ✅"]
+spend_alb["/spend/* ✅"]
+end
+cf[CloudFront] --> Public
+cf -.->|403 Forbidden| Blocked
+alb[ALB Direct] --> Internal
+style Blocked fill:#ffcccc
+style Internal fill:#ccffcc</div><hr><h2 id=quick-start>Quick Start</h2><h3 id=for-claude-code-users>For Claude Code Users</h3><p>Add these environment variables to your shell:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>export</span> <span class=nv>ANTHROPIC_BASE_URL</span><span class=o>=</span><span class=s2>&#34;https://d18l8nt8fin3hz.cloudfront.net&#34;</span>
 </span></span><span class=line><span class=cl><span class=nb>export</span> <span class=nv>ANTHROPIC_API_KEY</span><span class=o>=</span><span class=s2>&#34;&lt;your-api-key&gt;&#34;</span></span></span></code></pre></div></div><p>Then use Claude Code normally - requests will route through the gateway.</p><h3 id=test-api-access>Test API Access</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
@@ -169,26 +149,23 @@ Table of Contents Overview Architecture Quick Start User Management Security Mon
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1># List users and keys</span>
 </span></span><span class=line><span class=cl>./litellm-users.sh list-users
-</span></span><span class=line><span class=cl>./litellm-users.sh list-keys</span></span></code></pre></div></div><h3 id=available-models>Available Models</h3><table><thead><tr><th>Model Name</th><th>Description</th><th>Status</th></tr></thead><tbody><tr><td><code>claude-haiku-4-5</code></td><td>Fast, cost-effective</td><td>✅ Working</td></tr><tr><td><code>claude-sonnet-4-5</code></td><td>Balanced performance</td><td>⚠️ Pending AWS approval</td></tr><tr><td><code>claude-opus-4-5</code></td><td>Most capable</td><td>⚠️ Pending AWS approval</td></tr></tbody></table><h3 id=model-user-restrictions>Model-User Restrictions</h3><pre class=mermaid>flowchart TB
-    subgraph Users
-        admin[Admin&lt;br/&gt;All models, unlimited]
-        dev[Developer&lt;br/&gt;Haiku &#43; Sonnet, $50/mo]
-        intern[Intern&lt;br/&gt;Haiku only, $10/mo]
-    end
-
-    subgraph Models
-        haiku[Claude Haiku 4.5]
-        sonnet[Claude Sonnet 4.5]
-        opus[Claude Opus 4.5]
-    end
-
-    admin --&gt; haiku &amp; sonnet &amp; opus
-    dev --&gt; haiku &amp; sonnet
-    intern --&gt; haiku
-
-    style admin fill:#ff9999
-    style dev fill:#99ff99
-    style intern fill:#9999ff</pre><p>See <a href=docs/user-management.md rel>User Management Guide</a> for full documentation.</p><hr><h2 id=security>Security</h2><h3 id=admin-endpoint-protection>Admin Endpoint Protection</h3><p>Admin endpoints are <strong>blocked from CloudFront</strong> and only accessible via ALB direct (from VPC):</p><table><thead><tr><th>Endpoint</th><th>CloudFront</th><th>ALB Direct</th></tr></thead><tbody><tr><td><code>/v1/chat/completions</code></td><td>✅ Works</td><td>✅ Works</td></tr><tr><td><code>/v1/models</code></td><td>✅ Works</td><td>✅ Works</td></tr><tr><td><code>/user/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr><tr><td><code>/key/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr><tr><td><code>/model/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr><tr><td><code>/spend/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr></tbody></table><h3 id=managing-users-from-vpc>Managing Users from VPC</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+</span></span><span class=line><span class=cl>./litellm-users.sh list-keys</span></span></code></pre></div></div><h3 id=available-models>Available Models</h3><table><thead><tr><th>Model Name</th><th>Description</th><th>Status</th></tr></thead><tbody><tr><td><code>claude-haiku-4-5</code></td><td>Fast, cost-effective</td><td>✅ Working</td></tr><tr><td><code>claude-sonnet-4-5</code></td><td>Balanced performance</td><td>⚠️ Pending AWS approval</td></tr><tr><td><code>claude-opus-4-5</code></td><td>Most capable</td><td>⚠️ Pending AWS approval</td></tr></tbody></table><h3 id=model-user-restrictions>Model-User Restrictions</h3><div class=mermaid id=id-5>flowchart TB
+subgraph Users
+admin[Admin&lt;br/>All models, unlimited]
+dev[Developer&lt;br/>Haiku + Sonnet, $50/mo]
+intern[Intern&lt;br/>Haiku only, $10/mo]
+end
+subgraph Models
+haiku[Claude Haiku 4.5]
+sonnet[Claude Sonnet 4.5]
+opus[Claude Opus 4.5]
+end
+admin --> haiku & sonnet & opus
+dev --> haiku & sonnet
+intern --> haiku
+style admin fill:#ff9999
+style dev fill:#99ff99
+style intern fill:#9999ff</div><p>See <a href=docs/user-management.md rel>User Management Guide</a> for full documentation.</p><hr><h2 id=security>Security</h2><h3 id=admin-endpoint-protection>Admin Endpoint Protection</h3><p>Admin endpoints are <strong>blocked from CloudFront</strong> and only accessible via ALB direct (from VPC):</p><table><thead><tr><th>Endpoint</th><th>CloudFront</th><th>ALB Direct</th></tr></thead><tbody><tr><td><code>/v1/chat/completions</code></td><td>✅ Works</td><td>✅ Works</td></tr><tr><td><code>/v1/models</code></td><td>✅ Works</td><td>✅ Works</td></tr><tr><td><code>/user/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr><tr><td><code>/key/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr><tr><td><code>/model/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr><tr><td><code>/spend/*</code></td><td>❌ 403 Forbidden</td><td>✅ Works</td></tr></tbody></table><h3 id=managing-users-from-vpc>Managing Users from VPC</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># Via ALB direct (from VPC/VPN)</span>
 </span></span><span class=line><span class=cl>curl -X POST <span class=s2>&#34;http://kong-llm-gateway-poc-xxx.us-west-1.elb.amazonaws.com/user/new&#34;</span> <span class=se>\
@@ -197,38 +174,33 @@ Table of Contents Overview Architecture Quick Start User Management Security Mon
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1># Via CloudFront (blocked)</span>
 </span></span><span class=line><span class=cl>curl -X POST <span class=s2>&#34;https://d18l8nt8fin3hz.cloudfront.net/user/new&#34;</span>
-</span></span><span class=line><span class=cl><span class=c1># Returns: 403 Forbidden - Admin endpoints not accessible via CloudFront</span></span></span></code></pre></div></div><hr><h2 id=monitoring--observability>Monitoring & Observability</h2><h3 id=observability-stack-verified->Observability Stack (Verified ✅)</h3><pre class=mermaid>flowchart TB
-    subgraph LiteLLM[&#34;LiteLLM Proxy&#34;]
-        api[API Handler]
-        prom[Prometheus Callback]
-        lf_cb[Langfuse Callback]
-    end
-
-    subgraph Metrics[&#34;Victoria Metrics&#34;]
-        scrape[Scraper]
-        store[(TSDB)]
-    end
-
-    subgraph Tracing[&#34;Langfuse&#34;]
-        traces[(Traces)]
-        generations[(Generations)]
-    end
-
-    subgraph Dashboards[&#34;Grafana&#34;]
-        llm_dash[LLM Usage Dashboard]
-        infra_dash[Infrastructure Dashboard]
-    end
-
-    api --&gt; prom &amp; lf_cb
-    prom --&gt;|/metrics/| scrape
-    lf_cb --&gt; traces
-    scrape --&gt; store
-    llm_dash --&gt; store
-    llm_dash -.-&gt;|correlate| traces
-    infra_dash --&gt; store
-
-    style Tracing fill:#e6f3ff
-    style Metrics fill:#f5f5f5</pre><h3 id=dashboards>Dashboards</h3><table><thead><tr><th>Dashboard</th><th>Purpose</th><th>URL</th><th>Status</th></tr></thead><tbody><tr><td><strong>Grafana</strong> - LLM Usage</td><td>Token tracking, costs, latency</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Grafana</strong> - Infrastructure</td><td>ECS, ALB, CloudFront, Langfuse, Victoria Metrics</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Traces</td><td>Request/response logging</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Generations</td><td>LLM call analysis</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr></tbody></table><h4 id=grafana---infrastructure-metrics>Grafana - Infrastructure Metrics</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png title="Infrastructure Metrics"></p><h4 id=grafana---token-usage--costs>Grafana - Token Usage & Costs</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png title="Token Metrics"></p><h4 id=grafana---architecture-flow>Grafana - Architecture Flow</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png title="Architecture Metrics"></p><h4 id=grafana---postgresql-metrics>Grafana - PostgreSQL Metrics</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png title="SQL Metrics"></p><h4 id=langfuse---llm-traces>Langfuse - LLM Traces</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png title="Langfuse Metrics"></p><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png title="Langfuse Trace"></p><h3 id=metrics--traces-integration>Metrics & Traces Integration</h3><p>Grafana dashboards correlate Prometheus metrics with Langfuse traces:</p><table><thead><tr><th>Data Source</th><th>Metrics</th><th>Use Case</th></tr></thead><tbody><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_proxy_total_requests_metric</code></td><td>Request counts per user</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_total_tokens_metric</code></td><td>Token usage tracking</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_spend_metric</code></td><td>Cost monitoring</td></tr><tr><td><strong>Langfuse</strong></td><td>Traces</td><td>Full request/response logging</td></tr><tr><td><strong>Langfuse</strong></td><td>Generations</td><td>LLM call details and metadata</td></tr></tbody></table><h3 id=key-metrics>Key Metrics</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-promql"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+</span></span><span class=line><span class=cl><span class=c1># Returns: 403 Forbidden - Admin endpoints not accessible via CloudFront</span></span></span></code></pre></div></div><hr><h2 id=monitoring--observability>Monitoring & Observability</h2><h3 id=observability-stack-verified->Observability Stack (Verified ✅)</h3><div class=mermaid id=id-6>flowchart TB
+subgraph LiteLLM["LiteLLM Proxy"]
+api[API Handler]
+prom[Prometheus Callback]
+lf_cb[Langfuse Callback]
+end
+subgraph Metrics["Victoria Metrics"]
+scrape[Scraper]
+store[(TSDB)]
+end
+subgraph Tracing["Langfuse"]
+traces[(Traces)]
+generations[(Generations)]
+end
+subgraph Dashboards["Grafana"]
+llm_dash[LLM Usage Dashboard]
+infra_dash[Infrastructure Dashboard]
+end
+api --> prom & lf_cb
+prom -->|/metrics/| scrape
+lf_cb --> traces
+scrape --> store
+llm_dash --> store
+llm_dash -.->|correlate| traces
+infra_dash --> store
+style Tracing fill:#e6f3ff
+style Metrics fill:#f5f5f5</div><h3 id=dashboards>Dashboards</h3><table><thead><tr><th>Dashboard</th><th>Purpose</th><th>URL</th><th>Status</th></tr></thead><tbody><tr><td><strong>Grafana</strong> - LLM Usage</td><td>Token tracking, costs, latency</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Grafana</strong> - Infrastructure</td><td>ECS, ALB, CloudFront, Langfuse, Victoria Metrics</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Traces</td><td>Request/response logging</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Generations</td><td>LLM call analysis</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr></tbody></table><h4 id=grafana---infrastructure-metrics>Grafana - Infrastructure Metrics</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png title="Infrastructure Metrics"></p><h4 id=grafana---token-usage--costs>Grafana - Token Usage & Costs</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png title="Token Metrics"></p><h4 id=grafana---architecture-flow>Grafana - Architecture Flow</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png title="Architecture Metrics"></p><h4 id=grafana---postgresql-metrics>Grafana - PostgreSQL Metrics</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png title="SQL Metrics"></p><h4 id=langfuse---llm-traces>Langfuse - LLM Traces</h4><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png title="Langfuse Metrics"></p><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png title="Langfuse Trace"></p><h3 id=metrics--traces-integration>Metrics & Traces Integration</h3><p>Grafana dashboards correlate Prometheus metrics with Langfuse traces:</p><table><thead><tr><th>Data Source</th><th>Metrics</th><th>Use Case</th></tr></thead><tbody><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_proxy_total_requests_metric</code></td><td>Request counts per user</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_total_tokens_metric</code></td><td>Token usage tracking</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_spend_metric</code></td><td>Cost monitoring</td></tr><tr><td><strong>Langfuse</strong></td><td>Traces</td><td>Full request/response logging</td></tr><tr><td><strong>Langfuse</strong></td><td>Generations</td><td>LLM call details and metadata</td></tr></tbody></table><h3 id=key-metrics>Key Metrics</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-promql"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-promql data-lang=promql><span class=line><span class=cl><span class=c1># Total requests</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=k>sum</span><span class=o>(</span><span class=nv>litellm_proxy_total_requests_metric_total</span><span class=o>)</span><span class=w>
@@ -259,23 +231,219 @@ Table of Contents Overview Architecture Quick Start User Management Security Mon
 </span></span><span class=line><span class=cl>cp .env.example .env
 </span></span><span class=line><span class=cl><span class=c1># Edit .env with your AWS credentials</span>
 </span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>docker-compose up -d</span></span></code></pre></div></div><p>Local services:</p><ul><li><strong>LiteLLM</strong>: http://localhost:4000</li><li><strong>Grafana</strong>: http://localhost:3000 (admin/admin)</li><li><strong>Victoria Metrics</strong>: http://localhost:8428</li></ul><h3 id=cicd-pipeline>CI/CD Pipeline</h3><pre class=mermaid>flowchart LR
-    subgraph PR[&#34;Pull Request&#34;]
+</span></span><span class=line><span class=cl>docker-compose up -d</span></span></code></pre></div></div><p>Local services:</p><ul><li><strong>LiteLLM</strong>: http://localhost:4000</li><li><strong>Grafana</strong>: http://localhost:3000 (admin/admin)</li><li><strong>Victoria Metrics</strong>: http://localhost:8428</li></ul><h3 id=cicd-pipeline>CI/CD Pipeline</h3><div class=mermaid id=id-7>flowchart LR
+subgraph PR["Pull Request"]
+scan1[Security Scan]
+tf_plan[Terraform Plan]
+end
+subgraph Main["Push to Main"]
+scan2[Security Scan]
+trivy[Trivy Scan]
+checkov[Checkov Scan]
+validate[TF Validate]
+changes{Grafana&lt;br/>changed?}
+build[Build Grafana]
+deploy[Deploy POC]
+end
+scan1 --> tf_plan
+scan2 --> trivy --> checkov --> validate --> changes
+changes -->|Yes| build --> deploy
+changes -->|No| skip[Skip]</div><table><thead><tr><th>Workflow</th><th>Description</th><th>Trigger</th></tr></thead><tbody><tr><td><code>ci.yml</code></td><td>Security scan, Terraform validate, build, deploy</td><td>Push to main</td></tr><tr><td><code>terraform-plan.yml</code></td><td>Terraform plan with PR comment</td><td>Pull requests</td></tr></tbody></table><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png title="GitHub Pipeline"></p><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png title="GitHub Actions"></p><h3 id=operational-workflows-manual>Operational Workflows (Manual)</h3><table><thead><tr><th>Workflow</th><th>Description</th><th>Inputs</th></tr></thead><tbody><tr><td><code>ecs-restart.yml</code></td><td>Restart ECS services</td><td>service (or all)</td></tr><tr><td><code>ecs-logs.yml</code></td><td>Download container logs</td><td>service, duration, filter</td></tr><tr><td><code>ecs-status.yml</code></td><td>View cluster status</td><td>-</td></tr><tr><td><code>ecs-scale.yml</code></td><td>Scale services (0-3 tasks)</td><td>service, count</td></tr><tr><td><code>ecs-exec.yml</code></td><td>Execute debug commands</td><td>service, command</td></tr><tr><td><code>rds-status.yml</code></td><td>Database metrics</td><td>-</td></tr></tbody></table><blockquote><p><strong>Note</strong>: Operational workflows require <code>poc</code> environment approval for security.</p></blockquote><h3 id=estimated-costs>Estimated Costs</h3><table><thead><tr><th>Component</th><th>Monthly Cost</th></tr></thead><tbody><tr><td>ECS Fargate (LiteLLM + Langfuse + Grafana + Victoria)</td><td>~$55</td></tr><tr><td>RDS PostgreSQL (db.t4g.micro)</td><td>~$12</td></tr><tr><td>NAT Instance (t3.nano)</td><td>~$3</td></tr><tr><td>CloudFront</td><td>~$1-5</td></tr><tr><td><strong>Total Fixed</strong></td><td><strong>~$70-75</strong></td></tr><tr><td>Bedrock Usage</td><td>Pay per use</td></tr></tbody></table><hr><h2 id=license>License</h2><p>MIT License - See <a href=LICENSE rel>LICENSE</a> for details.</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2026-05-24</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/website/posts/stargate-llm-gateway/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on X" data-sharer=x data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway" data-hashtags=ai,gateway,llm><i class="fab fa-x-twitter" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Threads" data-sharer=threads data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-threads" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-hashtag=ai><i class="fab fa-facebook-square" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-hacker-news" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@16.9.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-weibo" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Diaspora" data-sharer=diaspora data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway" data-description><i class="fab fa-diaspora" aria-hidden=true></i></a><a href="https://t.me/share/url?url=https%3a%2f%2florenzogirardi.github.io%2fwebsite%2fposts%2fstargate-llm-gateway%2f&amp;text=Stargate%20LLM%20Gateway" target=_blank title="Share on Telegram"><i class="fab fa-telegram" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags" aria-hidden=true></i>&nbsp;<a href=/website/tags/ai/>Ai</a>,&nbsp;<a href=/website/tags/gateway/>Gateway</a>,&nbsp;<a href=/website/tags/llm/>Llm</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/website/>Home</a></span></section></div><div class=post-nav></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>Powered by <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.161.1">Hugo</a> | Theme - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright" aria-hidden=true></i><span itemprop=copyrightYear>2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/lorenzogirardi target=_blank>Lorenzo Girardi</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up" aria-hidden=true></i></a></div><div id=fixed-buttons-hidden><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment" aria-hidden=true></i></a></div><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js></script><script src=https://cdn.jsdelivr.net/npm/mermaid@11.5.0/dist/mermaid.min.js></script><script>window.config={comment:{},data:{"id-1":`flowchart LR
+    subgraph Clients
+        cc[Claude Code]
+        api[API Clients]
+    end
+
+    subgraph Gateway["LiteLLM Gateway"]
+        auth[API Key Auth]
+        budget[Budget Manager]
+        router[Model Router]
+        metrics[Prometheus Metrics]
+    end
+
+    subgraph Storage
+        pg[(PostgreSQL)]
+    end
+
+    subgraph Bedrock["AWS Bedrock"]
+        haiku[Claude Haiku 4.5]
+        sonnet[Claude Sonnet 4.5]
+        opus[Claude Opus 4.5]
+    end
+
+    cc --> auth
+    api --> auth
+    auth --> budget
+    budget --> router
+    router --> haiku & sonnet & opus
+    budget <--> pg
+    router --> metrics
+
+    style haiku fill:#90EE90
+    style sonnet fill:#FFD700
+    style opus fill:#FF6B6B`,"id-2":`sequenceDiagram
+    participant Client as Claude Code
+    participant CF as CloudFront
+    participant LiteLLM as LiteLLM Proxy
+    participant PG as PostgreSQL
+    participant Bedrock as AWS Bedrock
+    participant VM as Victoria Metrics
+
+    Client->>CF: POST /v1/chat/completions
+    CF->>LiteLLM: Forward request
+
+    LiteLLM->>LiteLLM: Validate API Key
+    LiteLLM->>PG: Check User Budget
+
+    alt Budget OK
+        LiteLLM->>Bedrock: InvokeModel (SigV4)
+        Bedrock-->>LiteLLM: Response + tokens
+        LiteLLM->>PG: Update spend
+        LiteLLM->>LiteLLM: Record metrics
+        LiteLLM-->>Client: 200 OK
+    else Budget Exceeded
+        LiteLLM-->>Client: 429 Budget Exceeded
+    end
+
+    VM->>LiteLLM: Scrape /metrics/`,"id-3":`flowchart TB
+    subgraph Internet
+        clients[Claude Code / API Clients]
+    end
+
+    subgraph AWS["AWS Cloud (us-west-1)"]
+        cf[CloudFront<br/>Admin endpoints blocked]
+
+        subgraph VPC["VPC 10.10.0.0/16"]
+            subgraph Public["Public Subnets"]
+                alb[Application Load Balancer]
+                nat[NAT Instance]
+            end
+
+            subgraph Private["Private Subnets"]
+                subgraph ECS["ECS Fargate Cluster"]
+                    litellm[LiteLLM Proxy<br/>1 vCPU, 2GB]
+                    langfuse[Langfuse<br/>0.5 vCPU, 1GB]
+                    grafana[Grafana<br/>0.25 vCPU, 0.5GB]
+                    victoria[Victoria Metrics<br/>0.25 vCPU, 0.5GB]
+                end
+
+                rds[(RDS PostgreSQL<br/>db.t4g.micro)]
+            end
+        end
+
+        bedrock[AWS Bedrock]
+        secrets[Secrets Manager]
+    end
+
+    clients --> cf
+    cf --> alb
+    alb --> litellm
+    alb --> grafana
+    alb --> langfuse
+    litellm --> bedrock
+    litellm <--> rds
+    litellm --> langfuse
+    langfuse <--> rds
+    victoria --> litellm
+    grafana --> victoria
+    litellm -.-> secrets
+
+    style cf fill:#ffcccc,stroke:#ff0000
+    style rds fill:#336791,color:#fff
+    style langfuse fill:#e6f3ff`,"id-4":`flowchart TB
+    subgraph Public["Public Access (CloudFront)"]
+        chat["/v1/chat/completions ✅"]
+        models["/v1/models ✅"]
+        health["/health/* ✅"]
+        metrics["/metrics/ ✅"]
+    end
+
+    subgraph Blocked["Blocked from CloudFront (403)"]
+        user["/user/* ❌"]
+        key["/key/* ❌"]
+        model["/model/* ❌"]
+        spend["/spend/* ❌"]
+    end
+
+    subgraph Internal["Internal Access Only (ALB)"]
+        user_alb["/user/* ✅"]
+        key_alb["/key/* ✅"]
+        model_alb["/model/* ✅"]
+        spend_alb["/spend/* ✅"]
+    end
+
+    cf[CloudFront] --> Public
+    cf -.->|403 Forbidden| Blocked
+    alb[ALB Direct] --> Internal
+
+    style Blocked fill:#ffcccc
+    style Internal fill:#ccffcc`,"id-5":`flowchart TB
+    subgraph Users
+        admin[Admin<br/>All models, unlimited]
+        dev[Developer<br/>Haiku + Sonnet, $50/mo]
+        intern[Intern<br/>Haiku only, $10/mo]
+    end
+
+    subgraph Models
+        haiku[Claude Haiku 4.5]
+        sonnet[Claude Sonnet 4.5]
+        opus[Claude Opus 4.5]
+    end
+
+    admin --> haiku & sonnet & opus
+    dev --> haiku & sonnet
+    intern --> haiku
+
+    style admin fill:#ff9999
+    style dev fill:#99ff99
+    style intern fill:#9999ff`,"id-6":`flowchart TB
+    subgraph LiteLLM["LiteLLM Proxy"]
+        api[API Handler]
+        prom[Prometheus Callback]
+        lf_cb[Langfuse Callback]
+    end
+
+    subgraph Metrics["Victoria Metrics"]
+        scrape[Scraper]
+        store[(TSDB)]
+    end
+
+    subgraph Tracing["Langfuse"]
+        traces[(Traces)]
+        generations[(Generations)]
+    end
+
+    subgraph Dashboards["Grafana"]
+        llm_dash[LLM Usage Dashboard]
+        infra_dash[Infrastructure Dashboard]
+    end
+
+    api --> prom & lf_cb
+    prom -->|/metrics/| scrape
+    lf_cb --> traces
+    scrape --> store
+    llm_dash --> store
+    llm_dash -.->|correlate| traces
+    infra_dash --> store
+
+    style Tracing fill:#e6f3ff
+    style Metrics fill:#f5f5f5`,"id-7":`flowchart LR
+    subgraph PR["Pull Request"]
         scan1[Security Scan]
         tf_plan[Terraform Plan]
     end
 
-    subgraph Main[&#34;Push to Main&#34;]
+    subgraph Main["Push to Main"]
         scan2[Security Scan]
         trivy[Trivy Scan]
         checkov[Checkov Scan]
         validate[TF Validate]
-        changes{Grafana&lt;br/&gt;changed?}
+        changes{Grafana<br/>changed?}
         build[Build Grafana]
         deploy[Deploy POC]
     end
 
-    scan1 --&gt; tf_plan
-    scan2 --&gt; trivy --&gt; checkov --&gt; validate --&gt; changes
-    changes --&gt;|Yes| build --&gt; deploy
-    changes --&gt;|No| skip[Skip]</pre><table><thead><tr><th>Workflow</th><th>Description</th><th>Trigger</th></tr></thead><tbody><tr><td><code>ci.yml</code></td><td>Security scan, Terraform validate, build, deploy</td><td>Push to main</td></tr><tr><td><code>terraform-plan.yml</code></td><td>Terraform plan with PR comment</td><td>Pull requests</td></tr></tbody></table><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png title="GitHub Pipeline"></p><p><img class=lazyload src=/website/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png title="GitHub Actions"></p><h3 id=operational-workflows-manual>Operational Workflows (Manual)</h3><table><thead><tr><th>Workflow</th><th>Description</th><th>Inputs</th></tr></thead><tbody><tr><td><code>ecs-restart.yml</code></td><td>Restart ECS services</td><td>service (or all)</td></tr><tr><td><code>ecs-logs.yml</code></td><td>Download container logs</td><td>service, duration, filter</td></tr><tr><td><code>ecs-status.yml</code></td><td>View cluster status</td><td>-</td></tr><tr><td><code>ecs-scale.yml</code></td><td>Scale services (0-3 tasks)</td><td>service, count</td></tr><tr><td><code>ecs-exec.yml</code></td><td>Execute debug commands</td><td>service, command</td></tr><tr><td><code>rds-status.yml</code></td><td>Database metrics</td><td>-</td></tr></tbody></table><blockquote><p><strong>Note</strong>: Operational workflows require <code>poc</code> environment approval for security.</p></blockquote><h3 id=estimated-costs>Estimated Costs</h3><table><thead><tr><th>Component</th><th>Monthly Cost</th></tr></thead><tbody><tr><td>ECS Fargate (LiteLLM + Langfuse + Grafana + Victoria)</td><td>~$55</td></tr><tr><td>RDS PostgreSQL (db.t4g.micro)</td><td>~$12</td></tr><tr><td>NAT Instance (t3.nano)</td><td>~$3</td></tr><tr><td>CloudFront</td><td>~$1-5</td></tr><tr><td><strong>Total Fixed</strong></td><td><strong>~$70-75</strong></td></tr><tr><td>Bedrock Usage</td><td>Pay per use</td></tr></tbody></table><hr><h2 id=license>License</h2><p>MIT License - See <a href=LICENSE rel>LICENSE</a> for details.</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2026-05-24</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/website/posts/stargate-llm-gateway/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on X" data-sharer=x data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway" data-hashtags=ai,gateway,llm><i class="fab fa-x-twitter" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Threads" data-sharer=threads data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-threads" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-hashtag=ai><i class="fab fa-facebook-square" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-hacker-news" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@16.9.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-weibo" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Diaspora" data-sharer=diaspora data-url=https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway" data-description><i class="fab fa-diaspora" aria-hidden=true></i></a><a href="https://t.me/share/url?url=https%3a%2f%2florenzogirardi.github.io%2fwebsite%2fposts%2fstargate-llm-gateway%2f&amp;text=Stargate%20LLM%20Gateway" target=_blank title="Share on Telegram"><i class="fab fa-telegram" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags" aria-hidden=true></i>&nbsp;<a href=/website/tags/ai/>Ai</a>,&nbsp;<a href=/website/tags/gateway/>Gateway</a>,&nbsp;<a href=/website/tags/llm/>Llm</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/website/>Home</a></span></section></div><div class=post-nav></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>Powered by <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.161.1">Hugo</a> | Theme - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright" aria-hidden=true></i><span itemprop=copyrightYear>2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/lorenzogirardi target=_blank>Lorenzo Girardi</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up" aria-hidden=true></i></a></div><div id=fixed-buttons-hidden><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment" aria-hidden=true></i></a></div><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js></script><script>window.config={comment:{},search:{highlightTag:"em",lunrIndexURL:"/website/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:30,type:"lunr"}}</script><script src=/website/js/theme.js></script></body></html>
+    scan1 --> tf_plan
+    scan2 --> trivy --> checkov --> validate --> changes
+    changes -->|Yes| build --> deploy
+    changes -->|No| skip[Skip]`},search:{highlightTag:"em",lunrIndexURL:"/website/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:30,type:"lunr"}}</script><script src=/website/js/theme.js></script></body></html>
