@@ -1,36 +1,98 @@
 baseURL = "https://lorenzogirardi.github.io/website"
-locale = "en-us"
 title = "Lorenzo's Blog"
-theme = "PaperMod"
-paginate = 10
+theme = "LoveIt"
+locale = "en"
+enableRobotsTXT = true
+enableEmoji = true
+
+[pagination]
+  pagerSize = 10
 
 [params]
-  author = "Lorenzo"
+  defaultTheme = "auto"
+  dateFormat = "2006-01-02"
   description = "Personal blog"
-  ShowReadingTime = true
-  ShowPostNavLinks = true
-  ShowBreadCrumbs = true
-  ShowCodeCopyButtons = true
-  ShowRssButtonInSectionTermList = true
 
-[params.homeInfoParams]
-  Title = "Hi there"
-  Content = "Any sufficiently advanced technology is indistinguishable from magic."
+  [params.author]
+    name = "Lorenzo Girardi"
+    link = "https://github.com/lorenzogirardi"
 
-[[params.socialIcons]]
-  name = "github"
-  url = "https://github.com/lorenzogirardi"
+  [params.header]
+    desktopMode = "fixed"
+    mobileMode = "auto"
+    [params.header.title]
+      name = "Lorenzo's Blog"
+      typeit = false
+
+  [params.footer]
+    enable = true
+    hugo = true
+    copyright = true
+    author = true
+    since = 2026
+
+  [params.home]
+    [params.home.profile]
+      enable = true
+      subtitle = "Any sufficiently advanced technology is indistinguishable from magic."
+      typeit = true
+      social = true
+    [params.home.posts]
+      enable = true
+      paginate = 10
+
+  [params.social]
+    GitHub = "lorenzogirardi"
+    RSS = true
+
+  [params.search]
+    enable = true
+    type = "lunr"
+    contentLength = 4000
+    maxResultLength = 10
+    snippetLength = 30
+    highlightTag = "em"
+
+  [params.page]
+    linkToMarkdown = true
+    [params.page.toc]
+      enable = true
+      auto = true
+    [params.page.code]
+      copy = true
+      maxShownLines = 50
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    lineNos = true
+    noClasses = false
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 6
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  page = ["HTML", "MarkDown"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML", "RSS"]
 
 [menu]
   [[menu.main]]
+    weight = 1
+    identifier = "posts"
     name = "Posts"
     url = "/posts/"
-    weight = 1
   [[menu.main]]
+    weight = 2
+    identifier = "tags"
     name = "Tags"
     url = "/tags/"
-    weight = 2
   [[menu.main]]
+    weight = 3
+    identifier = "whoami"
     name = "Whoami"
     url = "/whoami/"
-    weight = 3
