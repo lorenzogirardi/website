@@ -10,7 +10,6 @@ tags:
   - "prometheus "
 featuredImage: /website/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.png
 ---
-```markdown
 # Algolia Usage Exporter — A Case Study in AI-Assisted Tooling
 
 ## What is this?
@@ -111,6 +110,3 @@ Projects like this are a sweet spot for AI-assisted development: **self-containe
 The code isn't magical. What's interesting is the process: a non-specialist can build reliable infrastructure tooling in a fraction of the traditional time, using models that run at commodity pricing, without touching production data or business logic.
 
 That's a future worth building toward.
-
-```
-
