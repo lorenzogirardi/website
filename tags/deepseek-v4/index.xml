@@ -1,107 +1,12 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Deepseek V4 - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/deepseek-v4/</link><description>Deepseek V4 - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 26 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/deepseek-v4/" rel="self" type="application/rss+xml"/><item><title>Algolia prometheus exporter</title><link>https://lorenzogirardi.github.io/website/posts/algolia-prometheus-exporter/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/algolia-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/website/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.png" referrerpolicy="no-referrer">
-            </div><div class="code-block code-line-numbers" style="counter-reset: code-block 0">
-    <div class="code-header language-markdown">
-        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
-        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
-        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
-    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl"><span class="gh"># Algolia Usage Exporter — A Case Study in AI-Assisted Tooling
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">## What is this?
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">A lightweight Prometheus exporter that collects usage and infrastructure metrics from the Algolia search API and exposes them at <span class="sb">`/metrics`</span> for Prometheus / Datadog scraping.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">It runs as a standalone HTTP server (single binary via Docker/Podman), requires minimal configuration (just two API keys), and exports metrics like:
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">-</span> **Usage statistics**: search operations, records, processing time, QPS, write operations
-</span></span><span class="line"><span class="cl"><span class="k">-</span> **Infrastructure metrics**: CPU, RAM, SSD utilization, build times (Premium plan only)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> **Health signals**: scrape success status, timestamps
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">---
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">## Why build this?
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Algolia already provides a dashboard. But dashboards don&#39;t alert you at 3 AM when search capacity degrades. Exporting metrics to Prometheus / Datadog means:
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Unified observability alongside the rest of the infrastructure
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Programmatic alerting (latency spikes, capacity saturation)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Historical comparison and capacity planning
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">The API is read-only by design — there is no risk of accidental writes or data mutations.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">---
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">## Built with opencode + DeepSeek V4
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">This project was built from scratch using <span class="gs">**opencode**</span> (the open-source Claude Code alternative) running <span class="gs">**DeepSeek V4 Flash Free**</span>.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">The entire conversation — from analysis to implementation — was guided through natural language prompts. Every file, every test, every configuration was either written or refactored by an AI agent, reviewed and steered by a human operator.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Total active development time: approximately <span class="gs">**2 hours**</span> of back-and-forth prompting and validation.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">### Why this matters
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">There is a growing narrative that AI assistants are useful only for prototyping or throwaway code. This project demonstrates the opposite:
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">1.</span> <span class="gs">**Production-ready output**</span>: Helm charts, health endpoints, graceful shutdown, typed Python, comprehensive tests (76 passing), Docker/podman builds, error handling with fallback logic.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">2.</span> <span class="gs">**Not just Anthropic models**</span>: This entire session ran on <span class="gs">**DeepSeek V4**</span>, not Claude, not GPT-4. The ecosystem is diversifying fast — open-weight models can now drive complex, multi-step engineering workflows.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">3.</span> <span class="gs">**Safe by design**</span>: The exporter only calls GET endpoints and requires a dedicated read-only API key. No mutations, no deletions. AI-generated tooling for observability and monitoring is a <span class="gs">**low-risk, high-leverage**</span> use case — it improves operations without touching live business logic.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">### The ratio
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">A traditional approach would have required:
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Reading the Algolia API docs (30 min)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Designing the Prometheus collector pattern (30 min)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Writing the HTTP client with retries (30 min)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Implementing each collector (1h)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Writing tests (1h)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Building the Helm chart (30 min)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Debugging API compatibility issues (variable)
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gs">**Total estimate: 4-6 hours**</span> for a senior engineer.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">With AI assistance, the same result was achieved in roughly <span class="gs">**2 hours**</span>, with <span class="gs">**every artifact**</span> produced (code, tests, docs, Helm charts, Dockerfile, CI configuration).
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">The multiplier is real — not because the AI writes perfect code on the first try (it doesn&#39;t), but because the feedback loop is compressed. Refactoring &#34;add a /health endpoint and graceful shutdown&#34; takes 30 seconds instead of 15 minutes. The human stays in the loop, making architectural decisions, validating correctness, and steering toward production quality.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">---
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">## Key technical decisions
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">| Decision | Rationale |
-</span></span><span class="line"><span class="cl">|---|---|
-</span></span><span class="line"><span class="cl">| <span class="gs">**Private CollectorRegistry**</span> | Avoids infinite recursion when registering custom Prometheus collectors |
-</span></span><span class="line"><span class="cl">| <span class="gs">**Fallback stat fetching**</span> | Some Algolia plans reject the wildcard <span class="sb">`*`</span> — the exporter tries individual stats gracefully |
-</span></span><span class="line"><span class="cl">| <span class="gs">**RFC 3339 dates**</span> | The Algolia Usage API recently switched from <span class="sb">`YYYY-MM-DD`</span> to ISO 8601 with timezone |
-</span></span><span class="line"><span class="cl">| <span class="gs">**Health endpoint**</span> | Dedicated <span class="sb">`/health`</span> and <span class="sb">`/ready`</span> endpoints decoupled from the <span class="sb">`/metrics`</span> scrape weight |
-</span></span><span class="line"><span class="cl">| <span class="gs">**Graceful shutdown**</span> | SIGTERM handler ensures clean container termination in Kubernetes |
-</span></span><span class="line"><span class="cl">| <span class="gs">**No dependencies beyond stdlib + requests + prometheus_client**</span> | Minimal attack surface, easy to containerize |
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">---
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">## Is this production-ready?
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Yes. It runs daily in production, scraping an Algolia application every 5 minutes through a Prometheus ServiceMonitor in EKS, with metrics shipped to Datadog.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">The exporter handles:
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">-</span> API key rotation without restarts
-</span></span><span class="line"><span class="cl"><span class="k">-</span> 403 errors from the Monitoring API (Premium-gated features degrade gracefully)
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Per-index collection failures without aborting the global scrape
-</span></span><span class="line"><span class="cl"><span class="k">-</span> HTTP 429 rate limits with exponential backoff
-</span></span><span class="line"><span class="cl"><span class="k">-</span> Wildcard incompatibility across different Algolia plans
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">---
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="gu">## The bigger picture
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Projects like this are a sweet spot for AI-assisted development: <span class="gs">**self-contained, well-documented API surface, clear success criteria, no user-facing complexity, high leverage**</span>.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">The code isn&#39;t magical. What&#39;s interesting is the process: a non-specialist can build reliable infrastructure tooling in a fraction of the traditional time, using models that run at commodity pricing, without touching production data or business logic.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">That&#39;s a future worth building toward.</span></span></code></pre></div></div>]]></description></item></channel></rss>
+            </div><h1 id="algolia-usage-exporter--a-case-study-in-ai-assisted-tooling">Algolia Usage Exporter — A Case Study in AI-Assisted Tooling</h1>
+<h2 id="what-is-this">What is this?</h2>
+<p>A lightweight Prometheus exporter that collects usage and infrastructure metrics from the Algolia search API and exposes them at <code>/metrics</code> for Prometheus / Datadog scraping.</p>
+<p>It runs as a standalone HTTP server (single binary via Docker/Podman), requires minimal configuration (just two API keys), and exports metrics like:</p>
+<ul>
+<li><strong>Usage statistics</strong>: search operations, records, processing time, QPS, write operations</li>
+<li><strong>Infrastructure metrics</strong>: CPU, RAM, SSD utilization, build times (Premium plan only)</li>
+<li><strong>Health signals</strong>: scrape success status, timestamps</li>
+</ul>
+<p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item></channel></rss>
