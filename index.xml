@@ -1,5 +1,5 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 26 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/index.xml" rel="self" type="application/rss+xml"/><item><title>Algolia prometheus exporter</title><link>https://lorenzogirardi.github.io/website/posts/algolia-prometheus-exporter/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/algolia-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.png" referrerpolicy="no-referrer">
+                <img src="/website/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.png" referrerpolicy="no-referrer">
             </div><div class="code-block code-line-numbers" style="counter-reset: code-block 0">
     <div class="code-header language-markdown">
         <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
