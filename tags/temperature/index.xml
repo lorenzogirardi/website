@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Temperature - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/temperature/</link><description>Temperature - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 24 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/temperature/" rel="self" type="application/rss+xml"/><item><title>Ambient Sensor for Mere Mortal</title><link>https://lorenzogirardi.github.io/website/posts/ambient-sensor-for-mere-mortal/</link><pubDate>Sun, 24 Jan 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/ambient-sensor-for-mere-mortal/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>In the home automation era, I wanted to understand how simple thermal sensors actually work — not just buy a commercial solution and plug it in, but build the whole thing from scratch. Here&rsquo;s what I put together.</p>
+<h2 id="what-we-need">What We Need</h2>
+<ul>
+<li>ESP8266</li>
+<li>DHT22</li>
+<li>USB power supply</li>
+<li>InfluxDB</li>
+<li>Grafana</li>
+</ul>
+<h2 id="hardware">Hardware</h2>
+<p>I initially considered Arduino but followed a colleague&rsquo;s suggestion to use NodeMCU instead. NodeMCU is an open source platform developed for IoT where you can compile firmware with the sensors you need. Its primary advantage is Lua support, which is significantly simpler than Arduino&rsquo;s C implementation for this kind of work.</p>]]></description></item></channel></rss>

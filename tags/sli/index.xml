@@ -1,0 +1,13 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Sli - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/sli/</link><description>Sli - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 05 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/sli/" rel="self" type="application/rss+xml"/><item><title>The Monitoring Paper</title><link>https://lorenzogirardi.github.io/website/posts/the-monitoring-paper/</link><pubDate>Tue, 05 Jan 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/the-monitoring-paper/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png" referrerpolicy="no-referrer">
+            </div><p>Contrary to popular belief, monitoring an infrastructure is the opposite of just having some metrics about applications and network.</p>
+<p>There are many excellent resources on this topic. One of the most interesting is just a few pages from Google — <a href="https://static.googleusercontent.com/media/sre.google/it//static/pdf/art-of-slos-slides.pdf" target="_blank" rel="noopener noreffer ">the art of SLOs</a>. I took the book version from a Google on-site deep dive.</p>
+<p>To structure this properly, I want to use four simple statements:</p>
+<ul>
+<li><strong>WHAT</strong></li>
+<li><strong>WHY</strong></li>
+<li><strong>WHO</strong></li>
+<li><strong>HOW</strong></li>
+</ul>
+<h2 id="what">WHAT</h2>
+<p>This is probably the main argument we&rsquo;ll discuss here.</p>]]></description></item></channel></rss>

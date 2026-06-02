@@ -28,7 +28,7 @@
 </ul>
 <hr>
 <h2 id="overview">Overview</h2>
-<div class="mermaid" id="id-15">flowchart LR
+<div class="mermaid" id="id-8">flowchart LR
     subgraph Clients
         cc[Claude Code]
         api[API Clients]
@@ -63,60 +63,60 @@
     style sonnet fill:#FFD700
     style opus fill:#FF6B6B</div><h3 id="features">Features</h3>
 <table>
-  <thead>
-      <tr>
-          <th>Feature</th>
-          <th>Status</th>
-          <th>Description</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>OpenAI-compatible API</td>
-          <td>✅</td>
-          <td>Drop-in replacement for Claude Code</td>
-      </tr>
-      <tr>
-          <td>User Management</td>
-          <td>✅</td>
-          <td>Create users with budgets and model restrictions</td>
-      </tr>
-      <tr>
-          <td>API Key Generation</td>
-          <td>✅</td>
-          <td>Per-user API keys with limits</td>
-      </tr>
-      <tr>
-          <td>Usage Tracking</td>
-          <td>✅</td>
-          <td>Token and cost tracking per user</td>
-      </tr>
-      <tr>
-          <td>Prometheus Metrics</td>
-          <td>✅</td>
-          <td>Full observability stack</td>
-      </tr>
-      <tr>
-          <td>Langfuse Tracing</td>
-          <td>✅</td>
-          <td>LLM call logging and analysis</td>
-      </tr>
-      <tr>
-          <td>Streaming Support</td>
-          <td>✅</td>
-          <td>SSE for real-time responses</td>
-      </tr>
-      <tr>
-          <td>Admin Endpoint Security</td>
-          <td>✅</td>
-          <td>Blocked from public access</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th>Feature</th>
+					<th>Status</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>OpenAI-compatible API</td>
+					<td>✅</td>
+					<td>Drop-in replacement for Claude Code</td>
+			</tr>
+			<tr>
+					<td>User Management</td>
+					<td>✅</td>
+					<td>Create users with budgets and model restrictions</td>
+			</tr>
+			<tr>
+					<td>API Key Generation</td>
+					<td>✅</td>
+					<td>Per-user API keys with limits</td>
+			</tr>
+			<tr>
+					<td>Usage Tracking</td>
+					<td>✅</td>
+					<td>Token and cost tracking per user</td>
+			</tr>
+			<tr>
+					<td>Prometheus Metrics</td>
+					<td>✅</td>
+					<td>Full observability stack</td>
+			</tr>
+			<tr>
+					<td>Langfuse Tracing</td>
+					<td>✅</td>
+					<td>LLM call logging and analysis</td>
+			</tr>
+			<tr>
+					<td>Streaming Support</td>
+					<td>✅</td>
+					<td>SSE for real-time responses</td>
+			</tr>
+			<tr>
+					<td>Admin Endpoint Security</td>
+					<td>✅</td>
+					<td>Blocked from public access</td>
+			</tr>
+	</tbody>
 </table>
 <hr>
 <h2 id="architecture">Architecture</h2>
 <h3 id="request-flow">Request Flow</h3>
-<div class="mermaid" id="id-16">sequenceDiagram
+<div class="mermaid" id="id-9">sequenceDiagram
     participant Client as Claude Code
     participant CF as CloudFront
     participant LiteLLM as LiteLLM Proxy
@@ -141,7 +141,7 @@
     end
 
     VM-&gt;&gt;LiteLLM: Scrape /metrics/</div><h3 id="deployment-architecture">Deployment Architecture</h3>
-<div class="mermaid" id="id-17">flowchart TB
+<div class="mermaid" id="id-10">flowchart TB
     subgraph Internet
         clients[Claude Code / API Clients]
     end
@@ -187,7 +187,7 @@
     style cf fill:#ffcccc,stroke:#ff0000
     style rds fill:#336791,color:#fff
     style langfuse fill:#e6f3ff</div><h3 id="security-model">Security Model</h3>
-<div class="mermaid" id="id-18">flowchart TB
+<div class="mermaid" id="id-11">flowchart TB
     subgraph Public[&#34;Public Access (CloudFront)&#34;]
         chat[&#34;/v1/chat/completions ✅&#34;]
         models[&#34;/v1/models ✅&#34;]
@@ -217,4 +217,115 @@
     style Internal fill:#ccffcc</div><hr>
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="for-claude-code-users">For Claude Code Users</h3>
-<p>Add these environment variables to your shell:</p>]]></description></item></channel></rss>
+<p>Add these environment variables to your shell:</p>]]></description></item><item><title>Redefining E-commerce for the Age of Conversational AI</title><link>https://lorenzogirardi.github.io/website/posts/redefining-ux-for-the-age-of-conversational-ai/</link><pubDate>Sun, 31 Aug 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/redefining-ux-for-the-age-of-conversational-ai/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.png" referrerpolicy="no-referrer">
+            </div><h2 id="introduction">Introduction</h2>
+<p>This article began as a classic exploration into JSON-LD and its impact on structured data for e-commerce. However, as research and experimentation progressed, a fundamental realization emerged: what&rsquo;s actually changing is the entire user experience paradigm. The way end-users interact with digital products is shifting beyond traditional web and app models — toward dynamic, conversational discovery driven by AI.</p>
+<p>For years, the typical customer journey followed one of several well-established routes:</p>]]></description></item><item><title>Migrating Homelab from VMware ESXi to Proxmox: A New Era</title><link>https://lorenzogirardi.github.io/website/posts/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/</link><pubDate>Mon, 28 Apr 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/proxmox-import-vmware-vms-01.jpg" referrerpolicy="no-referrer">
+            </div><h2 id="introduction">Introduction</h2>
+<p>For years, VMware ESXi was the foundation of my homelab — stable, dependable, and familiar. Then Broadcom acquired VMware, and the writing was on the wall.</p>
+<p>The free ESXi license disappeared. Support for consumer-grade hardware like MiniPCs and NUCs became problematic. The platform that had &ldquo;just worked&rdquo; for years was now actively working against the homelab use case.</p>
+<p>Enter <strong>Proxmox</strong> — an open-source virtualization platform built on Debian Linux, offering KVM, LXC, ZFS, and native clustering without a licensing fee.</p>]]></description></item><item><title>Building a Scalable Image CDN with MinIO, imgproxy, and Cloudflare</title><link>https://lorenzogirardi.github.io/website/posts/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/</link><pubDate>Thu, 24 Apr 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.png" referrerpolicy="no-referrer">
+            </div><h2 id="intro">Intro</h2>
+<p>In today&rsquo;s digital landscape, efficiently serving images is critical for website performance. Users expect fast-loading, responsive websites, and images often account for the majority of a page&rsquo;s weight. In this article, I&rsquo;ll walk you through building a powerful, scalable image CDN using open-source tools that you can deploy in your own infrastructure.</p>
+<h2 id="the-architecture">The Architecture</h2>
+<p>Our image CDN consists of three main components:</p>
+<ol>
+<li><strong>MinIO</strong> — An S3-compatible object storage backend that stores original images</li>
+<li><strong>imgproxy</strong> — A fast and secure image processing service that resizes and optimizes images on-the-fly</li>
+<li><strong>Cloudflare</strong> — Providing CDN capabilities through Cloudflare Tunnel</li>
+</ol>
+<p></p>]]></description></item><item><title>Websocket, Cloudflare Tunnel, Apache httpd and a Bit of Security</title><link>https://lorenzogirardi.github.io/website/posts/websocket-cloudflare-tunnel-apache-and-irritation/</link><pubDate>Thu, 03 Aug 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/websocket-cloudflare-tunnel-apache-and-irritation/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png" referrerpolicy="no-referrer">
+            </div><h2 id="the-infrastructure-overview">The Infrastructure Overview</h2>
+<p>Exposing home lab services to the internet can be both necessary and risky. Traditional methods — port forwarding, VPNs, reverse proxies with open inbound ports — come with their own set of challenges. This is where Cloudflare Tunnel (formerly Argo Tunnel) comes in as an elegant solution.</p>
+<p>In this article, I&rsquo;ll walk you through how I&rsquo;ve implemented a secure infrastructure using Cloudflare Tunnel with WebSocket support, running on a Kubernetes cluster with Apache HTTPD as a reverse proxy. This setup allows me to securely expose internal services without opening ports on my residential firewall.</p>]]></description></item><item><title>HPA vs Rate-limit</title><link>https://lorenzogirardi.github.io/website/posts/hpa-vs-rate-limit/</link><pubDate>Tue, 14 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/hpa-vs-rate-limit/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/hpa-vs-rate-limit/Screenshot_2023-02-14_at_20.15.33-removebg-preview-2.png" referrerpolicy="no-referrer">
+            </div><h2 id="intro">INTRO</h2>
+<p>Strange&hellip; we are using HPA to increase availability and introducing rate limiting to reduce it?</p>
+<p>Well, let&rsquo;s create the context.</p>
+<p>This analysis is based on specific assumptions:</p>
+<ul>
+<li>Cloud environment</li>
+<li>Dynamic infrastructure</li>
+<li>Minimum resources available</li>
+</ul>
+<h3 id="hpa">HPA</h3>
+<p>In Kubernetes, a <em>HorizontalPodAutoscaler</em> automatically updates a workload resource (Deployment, StatefulSet) to match demand.</p>
+<h4 id="patterns">Patterns</h4>
+<table>
+	<thead>
+			<tr>
+					<th>Type</th>
+					<th>Behaviour</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Slow and temporary</td>
+					<td>Daily fluctuations, peaking during the day and troughing at night</td>
+			</tr>
+			<tr>
+					<td>Rapid and temporary</td>
+					<td>Short bursts from poorly-behaved downstream services</td>
+			</tr>
+			<tr>
+					<td>Slow and persistent</td>
+					<td>Request volume slowly increases as the product sees adoption</td>
+			</tr>
+			<tr>
+					<td>Rapid and persistent</td>
+					<td>Abrupt shift from low to high volumes — e.g. called by batch jobs</td>
+			</tr>
+	</tbody>
+</table>
+<h4 id="ideal-practice">Ideal Practice</h4>
+<table>
+	<thead>
+			<tr>
+					<th>Type</th>
+					<th>Ideal Practice</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Slow and temporary</td>
+					<td>HPA should add and remove pods as necessary</td>
+			</tr>
+			<tr>
+					<td>Rapid and temporary</td>
+					<td>HPA should NOT modify pod count — leave headroom for brief spikes</td>
+			</tr>
+			<tr>
+					<td>Slow and persistent</td>
+					<td>HPA should add and remove pods as necessary</td>
+			</tr>
+			<tr>
+					<td>Rapid and persistent</td>
+					<td>Leave headroom; HPA adds pods quickly to restore target utilization</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="rate-limit">Rate Limit</h3>
+<p>A rate limit is the number of API calls an app or user can make within a given time period. If this limit is exceeded — or if CPU or time limits are exceeded — the app may be throttled. Throttled requests fail.</p>]]></description></item><item><title>Application Rate Limit</title><link>https://lorenzogirardi.github.io/website/posts/application-rate-limiting/</link><pubDate>Sat, 11 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/application-rate-limiting/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>I needed to implement rate limiting within an application for reasons I&rsquo;ll get into in a follow-up post. When you start thinking about this, you basically have two paths:</p>
+<ol>
+<li>Logic embedded directly in the application code</li>
+<li>A sidecar container that handles the rate limiting role</li>
+</ol>
+<p>Both work. Both have trade-offs. Let me go through each one.</p>
+<h2 id="the-code-way">The Code Way</h2>
+<p>This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce <em>false</em> metrics if you&rsquo;re not tracking it carefully.</p>]]></description></item><item><title>YA VPN Service in Kubernetes</title><link>https://lorenzogirardi.github.io/website/posts/ya-vpn-service-in-kubernetes/</link><pubDate>Mon, 18 Jul 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/ya-vpn-service-in-kubernetes/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/ya-vpn-service-in-kubernetes/wirecardmobile.png" referrerpolicy="no-referrer">
+            </div><h2 id="why">Why</h2>
+<p>I had my beloved IPsec setup based on strongswan running in Kubernetes for a while — you can read about that <a href="/posts/kubernetes-strongswan/" rel="">here</a>. It worked fine. I wasn&rsquo;t looking to change it. Then a colleague pointed out WireGuard&rsquo;s overhead numbers and I got curious enough to evaluate it myself.</p>
+<p>WireGuard is a modern VPN protocol that lives in the Linux kernel. It&rsquo;s designed to be simple, fast, and have a minimal attack surface compared to IPsec or OpenVPN. The numbers people throw around are impressive, but I wanted to see them in practice.</p>]]></description></item><item><title>Lazy People Do It Better</title><link>https://lorenzogirardi.github.io/website/posts/lazy-people-do-it-better/</link><pubDate>Sun, 20 Feb 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/lazy-people-do-it-better/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>There&rsquo;s a reactive way to manage infrastructure and there&rsquo;s a proactive way. The reactive way is: traffic increases, you notice the service is suffering, you add resources. The proactive way is: you understand your system well enough that it handles demand changes automatically, without you needing to be in the loop.</p>
+<p>I prefer the lazy way.</p>
+<p></p>]]></description></item></channel></rss>

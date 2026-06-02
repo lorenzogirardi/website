@@ -1,0 +1,8 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Latency - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/latency/</link><description>Latency - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 11 Aug 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/latency/" rel="self" type="application/rss+xml"/><item><title>Docker-latency — The Network Blaming Tool</title><link>https://lorenzogirardi.github.io/website/posts/docker-latency/</link><pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/docker-latency/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/docker-latency/grafana_home.png" referrerpolicy="no-referrer">
+            </div><h2 id="aka-the-network-blaming-tool">aka the network blaming tool</h2>
+<p>Every network admin hears it. &ldquo;The VPN is slow.&rdquo; &ldquo;I can&rsquo;t connect to $something.&rdquo; &ldquo;It worked yesterday.&rdquo;</p>
+<p>The problem: these complaints are vague. Is it the provider? A T2/T3 routing issue? The user&rsquo;s local network? Without data, you&rsquo;re guessing.</p>
+<p>This tool collects data.</p>
+<h2 id="how-to-understand-if-your-network-is-really-slow">How to Understand if Your Network is Really Slow</h2>
+<p>Deploy a pre-configured Grafana stack that monitors internet connection statistics. Select the endpoints that matter — VPN gateways, datacenter public IPs, main DNS servers — and get a continuous picture of latency and packet loss.</p>]]></description></item></channel></rss>

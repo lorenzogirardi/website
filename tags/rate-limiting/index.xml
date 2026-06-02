@@ -1,0 +1,85 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Rate Limiting - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/rate-limiting/</link><description>Rate Limiting - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 14 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/rate-limiting/" rel="self" type="application/rss+xml"/><item><title>HPA vs Rate-limit</title><link>https://lorenzogirardi.github.io/website/posts/hpa-vs-rate-limit/</link><pubDate>Tue, 14 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/hpa-vs-rate-limit/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/hpa-vs-rate-limit/Screenshot_2023-02-14_at_20.15.33-removebg-preview-2.png" referrerpolicy="no-referrer">
+            </div><h2 id="intro">INTRO</h2>
+<p>Strange&hellip; we are using HPA to increase availability and introducing rate limiting to reduce it?</p>
+<p>Well, let&rsquo;s create the context.</p>
+<p>This analysis is based on specific assumptions:</p>
+<ul>
+<li>Cloud environment</li>
+<li>Dynamic infrastructure</li>
+<li>Minimum resources available</li>
+</ul>
+<h3 id="hpa">HPA</h3>
+<p>In Kubernetes, a <em>HorizontalPodAutoscaler</em> automatically updates a workload resource (Deployment, StatefulSet) to match demand.</p>
+<h4 id="patterns">Patterns</h4>
+<table>
+	<thead>
+			<tr>
+					<th>Type</th>
+					<th>Behaviour</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Slow and temporary</td>
+					<td>Daily fluctuations, peaking during the day and troughing at night</td>
+			</tr>
+			<tr>
+					<td>Rapid and temporary</td>
+					<td>Short bursts from poorly-behaved downstream services</td>
+			</tr>
+			<tr>
+					<td>Slow and persistent</td>
+					<td>Request volume slowly increases as the product sees adoption</td>
+			</tr>
+			<tr>
+					<td>Rapid and persistent</td>
+					<td>Abrupt shift from low to high volumes — e.g. called by batch jobs</td>
+			</tr>
+	</tbody>
+</table>
+<h4 id="ideal-practice">Ideal Practice</h4>
+<table>
+	<thead>
+			<tr>
+					<th>Type</th>
+					<th>Ideal Practice</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Slow and temporary</td>
+					<td>HPA should add and remove pods as necessary</td>
+			</tr>
+			<tr>
+					<td>Rapid and temporary</td>
+					<td>HPA should NOT modify pod count — leave headroom for brief spikes</td>
+			</tr>
+			<tr>
+					<td>Slow and persistent</td>
+					<td>HPA should add and remove pods as necessary</td>
+			</tr>
+			<tr>
+					<td>Rapid and persistent</td>
+					<td>Leave headroom; HPA adds pods quickly to restore target utilization</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="rate-limit">Rate Limit</h3>
+<p>A rate limit is the number of API calls an app or user can make within a given time period. If this limit is exceeded — or if CPU or time limits are exceeded — the app may be throttled. Throttled requests fail.</p>]]></description></item><item><title>Application Rate Limit</title><link>https://lorenzogirardi.github.io/website/posts/application-rate-limiting/</link><pubDate>Sat, 11 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/application-rate-limiting/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>I needed to implement rate limiting within an application for reasons I&rsquo;ll get into in a follow-up post. When you start thinking about this, you basically have two paths:</p>
+<ol>
+<li>Logic embedded directly in the application code</li>
+<li>A sidecar container that handles the rate limiting role</li>
+</ol>
+<p>Both work. Both have trade-offs. Let me go through each one.</p>
+<h2 id="the-code-way">The Code Way</h2>
+<p>This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce <em>false</em> metrics if you&rsquo;re not tracking it carefully.</p>]]></description></item><item><title>Kubernetes API Gateway</title><link>https://lorenzogirardi.github.io/website/posts/kubernetes-apigw/</link><pubDate>Sun, 08 Nov 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/kubernetes-apigw/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>It&rsquo;s time to talk about the API gateway.</p>
+<p>In a modern infrastructure — especially in a microservices environment — you probably know what I&rsquo;m referring to. But it&rsquo;s worth being explicit about it:</p>
+<blockquote>
+<p>&ldquo;An API gateway takes all API calls from clients, then routes them to the appropriate microservice with request routing, composition, and protocol translation. Typically it handles a request by invoking multiple microservices and aggregating the results, to determine the best path.&rdquo;</p>]]></description></item></channel></rss>

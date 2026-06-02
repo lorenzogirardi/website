@@ -1,0 +1,8 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Automation - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/automation/</link><description>Automation - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 06 Jul 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/automation/" rel="self" type="application/rss+xml"/><item><title>Terraform Your Free Cloudflare Account</title><link>https://lorenzogirardi.github.io/website/posts/terraform-your-free-cloudflare-account/</link><pubDate>Fri, 06 Jul 2018 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/terraform-your-free-cloudflare-account/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/terraform-your-free-cloudflare-account/git-terraform-cloudflare.png" referrerpolicy="no-referrer">
+            </div><h2 id="introduction">Introduction</h2>
+<p>Cloudflare provides a solid free tier. What sets it apart from competitors like Akamai or Incapsula isn&rsquo;t just the price — it&rsquo;s the API support and native Terraform provider. Everything you can click in the dashboard, you can manage in code.</p>
+<p>This article walks through automating a complete Cloudflare account: DNS records, page rules, security settings, and zone configuration — all in Terraform, all in Git.</p>
+<h2 id="setup">Setup</h2>
+<h3 id="1-authentication">1. Authentication</h3>
+<p>Grab your API key from the Cloudflare portal:</p>]]></description></item></channel></rss>

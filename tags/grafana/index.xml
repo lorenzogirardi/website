@@ -1,0 +1,50 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Grafana - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/grafana/</link><description>Grafana - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/grafana/" rel="self" type="application/rss+xml"/><item><title>Kubernetes nstats</title><link>https://lorenzogirardi.github.io/website/posts/kubernetes-nstats/</link><pubDate>Mon, 22 Feb 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/kubernetes-nstats/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>Here we go&hellip; another weird sidecar container.</p>
+<h2 id="motivations">Motivations</h2>
+<p>I&rsquo;ve always been interested in the observability area. There are many aspects that improve performances and fix bugs. One of the most interesting is network usage.</p>
+<p>This is not about network issues:</p>
+<p></p>
+<p>It&rsquo;s about understanding <em>where</em> bandwidth is actually going.</p>
+<p>You&rsquo;re probably used to seeing something like this for your VMs:</p>]]></description></item><item><title>Homelab, When Small is Big</title><link>https://lorenzogirardi.github.io/website/posts/homelab-when-small-is-big/</link><pubDate>Fri, 19 Feb 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/homelab-when-small-is-big/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>When I first got into IT, devices ran continuously. My first lab was an impressive tower from 1999 with substantial disk and memory banks, a quality CPU cooled by a massive copper heatsink and a 12cm fan. During the night, those components produced noise comparable to a helicopter. Neighbors complained. I didn&rsquo;t sleep well.</p>
+<p>The lab evolved over the years. Not just for noise reasons, but prioritizing cost-effective hardware that could replicate a simplified production environment. The goals today are very different from 1999:</p>]]></description></item><item><title>Ambient Sensor for Mere Mortal</title><link>https://lorenzogirardi.github.io/website/posts/ambient-sensor-for-mere-mortal/</link><pubDate>Sun, 24 Jan 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/ambient-sensor-for-mere-mortal/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>In the home automation era, I wanted to understand how simple thermal sensors actually work — not just buy a commercial solution and plug it in, but build the whole thing from scratch. Here&rsquo;s what I put together.</p>
+<h2 id="what-we-need">What We Need</h2>
+<ul>
+<li>ESP8266</li>
+<li>DHT22</li>
+<li>USB power supply</li>
+<li>InfluxDB</li>
+<li>Grafana</li>
+</ul>
+<h2 id="hardware">Hardware</h2>
+<p>I initially considered Arduino but followed a colleague&rsquo;s suggestion to use NodeMCU instead. NodeMCU is an open source platform developed for IoT where you can compile firmware with the sensors you need. Its primary advantage is Lua support, which is significantly simpler than Arduino&rsquo;s C implementation for this kind of work.</p>]]></description></item><item><title>The Monitoring Paper</title><link>https://lorenzogirardi.github.io/website/posts/the-monitoring-paper/</link><pubDate>Tue, 05 Jan 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/the-monitoring-paper/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png" referrerpolicy="no-referrer">
+            </div><p>Contrary to popular belief, monitoring an infrastructure is the opposite of just having some metrics about applications and network.</p>
+<p>There are many excellent resources on this topic. One of the most interesting is just a few pages from Google — <a href="https://static.googleusercontent.com/media/sre.google/it//static/pdf/art-of-slos-slides.pdf" target="_blank" rel="noopener noreffer ">the art of SLOs</a>. I took the book version from a Google on-site deep dive.</p>
+<p>To structure this properly, I want to use four simple statements:</p>
+<ul>
+<li><strong>WHAT</strong></li>
+<li><strong>WHY</strong></li>
+<li><strong>WHO</strong></li>
+<li><strong>HOW</strong></li>
+</ul>
+<h2 id="what">WHAT</h2>
+<p>This is probably the main argument we&rsquo;ll discuss here.</p>]]></description></item><item><title>Kubernetes sitespeed.io</title><link>https://lorenzogirardi.github.io/website/posts/kubernetes-sitespeedio/</link><pubDate>Fri, 02 Oct 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/kubernetes-sitespeedio/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/kubernetes-sitespeedio/reaction.png" referrerpolicy="no-referrer">
+            </div><p></p>
+<p>First, a thought about what this is and what it isn&rsquo;t: this is about website metrics management. Not the only way, but one way for a high-level overview.</p>
+<p>I&rsquo;m focused on sharing concepts about website monitoring and one possible way to manage this in Kubernetes. You can reach the same goal with just Docker and crontab — but I&rsquo;m using some other tools in Kubernetes because I&rsquo;m evaluating them for other purposes.</p>]]></description></item><item><title>Docker-latency — The Network Blaming Tool</title><link>https://lorenzogirardi.github.io/website/posts/docker-latency/</link><pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/docker-latency/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/docker-latency/grafana_home.png" referrerpolicy="no-referrer">
+            </div><h2 id="aka-the-network-blaming-tool">aka the network blaming tool</h2>
+<p>Every network admin hears it. &ldquo;The VPN is slow.&rdquo; &ldquo;I can&rsquo;t connect to $something.&rdquo; &ldquo;It worked yesterday.&rdquo;</p>
+<p>The problem: these complaints are vague. Is it the provider? A T2/T3 routing issue? The user&rsquo;s local network? Without data, you&rsquo;re guessing.</p>
+<p>This tool collects data.</p>
+<h2 id="how-to-understand-if-your-network-is-really-slow">How to Understand if Your Network is Really Slow</h2>
+<p>Deploy a pre-configured Grafana stack that monitors internet connection statistics. Select the endpoints that matter — VPN gateways, datacenter public IPs, main DNS servers — and get a continuous picture of latency and packet loss.</p>]]></description></item></channel></rss>
