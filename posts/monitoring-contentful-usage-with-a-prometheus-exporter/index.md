@@ -40,7 +40,7 @@ Enter **contentful-usage-exporter** — a Python CLI and Prometheus exporter I b
 
 Here's how the data flows:
 
-```mermaid
+{{< mermaid >}}
 flowchart LR
     A[Contentful CMA] -->|GET /organizations/:id/periodic_usages| B[Usage Collector]
     A -->|GET /spaces/:id| C[Space Collector]
@@ -53,11 +53,12 @@ flowchart LR
     G -->|scrape| H[Prometheus]
     H -->|query| I[Grafana]
     H -->|alert| J[Alertmanager]
-```
+{{< /mermaid >}}
+
 
 Two modes, same collectors underneath. The **one-shot mode** writes JSON and CSV files for ad-hoc analysis. The **Prometheus mode** starts an HTTP server on `:8000` and serves live metrics on every scrape.
 
-```mermaid
+{{< mermaid >}}
 flowchart TD
     subgraph "Prometheus Mode"
         P1["Prometheus scrapes /metrics"] --> P2[ContentfulCollector.collect]
@@ -70,7 +71,8 @@ flowchart TD
         C2 --> C3[writes summary.json + summary.csv]
         C2 --> C4[writes raw_usage.json, raw_space.json, raw_users.json]
     end
-```
+{{< /mermaid >}}
+
 
 ## How It Works
 
@@ -223,14 +225,15 @@ The deployment runs as non-root user 1000, with liveness and readiness probes on
 
 Once Prometheus is scraping, you can build a dashboard like this:
 
-```mermaid
+{{< mermaid >}}
 flowchart LR
     subgraph "Grafana Dashboard"
         S1["API Usage (Gauge)"] --> S2["Daily Trend (Bar)"]
         S3["Space Inventory (Stat)"] --> S4["Per-Space Breakdown (Table)"]
         S5["Org Members (Stat)"] --> S6["Scrape Health (Status)"]
     end
-```
+{{< /mermaid >}}
+
 
 Useful PromQL queries:
 
