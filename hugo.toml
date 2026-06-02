@@ -61,7 +61,6 @@ enableEmoji = true
     [params.page.code]
       copy = true
       maxShownLines = 50
-    [params.page.code]
       render.mermaid = true
 
 [markup]
