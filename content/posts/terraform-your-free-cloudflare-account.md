@@ -10,7 +10,7 @@ tags:
   - gitlab
   - terraform
   - waf
-featuredImage: /website/images/terraform-your-free-cloudflare-account/git-terraform-cloudflare.png
+featuredImage: /images/terraform-your-free-cloudflare-account/git-terraform-cloudflare.png
 ---
 
 ## Introduction
@@ -25,9 +25,9 @@ This article walks through automating a complete Cloudflare account: DNS records
 
 Grab your API key from the Cloudflare portal:
 
-![Cloudflare API key location](/website/images/terraform-your-free-cloudflare-account/cloudflare-api-key.png)
+![Cloudflare API key location](/images/terraform-your-free-cloudflare-account/cloudflare-api-key.png)
 
-![Cloudflare Global API key](/website/images/terraform-your-free-cloudflare-account/cloudflare-global-apikey.png)
+![Cloudflare Global API key](/images/terraform-your-free-cloudflare-account/cloudflare-global-apikey.png)
 
 Create `cloudflare-auth.tf`:
 
@@ -163,7 +163,7 @@ terraform apply -var-file=secrets.tfvars
 
 The final state shows DNS resolved, SSL certificate valid, security headers applied. Everything reproducible from code.
 
-![Git + Terraform + Cloudflare](/website/images/terraform-your-free-cloudflare-account/git-terraform-cloudflare.png)
+![Git + Terraform + Cloudflare](/images/terraform-your-free-cloudflare-account/git-terraform-cloudflare.png)
 
 Store state in GitLab CI with a `terraform.tfstate` backend. Any change goes through a merge request — full audit trail, rollback possible with `terraform apply` on the previous commit.
 

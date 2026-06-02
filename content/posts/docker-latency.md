@@ -9,7 +9,7 @@ tags:
   - monitoring
   - networking
   - latency
-featuredImage: /website/images/docker-latency/grafana_home.png
+featuredImage: /images/docker-latency/grafana_home.png
 ---
 
 ## aka the network blaming tool
@@ -107,11 +107,11 @@ Grafana available at `http://localhost:3000/` — credentials from `.env`.
 
 ## The Dashboard
 
-![Grafana home — latency overview](/website/images/docker-latency/grafana_home.png)
+![Grafana home — latency overview](/images/docker-latency/grafana_home.png)
 
 One row per endpoint. Latency over time, packet loss highlighted in red.
 
-![Ping metrics detail](/website/images/docker-latency/grafana_ping.png)
+![Ping metrics detail](/images/docker-latency/grafana_ping.png)
 
 When a user says "the VPN was slow at 3pm," you can show them exactly what happened — and whether it was the VPN endpoint, their ISP, or nothing at all.
 

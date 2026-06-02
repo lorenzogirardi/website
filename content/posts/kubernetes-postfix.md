@@ -8,10 +8,10 @@ tags:
   - postfix
   - email
   - dkim
-featuredImage: /website/images/kubernetes-postfix/vps.png
+featuredImage: /images/kubernetes-postfix/vps.png
 ---
 
-![VPS to Kubernetes migration](/website/images/kubernetes-postfix/vps.png)
+![VPS to Kubernetes migration](/images/kubernetes-postfix/vps.png)
 
 Long story short: my VPS provider changed the price for their small instance from $1 to $3, so I took the opportunity to move my Postfix service from cloud to on-premises. Why move away from cloud when the rest of the world is moving toward it? Because my own domain is used primarily for alerting, and the cost/benefit stopped making sense at $3/month.
 
@@ -40,7 +40,7 @@ The configuration relies on Postfix's virtual and transport maps.
 
 ## Implementation in Kubernetes
 
-![MicroK8s deployment](/website/images/kubernetes-postfix/microk8s.png)
+![MicroK8s deployment](/images/kubernetes-postfix/microk8s.png)
 
 The architecture migration was simple: change the MX record to point to my home IP.
 
@@ -238,7 +238,7 @@ After `kubectl apply -f kubernetes/`, the pod comes up:
 postfix   postfix-7d664f786c-rmf54   1/1   Running   0   29m
 ```
 
-![Postfix log output](/website/images/kubernetes-postfix/postfixlog.png)
+![Postfix log output](/images/kubernetes-postfix/postfixlog.png)
 
 Check the logs — you should see OpenDKIM adding the DKIM signature:
 
@@ -246,7 +246,7 @@ Check the logs — you should see OpenDKIM adding the DKIM signature:
 opendkim[22]: 91E522A000C: DKIM-Signature field added
 ```
 
-![Email options](/website/images/kubernetes-postfix/emailoption.png)
+![Email options](/images/kubernetes-postfix/emailoption.png)
 
 The `RequireSafeKeys false` option in the OpenDKIM configmap is enabled for testing — tighten that up before calling this production-ready.
 

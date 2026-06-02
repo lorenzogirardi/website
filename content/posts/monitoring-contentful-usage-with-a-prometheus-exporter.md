@@ -14,7 +14,7 @@ tags:
   - python
   - kubernetes
   - automation
-featuredImage: /website/images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png
+featuredImage: /images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png
 ---
 ### Table of Contents
 

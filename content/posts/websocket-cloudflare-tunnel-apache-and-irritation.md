@@ -13,7 +13,7 @@ tags:
   - tunnel
   - websocket
   - workers
-featuredImage: /website/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png
+featuredImage: /images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png
 ---
 
 ## The Infrastructure Overview
@@ -26,17 +26,17 @@ In this article, I'll walk you through how I've implemented a secure infrastruct
 
 This one of the scenarios that made me crazy: WebSockets. Grafana, since version 8.x, uses WebSockets to update dashboards in real time. Getting that to work reliably through multiple proxy layers took some iteration.
 
-![Architecture overview](/website/images/websocket-cloudflare-tunnel-apache-and-irritation/home_all_v1.drawio-4.png)
+![Architecture overview](/images/websocket-cloudflare-tunnel-apache-and-irritation/home_all_v1.drawio-4.png)
 
 The original idea was to define a "role" for each layer:
 
-![Cloudflare Workers](/website/images/websocket-cloudflare-tunnel-apache-and-irritation/cworkers.png) Used as global security header injector — same security posture for every exposed application.
+![Cloudflare Workers](/images/websocket-cloudflare-tunnel-apache-and-irritation/cworkers.png) Used as global security header injector — same security posture for every exposed application.
 
-![Cloudflare WAF](/website/images/websocket-cloudflare-tunnel-apache-and-irritation/cfwaf.png) Used to obfuscate the origin and add a protection layer, even on the free plan.
+![Cloudflare WAF](/images/websocket-cloudflare-tunnel-apache-and-irritation/cfwaf.png) Used to obfuscate the origin and add a protection layer, even on the free plan.
 
-![Linux firewall](/website/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.46.00.png) Linux-based firewall for ACL and NAT rules.
+![Linux firewall](/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.46.00.png) Linux-based firewall for ACL and NAT rules.
 
-![Kubernetes](/website/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.54.58.png) Kubernetes for all workloads that can run as immutable images.
+![Kubernetes](/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.54.58.png) Kubernetes for all workloads that can run as immutable images.
 
 The Cloudflare Worker handling security headers:
 

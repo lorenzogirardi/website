@@ -12,7 +12,7 @@ tags:
   - metrics
   - observability
   - alerting
-featuredImage: /website/images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png
+featuredImage: /images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png
 ---
 
 Contrary to popular belief, monitoring an infrastructure is the opposite of just having some metrics about applications and network.
@@ -69,7 +69,7 @@ So what should we consider when monitoring an application in production? Let me 
 
 These are the easiest and most-used metrics since you first started monitoring services. They represent the basic resource usage, and as the technology level increases from bare metal to VM to Docker to serverless, these values become progressively less influential in isolation. But you still need to start here to build a baseline.
 
-![System metrics — VMware host](/website/images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png)
+![System metrics — VMware host](/images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png)
 
 Drilling into a VM inside that host, here's the one I use for my Kubernetes lab:
 
@@ -79,7 +79,7 @@ In both images you can see something moving CPU close to 100% cyclically — tha
 
 Now move inside the Kubernetes cluster and check how a web application is performing. For a Spring Boot application, you can understand the framework behavior (Java) and behavioral interactions: response time server-to-server, server errors, client errors, SQL interactions, garbage collector behavior, sidecar usage, log creation, metric creation.
 
-![Application metrics dashboard](/website/images/the-monitoring-paper/app_metrics.png)
+![Application metrics dashboard](/images/the-monitoring-paper/app_metrics.png)
 
 With these in place you can understand, from an application point of view, how performance evolves release by release. What happens under bugs. What happens under unexpected high traffic. Where you should focus improvement effort.
 
@@ -107,7 +107,7 @@ With these three clusters of metrics we can define and plan the architecture and
 
 If you're selling something through your application, conversion is always the most relevant buzzword. From 100 visitors, who actually completes a purchase? In e-commerce, it's a small slice.
 
-![Conversion impact score funnel](/website/images/the-monitoring-paper/conversion-impact-score-funnel-NEW.png)
+![Conversion impact score funnel](/images/the-monitoring-paper/conversion-impact-score-funnel-NEW.png)
 
 This image comes from a 2015 [Akamai article](https://blogs.akamai.com/2015/07/conversion-impact-score-what-is-it-and-why-do-you-need-to-know-yours.html) that is still very much relevant today.
 

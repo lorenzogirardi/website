@@ -1,4 +1,4 @@
-baseURL = "https://lorenzogirardi.github.io/website"
+baseURL = "https://www.k8s.it"
 title = "Lorenzo's Blog"
 theme = "LoveIt"
 locale = "en"

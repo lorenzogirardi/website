@@ -9,10 +9,10 @@ tags:
   - grafana
   - monitoring
   - temperature
-featuredImage: /website/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png
+featuredImage: /images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png
 ---
 
-![Grafana temperature dashboard](/website/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png)
+![Grafana temperature dashboard](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png)
 
 In the home automation era, I wanted to understand how simple thermal sensors actually work — not just buy a commercial solution and plug it in, but build the whole thing from scratch. Here's what I put together.
 
@@ -168,15 +168,15 @@ The script reads temperature and humidity every 30 seconds (`tmr.alarm(0,30000,1
 
 ESPlorer provides a graphical interface for deploying and interacting with the NodeMCU platform. It requires Java, but it makes the development loop much smoother — you can write Lua code, upload it, and see the serial output all in one window.
 
-![ESPlorer interface](/website/images/ambient-sensor-for-mere-mortal/ESPlorer-panels.png)
+![ESPlorer interface](/images/ambient-sensor-for-mere-mortal/ESPlorer-panels.png)
 
 ## Results
 
 The system has been running since 2016. That's not a typo — this same setup, same code, same hardware.
 
-![Temperature and humidity over time](/website/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.11.01.png)
+![Temperature and humidity over time](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.11.01.png)
 
-![Multi-room sensor comparison](/website/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.06.50.png)
+![Multi-room sensor comparison](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.06.50.png)
 
 I have sensors in multiple rooms including one outside. The external sensor needs replacement about once a year — the enclosure isn't properly waterproof and the electrical contacts oxidize progressively. That's the only maintenance required.
 

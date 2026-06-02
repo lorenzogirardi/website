@@ -9,7 +9,7 @@ tags:
   - lxc
   - proxmox
   - vmware
-featuredImage: /website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/proxmox-import-vmware-vms-01.jpg
+featuredImage: /images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/proxmox-import-vmware-vms-01.jpg
 ---
 
 ## Introduction
@@ -42,7 +42,7 @@ ZFS, LXC containers, KVM/QEMU VMs, clustering, high availability — all include
 
 ### Step 0 — Hardware Comparison
 
-![Hardware comparison](/website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.13.27.png)
+![Hardware comparison](/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.13.27.png)
 
 My original setup was an Intel NUC J5005 from 2019. Good machine, but the migration was an opportunity to upgrade. I picked up two mini PCs at ~$150 each:
 
@@ -64,7 +64,7 @@ Installed Proxmox on both machines, then configured:
 - Users and permissions
 - Monitoring stack (Prometheus + Grafana)
 
-![Proxmox UI](/website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.19.42.png)
+![Proxmox UI](/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.19.42.png)
 
 ### Step 3 — Convert and Import VMs
 
@@ -76,13 +76,13 @@ ESXi VMs don't transfer directly. Options:
 
 I went with Proxmox's built-in migration tooling for most VMs.
 
-![VM import in progress](/website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.20.22.png)
+![VM import in progress](/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.20.22.png)
 
 ### Step 4 — Testing
 
 Most issues were CentOS VMs with VMware Tools baked into the kernel. They panicked on boot under KVM. Fix: regenerate initramfs or boot the latest kernel without VMware Tools.
 
-![VM running on Proxmox](/website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.22.39.png)
+![VM running on Proxmox](/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.22.39.png)
 
 ## Day-to-Day Differences: ESXi vs Proxmox
 
@@ -113,11 +113,11 @@ Most issues were CentOS VMs with VMware Tools baked into the kernel. They panick
 
 ## Current Installation
 
-![Grafana dashboard showing Proxmox metrics](/website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/screencapture-services-k8s-it-grafana-d-kxQQuHRZks-proxmox-2025-04-28-21_23_50.png)
+![Grafana dashboard showing Proxmox metrics](/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/screencapture-services-k8s-it-grafana-d-kxQQuHRZks-proxmox-2025-04-28-21_23_50.png)
 
 Both nodes running, monitored via Grafana. The Ryzen handles compute-heavy VMs. The N95 runs containers and lightweight services.
 
-![Node overview](/website/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.33.13.png)
+![Node overview](/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/Screenshot-2025-04-28-at-21.33.13.png)
 
 The migration restored flexibility that ESXi had slowly taken away. ZFS, LXC, clustering — all free, all working.
 

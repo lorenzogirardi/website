@@ -9,7 +9,7 @@ tags:
   - arm
   - hardware
   - monitoring
-featuredImage: /website/images/kubernetes-for-mere-mortals/k8s.arm-lg.jpeg
+featuredImage: /images/kubernetes-for-mere-mortals/k8s.arm-lg.jpeg
 ---
 
 ## Hardware Setup
@@ -21,9 +21,9 @@ Bill of materials:
 - 1x Anker 60W PowerPort 6 USB hub (power for all nodes)
 - 4x Orange Pi Plus 2E single-board computers
 
-![The cluster](/website/images/kubernetes-for-mere-mortals/k8s.arm-lg.jpeg)
+![The cluster](/images/kubernetes-for-mere-mortals/k8s.arm-lg.jpeg)
 
-![OrangePi nodes](/website/images/kubernetes-for-mere-mortals/IMG_20170605_150237.jpg)
+![OrangePi nodes](/images/kubernetes-for-mere-mortals/IMG_20170605_150237.jpg)
 
 Total cost: well under what a single month of cloud compute would run.
 
