@@ -7,7 +7,7 @@ Traditional IPsec-XAuth VPN manages credentials in flat files. Adding a user mea
 
 This implementation integrates Strongswan with LDAP, turning VPN access into a standard directory operation — the same system that manages every other credential in the organization.
 
-![VPN architecture](/website/images/kubernetes-strongswan/vpn_diagram.jpg)
+![VPN architecture](/images/kubernetes-strongswan/vpn_diagram.jpg)
 
 ## Architecture
 
@@ -37,9 +37,9 @@ Two LDAP elements required:
 1. **Technical bind user** (`ldapbind`) — low-privilege account for querying the directory
 2. **VPN group** (`vpn`) — group membership determines VPN access eligibility
 
-![LDAP bind user](/website/images/kubernetes-strongswan/strongswan_bind_user.png)
+![LDAP bind user](/images/kubernetes-strongswan/strongswan_bind_user.png)
 
-![VPN group configuration](/website/images/kubernetes-strongswan/strongswan_user_vpn_group.png)
+![VPN group configuration](/images/kubernetes-strongswan/strongswan_user_vpn_group.png)
 
 ## Docker Image
 
@@ -203,7 +203,7 @@ spec:
 
 Firewall rules must permit UDP 30500 and 30450 to the Kubernetes node.
 
-![Firewall NAT configuration](/website/images/kubernetes-strongswan/strongswan_firewall_nat.png)
+![Firewall NAT configuration](/images/kubernetes-strongswan/strongswan_firewall_nat.png)
 
 ## Deployment
 
@@ -221,13 +221,13 @@ strongswan-77bfbb9f9f-57hmz   1/1     Running   0          22h
 
 Standard IPsec clients work: Cisco IPsec client, native iOS/macOS VPN, Android IPsec clients.
 
-![Android VPN client setup](/website/images/kubernetes-strongswan/strongswan_android_client.png)
+![Android VPN client setup](/images/kubernetes-strongswan/strongswan_android_client.png)
 
 Configuration: gateway = Kubernetes node IP, authentication = PSK + username/password.
 
-![Android connected](/website/images/kubernetes-strongswan/strongswan_client_android.jpg)
+![Android connected](/images/kubernetes-strongswan/strongswan_client_android.jpg)
 
-![Android ping test through VPN](/website/images/kubernetes-strongswan/strongswan_android_ping.jpg)
+![Android ping test through VPN](/images/kubernetes-strongswan/strongswan_android_ping.jpg)
 
 ## Verification
 
@@ -239,7 +239,7 @@ Successful LDAP authentication in Strongswan logs:
 12[IKE] IKE_SA roadw[1] established between 10.1.1.84...10.1.1.1
 ```
 
-![Connection status](/website/images/kubernetes-strongswan/strongswan_stroke_statusall.png)
+![Connection status](/images/kubernetes-strongswan/strongswan_stroke_statusall.png)
 
 ## Conclusion
 

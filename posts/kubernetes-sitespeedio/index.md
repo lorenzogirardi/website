@@ -1,7 +1,7 @@
 # Kubernetes sitespeed.io
 
 
-![Performance reaction](/website/images/kubernetes-sitespeedio/reaction.png)
+![Performance reaction](/images/kubernetes-sitespeedio/reaction.png)
 
 First, a thought about what this is and what it isn't: this is about website metrics management. Not the only way, but one way for a high-level overview.
 
@@ -132,7 +132,7 @@ Once running, the metrics appear in Grafana. Two backend options work with the s
 **InfluxDB backend** — use the official Grafana dashboard:
 https://github.com/sitespeedio/grafana-bootstrap-docker/blob/main/dashboards/influxdb/pageSummary.json
 
-![Sitespeed results in Grafana](/website/images/kubernetes-sitespeedio/sitespeedresults.png)
+![Sitespeed results in Grafana](/images/kubernetes-sitespeedio/sitespeedresults.png)
 
 **Graphite backend** also works with the same metrics and even more provided dashboards.
 

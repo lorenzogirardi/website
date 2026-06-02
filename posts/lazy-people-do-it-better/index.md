@@ -1,13 +1,13 @@
 # Lazy People Do It Better
 
 
-![HPA autoscaling dashboard](/website/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png)
+![HPA autoscaling dashboard](/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png)
 
 There's a reactive way to manage infrastructure and there's a proactive way. The reactive way is: traffic increases, you notice the service is suffering, you add resources. The proactive way is: you understand your system well enough that it handles demand changes automatically, without you needing to be in the loop.
 
 I prefer the lazy way.
 
-![Lazy](/website/images/lazy-people-do-it-better/lazy.gif)
+![Lazy](/images/lazy-people-do-it-better/lazy.gif)
 
 But lazy here means thoughtful. Before you can set up meaningful autoscaling, you have to understand your KPIs. Not just "is the service up?" but what "up" actually means to your users. Is 3ms acceptable? 30ms? 300ms? 3000ms? The service can be running and completely failing the user at the same time. The impact is just invisible if you're not measuring it.
 

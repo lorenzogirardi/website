@@ -1,7 +1,7 @@
 # Application Rate Limit
 
 
-![Rate limit configuration overview](/website/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png)
+![Rate limit configuration overview](/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png)
 
 I needed to implement rate limiting within an application for reasons I'll get into in a follow-up post. When you start thinking about this, you basically have two paths:
 

@@ -1,7 +1,7 @@
 # Maximum Yield with Minimum Expense
 
 
-![Security headers scan result](/website/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png)
+![Security headers scan result](/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png)
 
 Great marketing quote in the title — but honestly, the underlying principle is always true: _keep it simple, keep it safe._
 
@@ -247,7 +247,7 @@ A bit of **awareness**.
 
 Are we safe? Maybe — but better to get an external opinion. [Probely](https://probely.com/) has a good free plan for vulnerability scanning.
 
-![Security headers scan](/website/images/maximum-yield-with-minimum-expense/screencapture-securityheaders.png)
+![Security headers scan](/images/maximum-yield-with-minimum-expense/screencapture-securityheaders.png)
 
 For performance monitoring, I already wrote about [sitespeed.io in Kubernetes](/posts/kubernetes-sitespeedio/).
 

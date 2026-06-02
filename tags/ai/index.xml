@@ -1,5 +1,5 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Ai - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/ai/</link><description>Ai - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 26 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/ai/" rel="self" type="application/rss+xml"/><item><title>Algolia prometheus exporter</title><link>https://lorenzogirardi.github.io/website/posts/algolia-prometheus-exporter/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/algolia-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/website/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.png" referrerpolicy="no-referrer">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Ai - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/ai/</link><description>Ai - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 26 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/ai/" rel="self" type="application/rss+xml"/><item><title>Algolia prometheus exporter</title><link>https://www.k8s.it/posts/algolia-prometheus-exporter/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/algolia-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.png" referrerpolicy="no-referrer">
             </div><h1 id="algolia-usage-exporter--a-case-study-in-ai-assisted-tooling">Algolia Usage Exporter — A Case Study in AI-Assisted Tooling</h1>
 <h2 id="what-is-this">What is this?</h2>
 <p>A lightweight Prometheus exporter that collects usage and infrastructure metrics from the Algolia search API and exposes them at <code>/metrics</code> for Prometheus / Datadog scraping.</p>
@@ -9,8 +9,8 @@
 <li><strong>Infrastructure metrics</strong>: CPU, RAM, SSD utilization, build times (Premium plan only)</li>
 <li><strong>Health signals</strong>: scrape success status, timestamps</li>
 </ul>
-<p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item><item><title>Stargate LLM Gateway</title><link>https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/</link><pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/stargate-llm-gateway/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/website/images/herostargate.png" referrerpolicy="no-referrer">
+<p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item><item><title>Stargate LLM Gateway</title><link>https://www.k8s.it/posts/stargate-llm-gateway/</link><pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/stargate-llm-gateway/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/herostargate.png" referrerpolicy="no-referrer">
             </div><h1 id="stargate-llm-gateway">Stargate LLM Gateway</h1>
 <p>
 </p>
@@ -217,8 +217,8 @@
     style Internal fill:#ccffcc</div><hr>
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="for-claude-code-users">For Claude Code Users</h3>
-<p>Add these environment variables to your shell:</p>]]></description></item><item><title>Redefining E-commerce for the Age of Conversational AI</title><link>https://lorenzogirardi.github.io/website/posts/redefining-ux-for-the-age-of-conversational-ai/</link><pubDate>Sun, 31 Aug 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/redefining-ux-for-the-age-of-conversational-ai/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/website/images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.png" referrerpolicy="no-referrer">
+<p>Add these environment variables to your shell:</p>]]></description></item><item><title>Redefining E-commerce for the Age of Conversational AI</title><link>https://www.k8s.it/posts/redefining-ux-for-the-age-of-conversational-ai/</link><pubDate>Sun, 31 Aug 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/redefining-ux-for-the-age-of-conversational-ai/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.png" referrerpolicy="no-referrer">
             </div><h2 id="introduction">Introduction</h2>
 <p>This article began as a classic exploration into JSON-LD and its impact on structured data for e-commerce. However, as research and experimentation progressed, a fundamental realization emerged: what&rsquo;s actually changing is the entire user experience paradigm. The way end-users interact with digital products is shifting beyond traditional web and app models — toward dynamic, conversational discovery driven by AI.</p>
 <p>For years, the typical customer journey followed one of several well-established routes:</p>]]></description></item></channel></rss>

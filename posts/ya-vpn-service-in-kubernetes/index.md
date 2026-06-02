@@ -198,9 +198,9 @@ Endpoint = <your-public-ip>:31820
 
 ## Test and Results
 
-![WireGuard mobile client connected](/website/images/ya-vpn-service-in-kubernetes/wirecardmobile.png)
+![WireGuard mobile client connected](/images/ya-vpn-service-in-kubernetes/wirecardmobile.png)
 
-![WireGuard desktop client](/website/images/ya-vpn-service-in-kubernetes/wireguarddesktop.png)
+![WireGuard desktop client](/images/ya-vpn-service-in-kubernetes/wireguarddesktop.png)
 
 I ran a 1GB file download over the tunnel and monitored CPU and memory usage on the server side. The numbers were genuinely impressive — minimal CPU overhead, minimal memory footprint. This is where WireGuard earns its reputation. I'm really impressed by the efficiency of this tool. It's another one for the swiss army knife.
 
@@ -235,7 +235,7 @@ Then add the exporter container alongside wireguard:
 
 And the result in Grafana:
 
-![WireGuard Grafana dashboard](/website/images/ya-vpn-service-in-kubernetes/grafana-wireguard.png)
+![WireGuard Grafana dashboard](/images/ya-vpn-service-in-kubernetes/grafana-wireguard.png)
 
 The full updated configuration with monitoring is in the monitoring branch of the repo. If you're running WireGuard in Kubernetes and you're not already watching transfer rates and handshake timestamps per peer, you're flying blind. Add the exporter — it's one container and a few annotations.
 

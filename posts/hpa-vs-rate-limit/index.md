@@ -90,7 +90,7 @@ constantUsersPerSec(10).during(60.seconds),
 rampUsersPerSec(10).to(40).during(5.minutes)
 ```
 
-![No autoscaling - first run](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-20.28.38.png)
+![No autoscaling - first run](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-20.28.38.png)
 
 Result: Pod becomes unresponsive at ~33 rps. CPU hit ~28% of the 300mcpu limit. Active users spike after 33 rps.
 
@@ -104,7 +104,7 @@ rampUsersPerSec(10).to(30).during(4.minutes)
 
 Better stability. **Maximum sustainable: 33 rps on a single pod.**
 
-![No autoscaling - second run](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.15.19.png)
+![No autoscaling - second run](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.15.19.png)
 
 ---
 
@@ -126,31 +126,31 @@ rampUsersPerSec(10).to(99).during(15.minutes)
 > Request timeout  73 ( 0.40%)
 ```
 
-![HPA 33rps failure](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.16.02.png)
+![HPA 33rps failure](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.16.02.png)
 
 System unresponsive at 72% of test completion.
 
 #### 2 pod start - hpa 33rps - 15 min - 99 max requests
 
-![HPA 2 pods](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.17.54.png)
+![HPA 2 pods](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.17.54.png)
 
 Autoscaler cannot support traffic even with 2 pods. Scaling curve stresses the namespace unpredictably.
 
 #### 1 pod start - hpa 30rps - 15 min - 99 max requests
 
-![HPA 30rps](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.19.22.png)
+![HPA 30rps](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.19.22.png)
 
 Scaling works but system crashes at end.
 
 #### 1 pod start - hpa 27rps - 15 min - 99 max requests
 
-![HPA 27rps](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.20.38.png)
+![HPA 27rps](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.20.38.png)
 
 Worse than 30rps. Over-stress causes unpredictable failures.
 
 #### **[optimal]** 1 pod start - hpa 24rps - 15 min - 99 max requests
 
-![HPA 24rps - optimal](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.24.14.png)
+![HPA 24rps - optimal](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.24.14.png)
 
 Successful test. **65% of maximum single-pod capacity (24/33) is the safe autoscaling threshold.**
 
@@ -166,13 +166,13 @@ See: [Application Rate Limiting](/posts/application-rate-limiting)
 
 #### **[optimal]** 1 pod start - hpa 25rps - 15 min - 99 max requests + rate-limit 27
 
-![Internal rate limit optimal](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.30.24.png)
+![Internal rate limit optimal](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.30.24.png)
 
 Starting at 25rps (above the 24rps optimal without rate limiting). Errors are 429s, not 5xxs. App doesn't crash. Slight queue buildup but stable.
 
 #### 1 pod start - hpa 26rps - 15 min - 99 max requests + rate-limit 28
 
-![Internal rate limit 26](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.41.18.png)
+![Internal rate limit 26](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.41.18.png)
 
 One pod restart observed. Near the edge.
 
@@ -190,7 +190,7 @@ Fails.
 
 #### **[optimal]** 1 pod start - hpa 26rps - 15 min - 99 max requests + rate-limit 29 - envoy
 
-![Envoy rate limit optimal](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.44.45.png)
+![Envoy rate limit optimal](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-21.44.45.png)
 
 Better than application-embedded rate limiting at the same rps. Envoy manages traffic externally, preventing internal saturation.
 
@@ -212,17 +212,17 @@ constantUsersPerSec(333).during(2.seconds),       // spike
 constantUsersPerSec(333).during(10.seconds),      // sustained spike
 ```
 
-![Unexpected traffic - spikes](/website/images/hpa-vs-rate-limit/logs-crawl-spikes-three-c-sm-border.png)
+![Unexpected traffic - spikes](/images/hpa-vs-rate-limit/logs-crawl-spikes-three-c-sm-border.png)
 
 #### 3 pod start - hpa 26rps - rate-limit 27 internal
 
-![Unexpected internal](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-22.08.07.png)
+![Unexpected internal](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-22.08.07.png)
 
 Mix of 429s and 5xxs. System unstable during spikes.
 
 #### **[optimal]** 3 pod start - hpa 26rps - rate-limit 27 - envoy
 
-![Unexpected envoy optimal](/website/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-22.30.45.png)
+![Unexpected envoy optimal](/images/hpa-vs-rate-limit/Screenshot-2023-02-16-at-22.30.45.png)
 
 No issues. Envoy absorbs the spikes externally. Python app never sees the overload.
 

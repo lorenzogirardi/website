@@ -23,7 +23,7 @@ Managing this in Nginx ConfigMaps or Ingress annotations becomes a nightmare. Th
 
 ### The Front Controller Pattern
 
-![Front controller architecture](/website/images/kubernetes-apacherr/front-controller.png)
+![Front controller architecture](/images/kubernetes-apacherr/front-controller.png)
 
 A front controller is a business logic layer responsible for:
 

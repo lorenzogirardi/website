@@ -1,7 +1,7 @@
 # Kubernetes Service Mesh
 
 
-![Service mesh flow diagram](/website/images/kubernetes-servicemesh/img_flow.png)
+![Service mesh flow diagram](/images/kubernetes-servicemesh/img_flow.png)
 
 Do we need a service mesh? A few years ago I started evaluating this feature for existing infrastructure. There are many concepts to consider, and many mistakes people commonly make in thinking about what service mesh does.
 
@@ -238,13 +238,13 @@ spec:
           name: c-app-count
 ```
 
-![Hubble network visibility — drops](/website/images/kubernetes-servicemesh/hubble-drop.png)
+![Hubble network visibility — drops](/images/kubernetes-servicemesh/hubble-drop.png)
 
 Hubble shows the dropped traffic visually. With the policy applied, Case 2 gets blocked at the network level — no application changes, no firewall rules on the host, just Kubernetes-native network policy enforced by Cilium.
 
 ### Istio Observability
 
-![Istio Kiali service graph](/website/images/kubernetes-servicemesh/istio-kiali.png)
+![Istio Kiali service graph](/images/kubernetes-servicemesh/istio-kiali.png)
 
 Istio with Kiali provides the service topology view — exactly the observability piece that's genuinely hard to get any other way. When you have dozens of microservices and something is degrading, having a visual map of service-to-service traffic with latency and error rates is invaluable.
 

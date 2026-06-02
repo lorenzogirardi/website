@@ -1,5 +1,5 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Envoy - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/envoy/</link><description>Envoy - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 14 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/envoy/" rel="self" type="application/rss+xml"/><item><title>HPA vs Rate-limit</title><link>https://lorenzogirardi.github.io/website/posts/hpa-vs-rate-limit/</link><pubDate>Tue, 14 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/hpa-vs-rate-limit/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/website/images/hpa-vs-rate-limit/Screenshot_2023-02-14_at_20.15.33-removebg-preview-2.png" referrerpolicy="no-referrer">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Envoy - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/envoy/</link><description>Envoy - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 14 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/envoy/" rel="self" type="application/rss+xml"/><item><title>HPA vs Rate-limit</title><link>https://www.k8s.it/posts/hpa-vs-rate-limit/</link><pubDate>Tue, 14 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/hpa-vs-rate-limit/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/hpa-vs-rate-limit/Screenshot_2023-02-14_at_20.15.33-removebg-preview-2.png" referrerpolicy="no-referrer">
             </div><h2 id="intro">INTRO</h2>
 <p>Strange&hellip; we are using HPA to increase availability and introducing rate limiting to reduce it?</p>
 <p>Well, let&rsquo;s create the context.</p>
@@ -66,8 +66,8 @@
 	</tbody>
 </table>
 <h3 id="rate-limit">Rate Limit</h3>
-<p>A rate limit is the number of API calls an app or user can make within a given time period. If this limit is exceeded — or if CPU or time limits are exceeded — the app may be throttled. Throttled requests fail.</p>]]></description></item><item><title>Application Rate Limit</title><link>https://lorenzogirardi.github.io/website/posts/application-rate-limiting/</link><pubDate>Sat, 11 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/application-rate-limiting/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/website/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png" referrerpolicy="no-referrer">
+<p>A rate limit is the number of API calls an app or user can make within a given time period. If this limit is exceeded — or if CPU or time limits are exceeded — the app may be throttled. Throttled requests fail.</p>]]></description></item><item><title>Application Rate Limit</title><link>https://www.k8s.it/posts/application-rate-limiting/</link><pubDate>Sat, 11 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/application-rate-limiting/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png" referrerpolicy="no-referrer">
             </div><p></p>
 <p>I needed to implement rate limiting within an application for reasons I&rsquo;ll get into in a follow-up post. When you start thinking about this, you basically have two paths:</p>
 <ol>

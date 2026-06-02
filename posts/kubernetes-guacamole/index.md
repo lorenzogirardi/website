@@ -67,11 +67,11 @@ Security enhancements:
 
 ## What It Looks Like
 
-![Guacamole Linux session](/website/images/kubernetes-guacamole/guacamole-linux.png)
+![Guacamole Linux session](/images/kubernetes-guacamole/guacamole-linux.png)
 
 SSH session in a browser tab. No client software. Works from any device.
 
-![Guacamole Windows session](/website/images/kubernetes-guacamole/guacamole-win.png)
+![Guacamole Windows session](/images/kubernetes-guacamole/guacamole-win.png)
 
 Full RDP session. Clipboard sharing, file transfer, everything you'd expect.
 
