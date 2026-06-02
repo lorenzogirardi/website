@@ -20,7 +20,11 @@ E -->|JSON/CSV| F[One-Shot Report]
 E -->|Prometheus Gauges| G["/metrics endpoint"]
 G -->|scrape| H[Prometheus]
 H -->|query| I[Grafana]
-H -->|alert| J[Alertmanager]</div><p>Two modes, same collectors underneath. The <strong>one-shot mode</strong> writes JSON and CSV files for ad-hoc analysis. The <strong>Prometheus mode</strong> starts an HTTP server on <code>:8000</code> and serves live metrics on every scrape.</p><div class=mermaid id=id-2>flowchart TD
+H -->|alert| J[Alertmanager]
+```.
+Two modes, same collectors underneath. The **one-shot mode** writes JSON and CSV files for ad-hoc analysis. The **Prometheus mode** starts an HTTP server on `:8000` and serves live metrics on every scrape.
+```mermaid
+flowchart TD
 subgraph "Prometheus Mode"
 P1["Prometheus scrapes /metrics"] --> P2[ContentfulCollector.collect]
 P2 --> P3[Runs all 3 collectors]
@@ -126,7 +130,7 @@ contentful_exporter_last_scrape_success 1</code></pre></div><h2 id=deploying-on-
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>helm upgrade --install contentful-exporter ./helm/contentful-usage-exporter <span class=se>\
 </span></span></span><span class=line><span class=cl>  --namespace monitoring <span class=se>\
-</span></span></span><span class=line><span class=cl>  --values values.yaml</span></span></code></pre></div></div><p>The deployment runs as non-root user 1000, with liveness and readiness probes on <code>/metrics</code>. The Secret is mounted from an external source — never bake tokens into the chart.</p><h2 id=grafana-dashboards>Grafana Dashboards</h2><p>Once Prometheus is scraping, you can build a dashboard like this:</p><div class=mermaid id=id-3>flowchart LR
+</span></span></span><span class=line><span class=cl>  --values values.yaml</span></span></code></pre></div></div><p>The deployment runs as non-root user 1000, with liveness and readiness probes on <code>/metrics</code>. The Secret is mounted from an external source — never bake tokens into the chart.</p><h2 id=grafana-dashboards>Grafana Dashboards</h2><p>Once Prometheus is scraping, you can build a dashboard like this:</p><div class=mermaid id=id-2>flowchart LR
 subgraph "Grafana Dashboard"
 S1["API Usage (Gauge)"] --> S2["Daily Trend (Bar)"]
 S3["Space Inventory (Stat)"] --> S4["Per-Space Breakdown (Table)"]
