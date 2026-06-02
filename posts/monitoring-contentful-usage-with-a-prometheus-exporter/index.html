@@ -20,7 +20,7 @@ E -->|JSON/CSV| F[One-Shot Report]
 E -->|Prometheus Gauges| G["/metrics endpoint"]
 G -->|scrape| H[Prometheus]
 H -->|query| I[Grafana]
-H -->|alert| J[Alertmanager]</div><p>Two modes, same collectors underneath. The <strong>one-shot mode</strong> writes JSON and CSV files for ad-hoc analysis. The <strong>Prometheus mode</strong> starts an HTTP server on <code>:8000</code> and serves live metrics on every scrape.</p><div class=mermaid id=id-2>flowchart TD
+H -->|alert| J[Alertmanager]</div><script type=module>import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true});</script><p>Two modes, same collectors underneath. The <strong>one-shot mode</strong> writes JSON and CSV files for ad-hoc analysis. The <strong>Prometheus mode</strong> starts an HTTP server on <code>:8000</code> and serves live metrics on every scrape.</p><div class=mermaid id=id-2>flowchart TD
 subgraph "Prometheus Mode"
 P1["Prometheus scrapes /metrics"] --> P2[ContentfulCollector.collect]
 P2 --> P3[Runs all 3 collectors]
