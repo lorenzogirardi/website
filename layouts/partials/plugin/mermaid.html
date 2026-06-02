@@ -1,0 +1,7 @@
+{{- $id := dict "Content" .Content "Scratch" .Page.Scratch | partial "function/id.html" -}}
+<div class="mermaid" id="{{ $id }}">{{ .Content }}</div>
+{{- .Page.Scratch.SetInMap "this" "mermaid" true -}}
+{{- if not (.Page.Scratch.Get "mermaid_js_injected") -}}
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true});</script>
+{{- .Page.Scratch.Set "mermaid_js_injected" true -}}
+{{- end -}}

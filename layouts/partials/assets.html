@@ -144,6 +144,7 @@
     {{- $config = dict "strict" false "delimiters" $delimiters | dict "math" | merge $config -}}
 {{- end -}}
 
+<!-- mermaid-assets-override-active -->
 {{- /* mermaid — use HasShortcode as fallback for Hugo 0.123+ Scratch propagation bug */ -}}
 {{- if or (.Scratch.Get "this").mermaid (.HasShortcode "mermaid") -}}
     {{- $source := $cdn.mermaidJS | default "lib/mermaid/mermaid.min.js" -}}
