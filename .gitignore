@@ -1,3 +1,6 @@
 public/
 resources/
 .hugo_build.lock
+.DS_Store
+.claude/
+content/.DS_Store
