@@ -52,7 +52,7 @@ flowchart LR
     G -->|scrape| H[Prometheus]
     H -->|query| I[Grafana]
     H -->|alert| J[Alertmanager]
-```. 
+```
 
 Two modes, same collectors underneath. The **one-shot mode** writes JSON and CSV files for ad-hoc analysis. The **Prometheus mode** starts an HTTP server on `:8000` and serves live metrics on every scrape.
 
