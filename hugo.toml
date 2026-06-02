@@ -61,7 +61,7 @@ enableEmoji = true
     [params.page.code]
       copy = true
       maxShownLines = 50
-  [params.page]
+  [params.mermaid]
     enable = true
     theme = "neutral"
 
