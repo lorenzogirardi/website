@@ -1,4 +1,20 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Python - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/python/</link><description>Python - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 30 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/python/" rel="self" type="application/rss+xml"/><item><title>Python REST API Test Application</title><link>https://lorenzogirardi.github.io/website/posts/python-rest-api-test-application/</link><pubDate>Fri, 30 Oct 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/python-rest-api-test-application/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Python - Tag - Lorenzo's Blog</title><link>https://lorenzogirardi.github.io/website/tags/python/</link><description>Python - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 02 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lorenzogirardi.github.io/website/tags/python/" rel="self" type="application/rss+xml"/><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://lorenzogirardi.github.io/website/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/website/images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem</li>
+<li>The Architecture</li>
+<li>How It Works</li>
+<li>CLI Mode — One-Shot Reports</li>
+<li>Prometheus Mode — Continuous Monitoring</li>
+<li>Deploying on Kubernetes with Helm</li>
+<li>Grafana Dashboards</li>
+<li>Security Considerations</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item><item><title>Python REST API Test Application</title><link>https://lorenzogirardi.github.io/website/posts/python-rest-api-test-application/</link><pubDate>Fri, 30 Oct 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://lorenzogirardi.github.io/website/posts/python-rest-api-test-application/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/website/images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.png" referrerpolicy="no-referrer">
             </div><p></p>
 <p>When you work in platform engineering focused on infrastructure, you sometimes need to create prototypes specifically built for platform testing purposes. I needed a backend that could simulate real API behavior without coupling to any actual business logic — something I could abuse freely.</p>
