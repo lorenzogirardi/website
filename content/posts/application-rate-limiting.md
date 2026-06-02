@@ -1,8 +1,9 @@
 ---
-title: "Application Rate Limit"
+title: Application Rate Limit
 date: 2023-02-11
 draft: false
-description: "Two ways to implement rate limiting for your application: embedding it in the code vs running it in a sidecar container with Envoy."
+description: "Two ways to implement rate limiting for your application:
+  embedding it in the code vs running it in a sidecar container with Envoy."
 tags:
   - rate-limiting
   - kubernetes
@@ -10,9 +11,6 @@ tags:
   - sidecar
 featuredImage: /images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png
 ---
-
-![Rate limit configuration overview](/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png)
-
 I needed to implement rate limiting within an application for reasons I'll get into in a follow-up post. When you start thinking about this, you basically have two paths:
 
 1. Logic embedded directly in the application code
@@ -22,7 +20,7 @@ Both work. Both have trade-offs. Let me go through each one.
 
 ## The Code Way
 
-This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce _false_ metrics if you're not tracking it carefully.
+This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce *false* metrics if you're not tracking it carefully.
 
 For a Flask application, you add `Flask-Limiter` to `requirements.txt`, then wire it up like this:
 
@@ -109,7 +107,7 @@ It works. But here's the thing I don't like about it:
 
 Service meshes and API gateways embrace this pattern, but you don't need a full infrastructure overhaul for it. You can run a standalone sidecar container just for this purpose.
 
-I chose **Envoy** because it's flexible and I'd already been working with it in Istio environments. Fair warning: it's _really_ flexible — sometimes too much, in a way that makes configuration confusing.
+I chose **Envoy** because it's flexible and I'd already been working with it in Istio environments. Fair warning: it's *really* flexible — sometimes too much, in a way that makes configuration confusing.
 
 ### Kubernetes Pod Configuration
 
@@ -319,6 +317,6 @@ Notice the `x-local-rate-limit: true` header on the 429 — that's Envoy telling
 
 ## Conclusion
 
-Both solutions work. The difference is _where_ the impact lands. The code way is simpler to set up but bleeds into your app's resource budget and can confuse your autoscaling metrics. The sidecar way isolates the function cleanly — Envoy handles the gate, and the app just processes what gets through. If you need rate limiting that doesn't interfere with your application's own performance story, the sidecar approach gives you exactly that.
+Both solutions work. The difference is *where* the impact lands. The code way is simpler to set up but bleeds into your app's resource budget and can confuse your autoscaling metrics. The sidecar way isolates the function cleanly — Envoy handles the gate, and the app just processes what gets through. If you need rate limiting that doesn't interfere with your application's own performance story, the sidecar approach gives you exactly that.
 
 I'll share the full context for why I needed this in the first place in an upcoming post.
