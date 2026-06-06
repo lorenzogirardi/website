@@ -1,0 +1,997 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem - Lorenzo's Blog</title><meta name=Description content="Agentic AI tools let non-technical people build working apps. That's great. Where do those apps go? A deep dive into building a safe, self-contained Kubernetes environment with an explicit platform contract for vibe-coded applications."><meta property="og:url" content="https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/"><meta property="og:site_name" content="Lorenzo's Blog"><meta property="og:title" content="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem"><meta property="og:description" content="Agentic AI tools let non-technical people build working apps. That's great. Where do those apps go? A deep dive into building a safe, self-contained Kubernetes environment with an explicit platform contract for vibe-coded applications."><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-06-06T00:00:00+00:00"><meta property="article:modified_time" content="2026-06-06T00:00:00+00:00"><meta property="article:tag" content="Kubernetes"><meta property="article:tag" content="Ai"><meta property="article:tag" content="Automation"><meta property="article:tag" content="Monitoring"><meta property="article:tag" content="Containers"><meta property="article:tag" content="Security"><meta name=twitter:card content="summary"><meta name=twitter:title content="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem"><meta name=twitter:description content="Agentic AI tools let non-technical people build working apps. That's great. Where do those apps go? A deep dive into building a safe, self-contained Kubernetes environment with an explicit platform contract for vibe-coded applications."><meta name=application-name content="My cool site"><meta name=apple-mobile-web-app-title content="My cool site"><meta name=referrer content="no-referrer"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/><link rel=prev href=https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/www.k8s.it\/posts\/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem\/"},"genre":"posts","keywords":"kubernetes, ai, automation, monitoring, containers, security, vibe, vibe coding, vibe apps, skills, ai4ai, contracts, platform contract","wordcount":5500,"url":"https:\/\/www.k8s.it\/posts\/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem\/","datePublished":"2026-06-06T00:00:00+00:00","dateModified":"2026-06-06T00:00:00+00:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"Lorenzo Girardi"},"description":"Agentic AI tools let non-technical people build working apps. That's great. Where do those apps go? A deep dive into building a safe, self-contained Kubernetes environment with an explicit platform contract for vibe-coded applications."}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script>const query=window.matchMedia("(prefers-color-scheme: dark)");function applyTheme(){let e=window.localStorage?.getItem("theme")||"auto",t=e==="dark"||e==="auto"&&query.matches;document.body.setAttribute("theme",t?"dark":"light"),document.body.setAttribute("cfg-theme",e)}applyTheme(),query.addEventListener("change",applyTheme)</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="Lorenzo's Blog">Lorenzo's Blog</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>Posts </a><a class=menu-item href=/tags/>Tags </a><a class=menu-item href=/whoami/>Whoami </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-spin" aria-hidden=true></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="Lorenzo's Blog">Lorenzo's Blog</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>Posts</a><a class=menu-item href=/tags/ title>Tags</a><a class=menu-item href=/whoami/ title>Whoami</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://github.com/lorenzogirardi title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle" aria-hidden=true></i>Lorenzo Girardi</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt" aria-hidden=true></i>&nbsp;<time datetime=2026-06-06>2026-06-06</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden=true></i>&nbsp;5500 words&nbsp;
+<i class="far fa-clock" aria-hidden=true></i>&nbsp;26 minutes&nbsp;</div></div><div class=featured-image><img class=lazyload src=/svg/loading.min.svg data-src=/images/vibeenv.png data-srcset="/images/vibeenv.png, /images/vibeenv.png 1.5x, /images/vibeenv.png 2x" data-sizes=auto alt=/images/vibeenv.png title="Agentic AI tools let non-technical people build working apps. That's great. Where do those apps go? A deep dive into building a safe, self-contained Kubernetes environment with an explicit platform contract for vibe-coded applications."></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><ul><li><a href=#table-of-contents>Table of Contents</a></li></ul></li><li><a href=#the-shift-is-already-happening>The Shift Is Already Happening</a></li><li><a href=#the-problem-nobody-prepared-for>The Problem Nobody Prepared For</a></li><li><a href=#the-design-principle-safe-by-default>The Design Principle: Safe by Default</a></li><li><a href=#the-platform-contract--what-every-app-must-be>The Platform Contract — What Every App Must Be</a><ul><li><a href=#supported-languages-and-base-images>Supported Languages and Base Images</a></li><li><a href=#supported-components>Supported Components</a></li><li><a href=#t-shirt-sizing>T-shirt Sizing</a></li><li><a href=#port-contract>Port Contract</a></li><li><a href=#health-endpoints>Health Endpoints</a></li><li><a href=#secrets-sealed-always>Secrets: Sealed, Always</a></li><li><a href=#images-commit-sha-never-latest>Images: Commit SHA, Never Latest</a></li><li><a href=#network-default-deny-every-time>Network: Default Deny, Every Time</a></li></ul></li><li><a href=#the-three-tier-monitoring-contract>The Three-Tier Monitoring Contract</a><ul><li><a href=#system-tier--automatic>System Tier — Automatic</a></li><li><a href=#framework-tier--app-metrics>Framework Tier — App Metrics</a></li><li><a href=#business-tier--what-the-app-actually-does>Business Tier — What the App Actually Does</a></li><li><a href=#logging-contract>Logging Contract</a></li></ul></li><li><a href=#the-review-gate--35-checks-before-deploy>The Review Gate — 35+ Checks Before Deploy</a></li><li><a href=#the-helm-chart--five-questions-full-platform>The Helm Chart — Five Questions, Full Platform</a></li><li><a href=#the-cicd-pipeline--ai-app-meets-gitops>The CI/CD Pipeline — AI App Meets GitOps</a></li><li><a href=#the-skill-pipeline--ai-onboarding-an-ai-app>The Skill Pipeline — AI Onboarding an AI App</a></li><li><a href=#the-raci-collapse>The RACI Collapse</a></li><li><a href=#conclusion>Conclusion</a></li></ul></nav></div></div><div class=content id=content><h3 id=table-of-contents>Table of Contents</h3><ul><li>The Shift Is Already Happening</li><li>The Problem Nobody Prepared For</li><li>The Design Principle: Safe by Default</li><li>The Platform Contract — What Every App Must Be<ul><li>Supported Languages and Base Images</li><li>Supported Components</li><li>T-shirt Sizing</li><li>Port Contract</li><li>Health Endpoints</li><li>Secrets: Sealed, Always</li><li>Images: Commit SHA, Never Latest</li><li>Network: Default Deny, Every Time</li></ul></li><li>The Three-Tier Monitoring Contract<ul><li>System Tier — Automatic</li><li>Framework Tier — App Metrics</li><li>Business Tier — What the App Actually Does</li></ul></li><li>The Review Gate — 35+ Checks Before Deploy</li><li>The Helm Chart — Five Questions, Full Platform</li><li>The CI/CD Pipeline — AI App Meets GitOps</li><li>The Skill Pipeline — AI Onboarding an AI App</li><li>The RACI Collapse</li><li>Conclusion</li></ul><hr><p>Here we are. Somewhere in the last twelve months, something quietly changed.</p><h2 id=the-shift-is-already-happening>The Shift Is Already Happening</h2><p>People who have never written a line of code in their professional lives are now producing working software. Not prototypes in the &ldquo;I dragged boxes around in a no-code tool&rdquo; sense. Real applications: Python backends with data models and business logic, React frontends that talk to APIs, database schemas that reflect years of domain knowledge no engineer could have extracted through interviews alone.</p><p>They built these with Claude, Cursor, Copilot. They described what they wanted in plain language. The agent coded it. They reviewed the output the way they review a Word document — checking the content, not the syntax.</p><p>This is not hype. I&rsquo;ve watched it happen.</p><p>The question the industry keeps asking is &ldquo;will AI replace developers?&rdquo; That&rsquo;s the wrong question, and it&rsquo;s wasting time. The right question is: <strong>when non-technical people can build software, what are the operational consequences?</strong></p><p>Because there are operational consequences. Real ones.</p><hr><h2 id=the-problem-nobody-prepared-for>The Problem Nobody Prepared For</h2><p>Run an AI coding bootcamp. Give a group of non-technical employees — analysts, brand managers, merchandisers, finance people — access to Claude or Cursor for a week. Ask them to build something that solves a real problem in their job.</p><p>They will build things. Things that actually run.</p><p>Then ask: where do you put them?</p><p>The options are obvious, and they are all wrong.</p><p><strong>Their laptop.</strong> The app lives. Nobody else can use it. It dies when the laptop sleeps.</p><p><strong>A shared development server.</strong> Everyone is root. One person&rsquo;s experiment kills everyone else&rsquo;s. Data from different projects bleeds together. There is no deployment process — it&rsquo;s <code>scp</code> and <code>nohup</code>. Eventually someone pastes real data into a seed script and you have a security incident.</p><p><strong>Production.</strong> Naaaa. A vibe-coded app — built by someone who doesn&rsquo;t know what a liveness probe is, whose &ldquo;error handling&rdquo; is whatever Claude decided to generate — in production, serving real users, touching real data. The support cost alone would be catastrophic.</p><p>None of these work. And if you give people the ability to build software without giving them a safe place to run it, you have created a problem, not solved one.</p><p><strong>Vibe-Env</strong> is the answer: a purpose-built Kubernetes environment where vibe-coded apps can be deployed, tested, and shown to stakeholders — with every guardrail enforced by infrastructure, not documentation.</p><hr><h2 id=the-design-principle-safe-by-default>The Design Principle: Safe by Default</h2><p>&ldquo;Safe&rdquo; gets applied to a lot of things in tech that are not safe. So let me be specific.</p><p>Every protection in this platform is <strong>enforced by infrastructure</strong>, not left to the app creator to implement correctly. A non-technical user cannot be expected to configure NetworkPolicies, know that <code>latest</code> image tags are mutable, understand why plain Kubernetes Secrets in Git are readable by anyone with repo access, or choose non-root containers.</p><p>The platform does all of this automatically. Where it cannot be automated, it blocks deployment if the condition is not met. The Helm chart validates required fields and fails loudly. The CI pipeline blocks on secrets and critical CVEs. The review step runs 35+ checks. The cluster blocks internet egress entirely.</p><p>Safe by default. No exceptions.</p><div class=mermaid id=id-1>graph TB
+vpn(["🔒 VPN&lt;br/>corporate only&lt;br/>no public internet"])
+subgraph cluster["k3s Cluster — private VIP via MetalLB"]
+traefik["Traefik Ingress&lt;br/>MetalLB VIP"]
+subgraph obs["vibe-observability namespace"]
+grafana["Grafana&lt;br/>dashboards"]
+vm["VictoriaMetrics&lt;br/>metrics pull"]
+loki["Loki&lt;br/>+ Minio&lt;br/>7d retention"]
+otel["OTEL&lt;br/>Collector"]
+promtail["Promtail&lt;br/>DaemonSet"]
+end
+subgraph nsA["&amp;lt;prefix&amp;gt;-vibe-&amp;lt;app-A&amp;gt;"]
+appA["app"]
+dbA[("DB&lt;br/>PVC")]
+appA --- dbA
+end
+subgraph nsB["&amp;lt;prefix&amp;gt;-vibe-&amp;lt;app-B&amp;gt;"]
+appB["app"]
+dbB[("DB&lt;br/>PVC")]
+appB --- dbB
+end
+subgraph nsN["&amp;lt;prefix&amp;gt;-vibe-&amp;lt;app-N&amp;gt;"]
+appN["app"]
+dbN[("DB&lt;br/>PVC")]
+appN --- dbN
+end
+end
+egress["🚫 Egress blocked&lt;br/>cluster-wide&lt;br/>Platform/Arch owns"]
+vpn --> traefik
+traefik --> appA
+traefik --> appB
+traefik --> appN
+appA -.->|"/metrics + logs"| obs
+appB -.->|"/metrics + logs"| obs
+appN -.->|"/metrics + logs"| obs
+promtail -.->|"ship stdout"| loki
+cluster -.- egress
+style obs fill:#fef3c7,stroke:#d97706
+style nsA fill:#dbeafe,stroke:#3b82f6
+style nsB fill:#dbeafe,stroke:#3b82f6
+style nsN fill:#dbeafe,stroke:#3b82f6
+style egress fill:#fee2e2,stroke:#dc2626</div><script type=module>import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true});</script><hr><h2 id=the-platform-contract--what-every-app-must-be>The Platform Contract — What Every App Must Be</h2><p>The contract is the center of the platform. It is not a style guide or a recommendation. It is a binary gate: the app meets it, or it does not deploy.</p><h3 id=supported-languages-and-base-images>Supported Languages and Base Images</h3><p>All base images come from an internal Harbor mirror. Docker Hub is blocked at cluster egress. The approved base images are Debian-based — never Alpine. musl libc compatibility issues with native extensions and certain runtimes cause subtle runtime failures that non-technical creators cannot debug.</p><table><thead><tr><th>Language</th><th>Runtime</th><th>Base Image (Harbor mirror)</th><th>Notes</th></tr></thead><tbody><tr><td>TypeScript / JavaScript</td><td>Node.js 22</td><td><code>mirror/node:22-slim</code></td><td>Default for new apps</td></tr><tr><td>TypeScript / JavaScript</td><td>Node.js 20</td><td><code>mirror/node:20-slim</code></td><td>LTS — use if locked</td></tr><tr><td>Python</td><td>Python 3.12</td><td><code>mirror/python:3.12-slim</code></td><td>Debian-slim</td></tr><tr><td>Python</td><td>Python 3.11</td><td><code>mirror/python:3.11-slim</code></td><td></td></tr><tr><td>Go</td><td>Go 1.23</td><td><code>mirror/golang:1.23-bookworm</code> (build) + <code>mirror/gcr.io/distroless/static-debian12</code> (run)</td><td>Multi-stage mandatory</td></tr><tr><td>Java / Kotlin / Scala</td><td>JVM 21</td><td><code>mirror/eclipse-temurin:21-jre-jammy</code></td><td>Ubuntu-jammy</td></tr><tr><td>Java / Kotlin / Scala</td><td>JVM 17</td><td><code>mirror/eclipse-temurin:17-jre-jammy</code></td><td>LTS</td></tr><tr><td>Rust</td><td>Rust 1.78</td><td><code>mirror/rust:1.78-slim-bookworm</code> (build) + <code>mirror/gcr.io/distroless/static-debian12</code> (run)</td><td>Multi-stage</td></tr><tr><td>PHP</td><td>PHP 8.3</td><td><code>mirror/php:8.3-fpm-bookworm</code></td><td></td></tr></tbody></table><p>Multi-stage Dockerfile examples per runtime:</p><p><strong>Node.js (TypeScript)</strong></p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-dockerfile"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=s>mirror/node:22-slim</span><span class=w> </span><span class=k>AS</span><span class=w> </span><span class=s>builder</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>WORKDIR</span><span class=w> </span><span class=s>/app</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> package*.json tsconfig.json ./<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>RUN</span> npm install<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> src ./src<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>RUN</span> npm run build<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=s>mirror/node:22-slim</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>RUN</span> apt-get update <span class=o>&amp;&amp;</span> apt-get install -y --no-install-recommends curl <span class=se>\
+</span></span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> rm -rf /var/lib/apt/lists/* <span class=se>\
+</span></span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> groupadd -r appuser <span class=o>&amp;&amp;</span> useradd -r -g appuser appuser<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>WORKDIR</span><span class=w> </span><span class=s>/app</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> package*.json ./<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>RUN</span> npm install --production<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> --from<span class=o>=</span>builder /app/dist ./dist<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>USER</span><span class=w> </span><span class=s>appuser</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>EXPOSE</span><span class=w> </span><span class=s>8081</span> <span class=m>8082</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>CMD</span> <span class=p>[</span><span class=s2>&#34;npm&#34;</span><span class=p>,</span> <span class=s2>&#34;start&#34;</span><span class=p>]</span></span></span></code></pre></div></div><p><strong>Python</strong></p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-dockerfile"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=s>mirror/python:3.12-slim</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>WORKDIR</span><span class=w> </span><span class=s>/app</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> requirements.txt .<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>RUN</span> pip install --no-cache-dir -r requirements.txt <span class=se>\
+</span></span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> groupadd -r appuser <span class=o>&amp;&amp;</span> useradd -r -g appuser appuser<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> . .<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>USER</span><span class=w> </span><span class=s>appuser</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>EXPOSE</span><span class=w> </span><span class=s>8081</span> <span class=m>8082</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>CMD</span> <span class=p>[</span><span class=s2>&#34;sh&#34;</span><span class=p>,</span> <span class=s2>&#34;-c&#34;</span><span class=p>,</span> <span class=s2>&#34;python mgmt_server.py &amp; uvicorn app.main:app --host 0.0.0.0 --port 8081&#34;</span><span class=p>]</span></span></span></code></pre></div></div><p><strong>Go (multi-stage, distroless runtime)</strong></p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-dockerfile"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=s>mirror/golang:1.23-bookworm</span><span class=w> </span><span class=k>AS</span><span class=w> </span><span class=s>builder</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>WORKDIR</span><span class=w> </span><span class=s>/app</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> go.* ./<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>RUN</span> go mod download<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> . .<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>RUN</span> <span class=nv>CGO_ENABLED</span><span class=o>=</span><span class=m>0</span> <span class=nv>GOOS</span><span class=o>=</span>linux go build -o /app/server .<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=s>mirror/gcr.io/distroless/static-debian12</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>COPY</span> --from<span class=o>=</span>builder /app/server /server<span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>EXPOSE</span><span class=w> </span><span class=s>8081</span> <span class=m>8082</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=k>CMD</span> <span class=p>[</span><span class=s2>&#34;/server&#34;</span><span class=p>]</span></span></span></code></pre></div></div><p>If a runtime is not in the table, it must be mirrored to Harbor before use. The creator opens a request to Platform; Platform mirrors it; Platform provides the Harbor path. The creator never pulls from the internet.</p><h3 id=supported-components>Supported Components</h3><p>Every component a vibe app can use is pre-defined, pre-sized, and pre-wired:</p><table><thead><tr><th>Component</th><th>Image (Harbor mirror)</th><th>Purpose</th></tr></thead><tbody><tr><td><strong>app</strong></td><td>creator-built, pushed to Harbor</td><td>main application</td></tr><tr><td><strong>nginx</strong></td><td><code>mirror/nginx:1.27</code></td><td>reverse proxy, static files, SPA fallback</td></tr><tr><td><strong>postgres</strong></td><td><code>mirror/postgres:16</code></td><td>relational database</td></tr><tr><td><strong>mongo</strong></td><td><code>mirror/mongo:7.0</code></td><td>document database</td></tr><tr><td><strong>redis</strong></td><td><code>mirror/redis:7.4</code></td><td>cache, sessions</td></tr><tr><td><strong>rabbitmq</strong></td><td><code>mirror/rabbitmq:3.13-management</code></td><td>message broker</td></tr><tr><td><strong>postgres-exporter</strong></td><td><code>mirror/prometheuscommunity/postgres-exporter:v0.15.0</code></td><td>Prometheus metrics for PostgreSQL</td></tr><tr><td><strong>mongodb-exporter</strong></td><td><code>mirror/percona/mongodb_exporter:0.40</code></td><td>Prometheus metrics for MongoDB</td></tr><tr><td><strong>redis-exporter</strong></td><td><code>mirror/oliver006/redis_exporter:v1.63.0</code></td><td>Prometheus metrics for Redis</td></tr></tbody></table><p>All in the same namespace. All wired together by the Helm chart. The creator chooses which ones they need; the platform wires the rest.</p><h3 id=t-shirt-sizing>T-shirt Sizing</h3><p>Resource limits are not optional. Every container must declare requests and limits. The platform provides five standard sizes:</p><table><thead><tr><th>Size</th><th>CPU request</th><th>CPU limit</th><th>Memory request</th><th>Memory limit</th><th>Use case</th></tr></thead><tbody><tr><td><code>xs</code></td><td>50m</td><td>200m</td><td>64Mi</td><td>128Mi</td><td>static sites, minimal APIs</td></tr><tr><td><code>sm</code></td><td>100m</td><td>300m</td><td>128Mi</td><td>256Mi</td><td>light web apps</td></tr><tr><td><code>md</code></td><td>200m</td><td>500m</td><td>256Mi</td><td>512Mi</td><td>standard apps (default)</td></tr><tr><td><code>lg</code></td><td>500m</td><td>1000m</td><td>512Mi</td><td>1Gi</td><td>data-heavy apps</td></tr><tr><td><code>xl</code></td><td>1000m</td><td>2000m</td><td>1Gi</td><td>2Gi</td><td>intensive workloads</td></tr></tbody></table><p>DB components always get <code>md</code> minimum, regardless of app size.</p><p>The non-technical creator does not set CPU and memory values in YAML. They pick a t-shirt size. The Helm chart translates it:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># From values.yaml — the creator sees this</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>app</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>size</span><span class=p>:</span><span class=w> </span><span class=l>md     </span><span class=w> </span><span class=c># xs / sm / md / lg / xl</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=c># What the Helm template renders into the Deployment</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>resources</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>requests</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;200m&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;256Mi&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>limits</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;500m&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;512Mi&#34;</span></span></span></code></pre></div></div><h3 id=port-contract>Port Contract</h3><p>Two ports, hard requirements:</p><table><thead><tr><th>Port</th><th>Name</th><th>Purpose</th><th>Exposed externally?</th></tr></thead><tbody><tr><td><strong>8081</strong></td><td><code>http</code></td><td>Application traffic — API, frontend, everything the user interacts with</td><td>Yes — via Ingress</td></tr><tr><td><strong>8082</strong></td><td><code>mgmt</code></td><td>Health probes, metrics — cluster-internal only</td><td><strong>Never</strong></td></tr></tbody></table><p>Port 8082 is never reachable from outside the cluster. The review gate (check B6) fails deployment if the Ingress routes traffic to port 8082.</p><h3 id=health-endpoints>Health Endpoints</h3><p>Every long-running app must expose four endpoints on port 8082. The port is management-only and never routed externally.</p><table><thead><tr><th>Endpoint</th><th>Response 200</th><th>Response 503</th></tr></thead><tbody><tr><td><code>GET /readiness</code></td><td><code>{"status":"UP"}</code></td><td><code>{"status":"OUT_OF_SERVICE"}</code></td></tr><tr><td><code>GET /liveness</code></td><td><code>{"status":"UP"}</code></td><td><code>{"status":"DOWN"}</code></td></tr><tr><td><code>GET /info</code></td><td><code>{"app":"slug","version":"sha"}</code></td><td>—</td></tr><tr><td><code>GET /shutdown</code></td><td><code>null</code></td><td>—</td></tr></tbody></table><p>The platform adds <code>readinessProbe</code> and <code>livenessProbe</code> to every Deployment automatically, pointing at port 8082. If the app can&rsquo;t implement these endpoints, the platform provides an nginx sidecar that responds to them without touching the app code:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># values.yaml — enable the mgmt sidecar if app can&#39;t implement health endpoints</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>app</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mgmtSidecar</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span></span></span></code></pre></div></div><p>The sidecar nginx config is auto-generated:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-nginx"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-nginx data-lang=nginx><span class=line><span class=cl><span class=c1># nginx-mgmt-sidecar ConfigMap (auto-generated by Helm)
+</span></span></span><span class=line><span class=cl><span class=k>server</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kn>listen</span> <span class=mi>8082</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kn>location</span> <span class=s>/readiness</span> <span class=p>{</span> <span class=kn>return</span> <span class=mi>200</span> <span class=s>&#39;</span><span class=p>{</span><span class=kn>&#34;status&#34;:&#34;UP&#34;}&#39;</span><span class=p>;</span> <span class=kn>add_header</span> <span class=s>Content-Type</span> <span class=s>application/json</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=kn>location</span> <span class=s>/liveness</span>  <span class=p>{</span> <span class=kn>return</span> <span class=mi>200</span> <span class=s>&#39;</span><span class=p>{</span><span class=kn>&#34;status&#34;:&#34;UP&#34;}&#39;</span><span class=p>;</span> <span class=kn>add_header</span> <span class=s>Content-Type</span> <span class=s>application/json</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=kn>location</span> <span class=s>/shutdown</span>  <span class=p>{</span> <span class=kn>return</span> <span class=mi>200</span> <span class=s>&#39;null&#39;</span><span class=p>;</span> <span class=kn>add_header</span> <span class=s>Content-Type</span> <span class=s>application/json</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=kn>location</span> <span class=s>/info</span>      <span class=p>{</span> <span class=kn>return</span> <span class=mi>200</span> <span class=s>&#39;</span><span class=p>{</span><span class=kn>&#34;git&#34;:{&#34;branch&#34;:&#34;unknown&#34;}}&#39;</span><span class=p>;</span> <span class=kn>add_header</span> <span class=s>Content-Type</span> <span class=s>application/json</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><h3 id=secrets-sealed-always>Secrets: Sealed, Always</h3><p>Plain Kubernetes Secrets in Git are not secret. Anyone with repository read access can <code>base64 -d</code> them. This is a well-known problem and it still shows up in incident reports every month.</p><p>Vibe-Env uses <strong>Bitnami Sealed Secrets</strong>. The full flow — from plaintext to running pod — never exposes the secret in Git or in the pod spec:</p><div class=mermaid id=id-2>flowchart LR
+subgraph platform["Platform Team (onboarding)"]
+plain["plain Secret manifest&lt;br/>(never committed)"]
+ks["kubeseal CLI&lt;br/>+ cluster public key"]
+plain -->|seal| ks
+end
+subgraph git["Git Repo (safe to commit)"]
+sealed["SealedSecret YAML&lt;br/>encryptedData: AgB3x..."]
+end
+subgraph cluster["k3s Cluster"]
+direction TB
+argocd2["ArgoCD&lt;br/>sync"]
+controller["Sealed Secrets&lt;br/>controller&lt;br/>(vibe-observability)"]
+k8ssecret["Kubernetes Secret&lt;br/>(in-memory, namespace-scoped)"]
+app2["App Pod&lt;br/>env var via secretKeyRef"]
+argocd2 -->|"apply SealedSecret"| controller
+controller -->|"decrypt with cluster private key"| k8ssecret
+k8ssecret -->|"secretKeyRef"| app2
+end
+keybackup[("🔑 Cluster private key&lt;br/>BACKUP REQUIRED&lt;br/>kube-system/sealed-secrets-key")]
+ks -->|output| sealed
+sealed -->|"git push → ArgoCD detects"| argocd2
+controller -.->|"key lives here"| keybackup
+never["🚫 NEVER&lt;br/>plain Secret in Git&lt;br/>credentials in ConfigMap&lt;br/>credentials in Dockerfile ENV&lt;br/>credentials in Deployment spec"]
+style platform fill:#dbeafe,stroke:#3b82f6
+style git fill:#dcfce7,stroke:#16a34a
+style cluster fill:#fef3c7,stroke:#d97706
+style keybackup fill:#f3e8ff,stroke:#9333ea
+style never fill:#fee2e2,stroke:#dc2626</div><p>The sealing workflow:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 1. Create a plain Secret — locally, NEVER commit this file</span>
+</span></span><span class=line><span class=cl>kubectl create secret generic my-app-secret <span class=se>\
+</span></span></span><span class=line><span class=cl>  --from-literal<span class=o>=</span><span class=nv>DATABASE_URL</span><span class=o>=</span><span class=s2>&#34;postgres://user:pass@my-app-postgres:5432/appdb&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  --from-literal<span class=o>=</span><span class=nv>API_KEY</span><span class=o>=</span><span class=s2>&#34;sk-...&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  --dry-run<span class=o>=</span>client -o yaml &gt; /tmp/secret-plain.yaml
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 2. Seal with cluster public key — output is safe to commit</span>
+</span></span><span class=line><span class=cl>kubeseal <span class=se>\
+</span></span></span><span class=line><span class=cl>  --cert cluster.pub <span class=se>\
+</span></span></span><span class=line><span class=cl>  --namespace platform-vibe-my-app <span class=se>\
+</span></span></span><span class=line><span class=cl>  --format yaml <span class=se>\
+</span></span></span><span class=line><span class=cl>  &lt; /tmp/secret-plain.yaml &gt; k8s/02-sealed-secrets.yaml
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 3. Delete the plaintext immediately</span>
+</span></span><span class=line><span class=cl>rm /tmp/secret-plain.yaml
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 4. Commit the sealed version — ArgoCD syncs it</span>
+</span></span><span class=line><span class=cl>git add k8s/02-sealed-secrets.yaml <span class=o>&amp;&amp;</span> git commit -m <span class=s2>&#34;chore: add app secret&#34;</span></span></span></code></pre></div></div><p>The encrypted SealedSecret is namespace-scoped and cluster-scoped — it cannot be decrypted in a different namespace or on a different cluster. Safe to commit to GitHub.</p><p>The Deployment template injects secrets only via <code>secretKeyRef</code>. No plaintext appears anywhere in the pod spec:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>env</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>DATABASE_URL</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>valueFrom</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>secretKeyRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>my-app-secret</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>key</span><span class=p>:</span><span class=w> </span><span class=l>DATABASE_URL</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>API_KEY</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>valueFrom</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>secretKeyRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>my-app-secret</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>key</span><span class=p>:</span><span class=w> </span><span class=l>API_KEY</span></span></span></code></pre></div></div><p>E1 in the review gate: a plain <code>Secret</code> kind found in Git is a CRITICAL violation. Deployment is blocked and a security incident is raised.</p><h3 id=images-commit-sha-never-latest>Images: Commit SHA, Never Latest</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>harbor.internal.example.com/my-app:a3f91bc  </span><span class=w> </span><span class=c># correct — immutable</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>harbor.internal.example.com/my-app:latest   </span><span class=w> </span><span class=c># CRITICAL violation — deploy blocked</span></span></span></code></pre></div></div><p><code>latest</code> is a mutable tag. Between deploy and the next pod restart, a new push can silently replace what the tag points to. In an environment maintained by someone without an on-call rotation, a silent image change is the kind of thing that causes a Friday afternoon incident that nobody looks at until Monday.</p><p>The Helm template enforces this at render time:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>image</span><span class=p>:</span><span class=w> </span>{{<span class=w> </span><span class=l>.Values.cluster.registry }}/{{ .Values.app.image.repository }}:{{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=l>.Values.app.image.tag | required &#34;app.image.tag is required — use commit SHA, never &#39;latest&#39;&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl>}}</span></span></code></pre></div></div><h3 id=network-default-deny-every-time>Network: Default Deny, Every Time</h3><p>Every namespace has the same runtime anatomy: nginx reverse proxy in front, app container on two ports (8081 for traffic, 8082 for management only), stateful components only reachable via explicit NetworkPolicy, and the observability stack cross-namespace but allowed only for metrics scrape and log shipping.</p><div class=mermaid id=id-3>flowchart TB
+user(["👤 VPN User"])
+traefik["Traefik Ingress"]
+user -->|"HTTPS internal URL"| traefik
+subgraph ns["&amp;lt;prefix&amp;gt;-vibe-&amp;lt;app-slug&amp;gt; namespace"]
+direction TB
+deny["🛡 default-deny-ingress NetworkPolicy&lt;br/>applied FIRST — mandatory"]
+subgraph web["webserver"]
+nginx["nginx :80&lt;br/>reverse proxy&lt;br/>static files / SPA"]
+end
+subgraph application["application"]
+app["app container&lt;br/>:8081 http&lt;br/>:8082 mgmt — NEVER public&lt;br/>&lt;br/>/readiness /liveness&lt;br/>/metrics /info"]
+end
+subgraph storage["stateful components (optional)"]
+postgres[("PostgreSQL&lt;br/>:5432&lt;br/>PVC&lt;br/>Recreate")]
+mongo[("MongoDB&lt;br/>:27017&lt;br/>PVC&lt;br/>Recreate")]
+redis[("Redis&lt;br/>:6379&lt;br/>PVC")]
+rmq["RabbitMQ&lt;br/>:5672&lt;br/>PVC"]
+end
+subgraph exporters["metrics exporters"]
+pgexp["postgres-exporter&lt;br/>:9187"]
+mgexp["mongo-exporter&lt;br/>:9216"]
+end
+end
+subgraph observability["vibe-observability (cross-namespace)"]
+vm["VictoriaMetrics"]
+loki["Loki"]
+otel["OTEL Collector"]
+end
+traefik -->|"allow-ingress-controller :80"| nginx
+nginx -->|"proxy :8081"| app
+app -->|"allow-app-to-db"| postgres
+app -->|"OR"| mongo
+app -.->|"allow-app-to-redis"| redis
+app -.->|"allow-app-to-rabbitmq"| rmq
+postgres --- pgexp
+mongo --- mgexp
+app -->|"allow-metrics-scrape :8081"| vm
+pgexp -->|"allow-metrics-scrape :9187"| vm
+mgexp -->|"allow-metrics-scrape :9216"| vm
+app -->|"stdout JSON → Promtail"| loki
+app -->|"allow-otel-egress :4318"| otel
+style deny fill:#fee2e2,stroke:#dc2626
+style web fill:#dbeafe,stroke:#3b82f6
+style application fill:#dcfce7,stroke:#16a34a
+style storage fill:#fef3c7,stroke:#d97706
+style exporters fill:#f3e8ff,stroke:#9333ea
+style observability fill:#fef3c7,stroke:#d97706</div><p>First manifest applied to every namespace, before anything else:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 01-network-policies.yaml — applied FIRST, mandatory</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>NetworkPolicy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>default-deny-ingress</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>platform-vibe-my-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>podSelector</span><span class=p>:</span><span class=w> </span>{}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>policyTypes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>Ingress</span></span></span></code></pre></div></div><p>Every allowed path requires an explicit policy. Five standard policies are generated by the Helm chart for a typical app with PostgreSQL:</p><div class="code-block code-line-numbers" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=c># Traefik (kube-system) → app:8081</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>NetworkPolicy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>allow-ingress-controller</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>platform-vibe-my-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>podSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>matchLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>my-app-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ingress</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>from</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>namespaceSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>matchLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>kubernetes.io/metadata.name</span><span class=p>:</span><span class=w> </span><span class=l>kube-system</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>podSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>matchLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>app.kubernetes.io/name</span><span class=p>:</span><span class=w> </span><span class=l>traefik</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>8081</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=c># app → postgres:5432</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>NetworkPolicy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>allow-app-to-db</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>platform-vibe-my-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>podSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>matchLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>my-app-postgres</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ingress</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>from</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>podSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>matchLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>my-app-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>5432</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=c># VictoriaMetrics (observability ns) → app:8081 — metrics scrape</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>NetworkPolicy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>allow-metrics-scrape-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>platform-vibe-my-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>podSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>matchLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>my-app-app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ingress</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>from</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>namespaceSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>matchLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>kubernetes.io/metadata.name</span><span class=p>:</span><span class=w> </span><span class=l>platform-vibe-observability</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>8081</span></span></span></code></pre></div></div><p>If a policy is missing, traffic is dropped silently. Unknown traffic should be denied, not allowed and investigated later. Egress from the cluster to the internet is blocked at cluster level by Platform. No app can exfiltrate data by accident.</p><hr><h2 id=the-three-tier-monitoring-contract>The Three-Tier Monitoring Contract</h2><p>Monitoring is CRITICAL in the contract — not advisory, not recommended. Apps that don&rsquo;t expose <code>/metrics</code> or don&rsquo;t log JSON cannot be deployed. The review checks G1–G4 are at the same severity level as image and network violations.</p><p>The platform defines a three-tier monitoring model. System metrics are free. Framework and Business metrics are the app&rsquo;s responsibility.</p><div class=mermaid id=id-4>flowchart LR
+subgraph apps["vibe app pods (all namespaces *-vibe-*)"]
+a1["app-A&lt;br/>stdout JSON"]
+a2["app-B&lt;br/>stdout JSON"]
+metrics1["/metrics&lt;br/>Prometheus fmt"]
+metrics2["/metrics&lt;br/>Prometheus fmt"]
+end
+subgraph obs["vibe-observability"]
+direction TB
+promtail["Promtail&lt;br/>DaemonSet&lt;br/>/var/log/pods"]
+vm["VictoriaMetrics&lt;br/>auto-scrape&lt;br/>annotations"]
+loki["Loki&lt;br/>log aggregation"]
+minio[("Minio&lt;br/>S3 backend")]
+grafana["Grafana&lt;br/>dashboards&lt;br/>+ Loki Explore"]
+otel["OTEL Collector&lt;br/>:4317 gRPC&lt;br/>:4318 HTTP"]
+end
+a1 -->|stdout| promtail
+a2 -->|stdout| promtail
+promtail -->|push| loki
+loki --> minio
+metrics1 -->|"pull :8081"| vm
+metrics2 -->|"pull :8081"| vm
+vm --> grafana
+loki --> grafana
+a1 -.->|traces| otel
+a2 -.->|traces| otel
+note["📌 App MUST:&lt;br/>1. log JSON to stdout&lt;br/>2. expose /metrics&lt;br/>3. pod annotation:&lt;br/>prometheus.io/scrape: true&lt;br/>&lt;br/>Both CRITICAL —&lt;br/>blocks deploy if missing"]
+style obs fill:#fef3c7,stroke:#d97706
+style note fill:#fee2e2,stroke:#dc2626</div><h3 id=system-tier--automatic>System Tier — Automatic</h3><p>cAdvisor runs as a DaemonSet. VictoriaMetrics scrapes it automatically. Every app gets CPU, memory, network I/O, and disk I/O per container — without writing a single line of code.</p><p>These metrics answer &ldquo;is the infrastructure healthy?&rdquo; They don&rsquo;t tell you if the app is working.</p><h3 id=framework-tier--app-metrics>Framework Tier — App Metrics</h3><p>The app must expose <code>/metrics</code> on port 8081 in Prometheus format. The pod annotation tells VictoriaMetrics to scrape it:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># Auto-generated by Helm chart — creator does not write this</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>annotations</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>prometheus.io/scrape</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;true&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>prometheus.io/port</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;8081&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>prometheus.io/path</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;/metrics&#34;</span></span></span></code></pre></div></div><p>The minimum required metrics — generated by the <code>app-contract</code> skill:</p><p><strong>Node.js / TypeScript</strong></p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-typescript"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-typescript data-lang=typescript><span class=line><span class=cl><span class=kr>import</span> <span class=p>{</span> <span class=nx>Registry</span><span class=p>,</span> <span class=nx>Counter</span><span class=p>,</span> <span class=nx>Histogram</span><span class=p>,</span> <span class=nx>Gauge</span><span class=p>,</span> <span class=nx>collectDefaultMetrics</span> <span class=p>}</span> <span class=kr>from</span> <span class=s1>&#39;prom-client&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>register</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Registry</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=nx>collectDefaultMetrics</span><span class=p>({</span> <span class=nx>register</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kr>const</span> <span class=nx>httpRequestTotal</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Counter</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=o>:</span> <span class=s1>&#39;http_requests_total&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>help</span><span class=o>:</span> <span class=s1>&#39;Total HTTP requests&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>labelNames</span><span class=o>:</span> <span class=p>[</span><span class=s1>&#39;method&#39;</span><span class=p>,</span> <span class=s1>&#39;route&#39;</span><span class=p>,</span> <span class=s1>&#39;status_code&#39;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nx>registers</span><span class=o>:</span> <span class=p>[</span><span class=nx>register</span><span class=p>],</span>
+</span></span><span class=line><span class=cl><span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kr>const</span> <span class=nx>httpRequestDuration</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Histogram</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=o>:</span> <span class=s1>&#39;http_request_duration_seconds&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>help</span><span class=o>:</span> <span class=s1>&#39;HTTP request latency&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>labelNames</span><span class=o>:</span> <span class=p>[</span><span class=s1>&#39;method&#39;</span><span class=p>,</span> <span class=s1>&#39;route&#39;</span><span class=p>,</span> <span class=s1>&#39;status_code&#39;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nx>buckets</span><span class=o>:</span> <span class=p>[</span><span class=mf>0.01</span><span class=p>,</span> <span class=mf>0.05</span><span class=p>,</span> <span class=mf>0.1</span><span class=p>,</span> <span class=mf>0.5</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>5</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nx>registers</span><span class=o>:</span> <span class=p>[</span><span class=nx>register</span><span class=p>],</span>
+</span></span><span class=line><span class=cl><span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kr>const</span> <span class=nx>activeConnections</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Gauge</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=o>:</span> <span class=s1>&#39;http_active_connections&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>help</span><span class=o>:</span> <span class=s1>&#39;Active HTTP connections&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>registers</span><span class=o>:</span> <span class=p>[</span><span class=nx>register</span><span class=p>],</span>
+</span></span><span class=line><span class=cl><span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Expose on /metrics
+</span></span></span><span class=line><span class=cl><span class=nx>app</span><span class=p>.</span><span class=kr>get</span><span class=p>(</span><span class=s1>&#39;/metrics&#39;</span><span class=p>,</span> <span class=kr>async</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=o>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>res</span><span class=p>.</span><span class=kr>set</span><span class=p>(</span><span class=s1>&#39;Content-Type&#39;</span><span class=p>,</span> <span class=nx>register</span><span class=p>.</span><span class=nx>contentType</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>res</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=k>await</span> <span class=nx>register</span><span class=p>.</span><span class=nx>metrics</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>})</span></span></span></code></pre></div></div><p><strong>Python / FastAPI</strong></p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-python"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>prometheus_fastapi_instrumentator</span> <span class=kn>import</span> <span class=n>Instrumentator</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>prometheus_client</span> <span class=kn>import</span> <span class=n>Counter</span><span class=p>,</span> <span class=n>Histogram</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>app</span> <span class=o>=</span> <span class=n>FastAPI</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Default metrics from instrumentator (request count, latency, status codes)</span>
+</span></span><span class=line><span class=cl><span class=n>Instrumentator</span><span class=p>()</span><span class=o>.</span><span class=n>instrument</span><span class=p>(</span><span class=n>app</span><span class=p>)</span><span class=o>.</span><span class=n>expose</span><span class=p>(</span><span class=n>app</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Add custom metrics as needed</span>
+</span></span><span class=line><span class=cl><span class=n>db_query_total</span> <span class=o>=</span> <span class=n>Counter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;db_query_total&#39;</span><span class=p>,</span> <span class=s1>&#39;Total database queries&#39;</span><span class=p>,</span> <span class=p>[</span><span class=s1>&#39;operation&#39;</span><span class=p>,</span> <span class=s1>&#39;table&#39;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>db_query_duration</span> <span class=o>=</span> <span class=n>Histogram</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;db_query_duration_seconds&#39;</span><span class=p>,</span> <span class=s1>&#39;Database query duration&#39;</span><span class=p>,</span> <span class=p>[</span><span class=s1>&#39;operation&#39;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span></span></span></code></pre></div></div><p><strong>Go</strong></p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-go"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>import</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s>&#34;github.com/prometheus/client_golang/prometheus&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s>&#34;github.com/prometheus/client_golang/prometheus/promhttp&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=kd>var</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nx>httpRequests</span><span class=w> </span><span class=p>=</span><span class=w> </span><span class=nx>prometheus</span><span class=p>.</span><span class=nf>NewCounterVec</span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nx>prometheus</span><span class=p>.</span><span class=nx>CounterOpts</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span><span class=w> </span><span class=s>&#34;http_requests_total&#34;</span><span class=p>,</span><span class=w> </span><span class=nx>Help</span><span class=p>:</span><span class=w> </span><span class=s>&#34;Total HTTP requests&#34;</span><span class=p>},</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;method&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;path&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;status&#34;</span><span class=p>},</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nx>httpDuration</span><span class=w> </span><span class=p>=</span><span class=w> </span><span class=nx>prometheus</span><span class=p>.</span><span class=nf>NewHistogramVec</span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nx>prometheus</span><span class=p>.</span><span class=nx>HistogramOpts</span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nx>Name</span><span class=p>:</span><span class=w>    </span><span class=s>&#34;http_request_duration_seconds&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nx>Help</span><span class=p>:</span><span class=w>    </span><span class=s>&#34;HTTP request latency&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nx>Buckets</span><span class=p>:</span><span class=w> </span><span class=p>[]</span><span class=kt>float64</span><span class=p>{</span><span class=mf>0.01</span><span class=p>,</span><span class=w> </span><span class=mf>0.05</span><span class=p>,</span><span class=w> </span><span class=mf>0.1</span><span class=p>,</span><span class=w> </span><span class=mf>0.5</span><span class=p>,</span><span class=w> </span><span class=mi>1</span><span class=p>,</span><span class=w> </span><span class=mi>2</span><span class=p>,</span><span class=w> </span><span class=mi>5</span><span class=p>},</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>},</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;method&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;path&#34;</span><span class=p>},</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=kd>func</span><span class=w> </span><span class=nf>init</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nx>prometheus</span><span class=p>.</span><span class=nf>MustRegister</span><span class=p>(</span><span class=nx>httpRequests</span><span class=p>,</span><span class=w> </span><span class=nx>httpDuration</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=c1>// Expose on /metrics at port 8081</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nx>mux</span><span class=p>.</span><span class=nf>Handle</span><span class=p>(</span><span class=s>&#34;/metrics&#34;</span><span class=p>,</span><span class=w> </span><span class=nx>promhttp</span><span class=p>.</span><span class=nf>Handler</span><span class=p>())</span></span></span></code></pre></div></div><p>These metrics answer &ldquo;is the application behaving correctly?&rdquo; — request rate, error rate, latency by endpoint, database query count and duration.</p><h3 id=business-tier--what-the-app-actually-does>Business Tier — What the App Actually Does</h3><p>This is the layer that makes monitoring actually useful for the creator. The platform cannot define these metrics — they depend on what the app does. But the contract requires them.</p><p>During the skill pipeline, the assistant asks the creator: <em>&ldquo;What are the 3 most important numbers that tell you if your app is working?&rdquo;</em> Their answer becomes the metric definitions.</p><p>Examples:</p><ul><li>&ldquo;How many orders were processed today?&rdquo; → <code>orders_processed_total</code> Counter with <code>status</code> label</li><li>&ldquo;How many items are in low stock?&rdquo; → <code>inventory_low_stock_items</code> Gauge with <code>category</code> label</li><li>&ldquo;How many search queries per minute?&rdquo; → <code>searches_total</code> Counter</li></ul><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-python"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Python — business metrics for an inventory app</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>prometheus_client</span> <span class=kn>import</span> <span class=n>Counter</span><span class=p>,</span> <span class=n>Gauge</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>orders_processed</span> <span class=o>=</span> <span class=n>Counter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;orders_processed_total&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;Total orders processed&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>[</span><span class=s1>&#39;status&#39;</span><span class=p>]</span>  <span class=c1># fulfilled, cancelled, pending</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>low_stock_items</span> <span class=o>=</span> <span class=n>Gauge</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;inventory_low_stock_items&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;Products with stock below threshold&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>[</span><span class=s1>&#39;category&#39;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Call in business logic</span>
+</span></span><span class=line><span class=cl><span class=n>orders_processed</span><span class=o>.</span><span class=n>labels</span><span class=p>(</span><span class=n>status</span><span class=o>=</span><span class=s1>&#39;fulfilled&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>inc</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>low_stock_items</span><span class=o>.</span><span class=n>labels</span><span class=p>(</span><span class=n>category</span><span class=o>=</span><span class=s1>&#39;electronics&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>set</span><span class=p>(</span><span class=n>current_count</span><span class=p>)</span></span></span></code></pre></div></div><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-typescript"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-typescript data-lang=typescript><span class=line><span class=cl><span class=c1>// Node.js — business metrics for a reporting app
+</span></span></span><span class=line><span class=cl><span class=kr>import</span> <span class=p>{</span> <span class=nx>Counter</span><span class=p>,</span> <span class=nx>Gauge</span> <span class=p>}</span> <span class=kr>from</span> <span class=s1>&#39;prom-client&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>reportsGenerated</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Counter</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=o>:</span> <span class=s1>&#39;reports_generated_total&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>help</span><span class=o>:</span> <span class=s1>&#39;Total reports generated&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>labelNames</span><span class=o>:</span> <span class=p>[</span><span class=s1>&#39;report_type&#39;</span><span class=p>,</span> <span class=s1>&#39;format&#39;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl><span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>activeUsers</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Gauge</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=o>:</span> <span class=s1>&#39;active_users_current&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>help</span><span class=o>:</span> <span class=s1>&#39;Currently active users in the last 15 minutes&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>})</span></span></span></code></pre></div></div><p>These metrics answer &ldquo;is the app doing what it is supposed to do?&rdquo; — not just &ldquo;is it up and fast?&rdquo; but &ldquo;is business actually flowing through it?&rdquo;</p><p>The three tiers together give the creator a Grafana dashboard that answers four questions in sequence: Is everything running? (status row — green/red per pod). Is the infrastructure healthy? (system row — CPU, memory). Is the app behaving correctly? (framework row — request rate, error rate, DB connections). Is the business flowing? (business row — orders, searches, inventory).</p><h3 id=logging-contract>Logging Contract</h3><p>All logs must go to stdout in JSON format. Required fields: <code>time</code> (ISO8601), <code>level</code>, <code>msg</code>.</p><p><strong>Node.js</strong> — pino (JSON by default):</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-typescript"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-typescript data-lang=typescript><span class=line><span class=cl><span class=kr>import</span> <span class=nx>pino</span> <span class=kr>from</span> <span class=s1>&#39;pino&#39;</span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>logger</span> <span class=o>=</span> <span class=nx>pino</span><span class=p>({</span> <span class=nx>level</span>: <span class=kt>process.env.LOG_LEVEL</span> <span class=o>||</span> <span class=s1>&#39;info&#39;</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Every log call produces structured JSON
+</span></span></span><span class=line><span class=cl><span class=nx>logger</span><span class=p>.</span><span class=nx>info</span><span class=p>({</span> <span class=nx>userId</span>: <span class=kt>user.id</span><span class=p>,</span> <span class=nx>action</span><span class=o>:</span> <span class=s1>&#39;login&#39;</span> <span class=p>},</span> <span class=s1>&#39;User authenticated&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1>// → {&#34;time&#34;:&#34;2026-01-01T10:00:00Z&#34;,&#34;level&#34;:&#34;info&#34;,&#34;msg&#34;:&#34;User authenticated&#34;,&#34;userId&#34;:&#34;abc123&#34;,&#34;action&#34;:&#34;login&#34;}
+</span></span></span></code></pre></div></div><p><strong>Python</strong> — python-json-logger:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-python"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>logging</span><span class=o>,</span> <span class=nn>sys</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>pythonjsonlogger</span> <span class=kn>import</span> <span class=n>jsonlogger</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>handler</span> <span class=o>=</span> <span class=n>logging</span><span class=o>.</span><span class=n>StreamHandler</span><span class=p>(</span><span class=n>sys</span><span class=o>.</span><span class=n>stdout</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>handler</span><span class=o>.</span><span class=n>setFormatter</span><span class=p>(</span><span class=n>jsonlogger</span><span class=o>.</span><span class=n>JsonFormatter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;</span><span class=si>%(asctime)s</span><span class=s1> </span><span class=si>%(levelname)s</span><span class=s1> </span><span class=si>%(message)s</span><span class=s1>&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>rename_fields</span><span class=o>=</span><span class=p>{</span><span class=s2>&#34;asctime&#34;</span><span class=p>:</span> <span class=s2>&#34;time&#34;</span><span class=p>,</span> <span class=s2>&#34;levelname&#34;</span><span class=p>:</span> <span class=s2>&#34;level&#34;</span><span class=p>,</span> <span class=s2>&#34;message&#34;</span><span class=p>:</span> <span class=s2>&#34;msg&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=n>logging</span><span class=o>.</span><span class=n>root</span><span class=o>.</span><span class=n>addHandler</span><span class=p>(</span><span class=n>handler</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>logging</span><span class=o>.</span><span class=n>root</span><span class=o>.</span><span class=n>setLevel</span><span class=p>(</span><span class=n>logging</span><span class=o>.</span><span class=n>INFO</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Usage</span>
+</span></span><span class=line><span class=cl><span class=n>log</span> <span class=o>=</span> <span class=n>logging</span><span class=o>.</span><span class=n>getLogger</span><span class=p>(</span><span class=vm>__name__</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>log</span><span class=o>.</span><span class=n>info</span><span class=p>(</span><span class=s2>&#34;Order created&#34;</span><span class=p>,</span> <span class=n>extra</span><span class=o>=</span><span class=p>{</span><span class=s2>&#34;order_id&#34;</span><span class=p>:</span> <span class=n>order</span><span class=o>.</span><span class=n>id</span><span class=p>,</span> <span class=s2>&#34;amount&#34;</span><span class=p>:</span> <span class=n>order</span><span class=o>.</span><span class=n>total</span><span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=c1># → {&#34;time&#34;:&#34;2026-01-01T10:00:00Z&#34;,&#34;level&#34;:&#34;INFO&#34;,&#34;msg&#34;:&#34;Order created&#34;,&#34;order_id&#34;:&#34;ord-123&#34;,&#34;amount&#34;:142.50}</span></span></span></code></pre></div></div><p><strong>Go</strong> — zap (JSON to stdout by default):</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-go"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>import</span><span class=w> </span><span class=s>&#34;go.uber.org/zap&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nx>logger</span><span class=p>,</span><span class=w> </span><span class=nx>_</span><span class=w> </span><span class=o>:=</span><span class=w> </span><span class=nx>zap</span><span class=p>.</span><span class=nf>NewProduction</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nx>logger</span><span class=p>.</span><span class=nf>Info</span><span class=p>(</span><span class=s>&#34;Order created&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nx>zap</span><span class=p>.</span><span class=nf>String</span><span class=p>(</span><span class=s>&#34;order_id&#34;</span><span class=p>,</span><span class=w> </span><span class=nx>order</span><span class=p>.</span><span class=nx>ID</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nx>zap</span><span class=p>.</span><span class=nf>Float64</span><span class=p>(</span><span class=s>&#34;amount&#34;</span><span class=p>,</span><span class=w> </span><span class=nx>order</span><span class=p>.</span><span class=nx>Total</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=p>)</span></span></span></code></pre></div></div><p>File-based logging is explicitly prohibited. No <code>FileHandler</code>, no <code>RotatingFileHandler</code>, no Winston <code>transports.File</code>. File logs are invisible to Loki and lost when the pod restarts.</p><p>Loki receives every JSON line from every pod stdout via Promtail DaemonSet. Seven-day retention. The creator queries them in Grafana:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-logql"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><pre tabindex=0><code class=language-logql data-lang=logql># All logs for this app
+{namespace=&#34;platform-vibe-my-app&#34;}
+
+# Filter errors
+{namespace=&#34;platform-vibe-my-app&#34;} | json | level=&#34;error&#34;
+
+# Correlate with a trace ID
+{namespace=&#34;platform-vibe-my-app&#34;} | json | trace_id=&#34;abc-123&#34;</code></pre></div><hr><h2 id=the-review-gate--35-checks-before-deploy>The Review Gate — 35+ Checks Before Deploy</h2><p>The <code>review</code> skill is the deployment gate. CRITICAL findings block deployment — there is no override. WARNING findings are documented and raised to the app owner.</p><p><strong>A — Image</strong> (all CRITICAL)</p><table><thead><tr><th>Check</th><th>What it verifies</th></tr></thead><tbody><tr><td>A1</td><td>No <code>:latest</code> image tag anywhere</td></tr><tr><td>A2</td><td>Dockerfile declares <code>--platform linux/amd64</code></td></tr><tr><td>A3</td><td><code>runAsNonRoot: true</code> in pod securityContext</td></tr><tr><td>A4</td><td><code>capabilities: { drop: [ALL] }</code> in container securityContext</td></tr><tr><td>A5</td><td>No bare Docker Hub image references in any manifest</td></tr><tr><td>A6</td><td>App image references internal Harbor registry</td></tr></tbody></table><p><strong>B — Health & Ports</strong> (all CRITICAL)</p><table><thead><tr><th>Check</th><th>What it verifies</th></tr></thead><tbody><tr><td>B1</td><td><code>containerPort: 8081</code> declared (application traffic)</td></tr><tr><td>B2</td><td><code>containerPort: 8082</code> declared (management)</td></tr><tr><td>B3</td><td><code>livenessProbe</code> on port 8082 path <code>/liveness</code></td></tr><tr><td>B4</td><td><code>readinessProbe</code> on port 8082 path <code>/readiness</code></td></tr><tr><td>B5</td><td>Probe <code>timeoutSeconds >= 5</code> (10 if probe checks DB)</td></tr><tr><td>B6</td><td>Port 8082 NOT present in any Ingress rule</td></tr></tbody></table><p><strong>C — Networking</strong> (all CRITICAL)</p><table><thead><tr><th>Check</th><th>What it verifies</th></tr></thead><tbody><tr><td>C1</td><td><code>default-deny-ingress</code> NetworkPolicy present</td></tr><tr><td>C2</td><td>Explicit allow: ingress controller → app:8081</td></tr><tr><td>C3</td><td>Explicit allow: observability ns → app:8081 (metrics scrape)</td></tr><tr><td>C4</td><td>Explicit allow: app → DB port (if DB enabled)</td></tr><tr><td>C5</td><td>Explicit allow: app → redis:6379 (if Redis enabled)</td></tr><tr><td>C6</td><td>Explicit allow: app → rabbitmq:5672 (if RabbitMQ enabled)</td></tr></tbody></table><p><strong>D — Storage</strong> (all CRITICAL)</p><table><thead><tr><th>Check</th><th>What it verifies</th></tr></thead><tbody><tr><td>D1</td><td>PVC exists for every DB before the DB Deployment</td></tr><tr><td>D2</td><td>DB Deployment <code>strategy.type: Recreate</code> (not RollingUpdate — file locks)</td></tr><tr><td>D3</td><td>initContainer waiting for DB before app starts</td></tr><tr><td>D4</td><td>No data in container filesystem (ephemeral — data lost on restart)</td></tr></tbody></table><p><strong>E — Secrets</strong> (all CRITICAL)</p><table><thead><tr><th>Check</th><th>What it verifies</th></tr></thead><tbody><tr><td>E1</td><td>No <code>kind: Secret</code> in Git — only <code>kind: SealedSecret</code></td></tr><tr><td>E2</td><td>No passwords or tokens in ConfigMaps</td></tr><tr><td>E3</td><td>No credentials in Dockerfile <code>ENV</code> instructions</td></tr><tr><td>E4</td><td>No <code>CHANGE_ME</code> or <code>REPLACE_ME</code> placeholders remaining</td></tr><tr><td>E5</td><td>Credentials injected via <code>secretKeyRef</code>, never as plain <code>value:</code></td></tr><tr><td>E6</td><td>SealedSecret <code>metadata.namespace</code> matches deployment namespace</td></tr><tr><td>E7</td><td>Sealed with correct controller name and namespace</td></tr></tbody></table><p><strong>G — Metrics & Observability</strong> (G1–G4, G6 are CRITICAL)</p><table><thead><tr><th>Check</th><th>What it verifies</th></tr></thead><tbody><tr><td>G1</td><td>Pod has <code>prometheus.io/scrape</code>, <code>prometheus.io/port</code>, <code>prometheus.io/path</code></td></tr><tr><td>G2</td><td>App actually exposes <code>/metrics</code> in Prometheus format</td></tr><tr><td>G3</td><td>App logs to stdout in JSON format</td></tr><tr><td>G4</td><td>No file-based logging (FileHandler, log file mounts)</td></tr><tr><td>G5</td><td>Log lines contain <code>time</code>, <code>level</code>, <code>msg</code> fields</td></tr><tr><td>G6</td><td>No PII, credentials, or sensitive data patterns in log output</td></tr></tbody></table><p>G6 is worth calling out separately. The skill scans recent <code>kubectl logs</code> output for email addresses, credit card patterns, password fields in JSON, and Bearer tokens. A hit triggers a security incident and immediate namespace shutdown — no warnings.</p><p><strong>F — Resources</strong> and <strong>H — Ingress</strong> produce WARNINGs (deploy allowed, compliance incomplete).</p><p>A typical first review on a vibe-coded app looks like:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><pre tabindex=0><code>⚠️  Found 6 issues in &#34;Inventory Checker&#34;. Fix these before deploying:
+
+CRITICAL (must fix):
+  [A1] Image tag is &#39;:latest&#39; — use commit SHA (e.g. my-app:a3f91bc)
+  [A3] App runs as root — add runAsNonRoot: true, runAsUser: 1000 to pod securityContext
+  [C1] default-deny-ingress NetworkPolicy missing from 01-network-policies.yaml
+  [E1] Plain Secret found in k8s/02-secrets.yaml — replace with SealedSecret
+  [G1] No prometheus.io/scrape annotation on pod — app won&#39;t appear in Grafana
+  [G3] App logs are plaintext (not JSON) — Loki can&#39;t parse them
+
+WARNING (strongly recommended):
+  [F2] nginx container has no memory limit — set to 128Mi
+  [H1] Ingress URL doesn&#39;t match cluster pattern
+
+Run /vibe-review again after fixing.</code></pre></div><p>The creator fixes each finding, re-runs the review, and repeats until it passes. The AI assistant can apply CRITICAL fixes automatically — it modifies the manifest files and the source code without asking.</p><hr><h2 id=the-helm-chart--five-questions-full-platform>The Helm Chart — Five Questions, Full Platform</h2><p>The entire namespace — app container, database, nginx proxy, network policies, RBAC, probes, metrics annotations, HPA — deploys from a single Helm chart. The <code>values.yaml</code> is the only thing the creator touches.</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># values.yaml — the five questions</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>app</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>slug</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;inventory-checker&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Inventory Checker&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>repository</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;inventory-checker-app&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tag</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;a3f91bc&#34;</span><span class=w>          </span><span class=c># commit SHA from CI</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>size</span><span class=p>:</span><span class=w> </span><span class=l>md                  </span><span class=w> </span><span class=c># xs / sm / md / lg / xl</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>cluster</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>prefix</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;platform&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>registry</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;harbor.internal.example.com&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mirrorPrefix</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;harbor.internal.example.com/dockerhub-proxy&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>observabilityNamespace</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;platform-vibe-observability&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ingressHostPattern</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;{prefix}-{slug}.internal.example.com&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>postgres</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;harbor.internal.example.com/dockerhub-proxy/postgres:16&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>5Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>auth</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>existingSecret</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;inventory-checker-postgres-secret&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>ingress</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>tls</span><span class=p>:</span><span class=w> </span><span class=kc>true</span></span></span></code></pre></div></div><p>One command:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>helm upgrade --install inventory-checker ./helm/vibe-stack -f values.yaml</span></span></code></pre></div></div><p>What Helm renders includes security context baked in — the creator never writes these:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># From the real Helm template (app.yaml)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>template</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>securityContext</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>runAsNonRoot</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>runAsUser</span><span class=p>:</span><span class=w> </span><span class=m>1000</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>runAsGroup</span><span class=p>:</span><span class=w> </span><span class=m>1000</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>initContainers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>wait-for-postgres</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mirror/debian:12-slim</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s1>&#39;sh&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;-c&#39;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=s1>&#39;until (echo &gt;/dev/tcp/inventory-checker-postgres/5432) 2&gt;/dev/null;
+</span></span></span><span class=line><span class=cl><span class=s1>             do echo &#34;waiting for postgres...&#34;; sleep 2; done&#39;</span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>securityContext</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>allowPrivilegeEscalation</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>capabilities</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>drop</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>ALL]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>livenessProbe</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>httpGet</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>path</span><span class=p>:</span><span class=w> </span><span class=l>/liveness</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>8082</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>timeoutSeconds</span><span class=p>:</span><span class=w> </span><span class=m>5</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>failureThreshold</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>readinessProbe</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>httpGet</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>path</span><span class=p>:</span><span class=w> </span><span class=l>/readiness</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>8082</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>timeoutSeconds</span><span class=p>:</span><span class=w> </span><span class=m>5</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>failureThreshold</span><span class=p>:</span><span class=w> </span><span class=m>3</span></span></span></code></pre></div></div><p>Non-root, no capabilities, management port separated from application port, initContainer waiting for the database. None of this requires the creator to know it exists.</p><hr><h2 id=the-cicd-pipeline--ai-app-meets-gitops>The CI/CD Pipeline — AI App Meets GitOps</h2><p>The deploy pipeline is fully automatic from the moment it is set up. The creator pushes code; the app is live in approximately two minutes. They never touch the cluster directly.</p><div class=mermaid id=id-5>flowchart LR
+dev(["👤 App Creator"])
+subgraph git["CODE"]
+repo["Git repo&lt;br/>(main branch)"]
+end
+subgraph ci["CI / Actions"]
+direction TB
+t1["1. Trufflehog&lt;br/>secret scan"]
+t2["2. Trivy&lt;br/>CRITICAL only"]
+t3["3. Build&lt;br/>linux/amd64"]
+t1 --> t2 --> t3
+end
+subgraph reg["IMAGES"]
+harbor["Harbor&lt;br/>internal registry&lt;br/>&amp;lt;slug&amp;gt;:&amp;lt;sha7&amp;gt;&lt;br/>NEVER :latest"]
+end
+subgraph cd["CD / GitOps"]
+tag["commit tag&lt;br/>update to values.yaml"]
+argocd["ArgoCD&lt;br/>auto-sync&lt;br/>prune + selfHeal"]
+tag --> argocd
+end
+dev -->|"git push main"| repo
+repo -->|"webhook trigger"| ci
+t3 -->|"push image"| harbor
+harbor -->|"tag written to values.yaml"| tag
+argocd -->|"sync"| cluster(["k3s Cluster&lt;br/>~2 min total"])
+style git fill:#dbeafe,stroke:#3b82f6
+style ci fill:#fef9c3,stroke:#eab308
+style reg fill:#dcfce7,stroke:#16a34a
+style cd fill:#f3e8ff,stroke:#9333ea</div><p><strong>CI — Build, Scan, Push</strong> (generated by the skill pipeline, runs on every push to main):</p><div class="code-block code-line-numbers" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># .github/workflows/ci.yml — complete real pipeline</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>CI — Build, Scan, Push</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>push</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>branches</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>main]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>jobs</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>build-scan-push</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>runs-on</span><span class=p>:</span><span class=w> </span><span class=l>ubuntu-latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>steps</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@v4</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Set image tag (commit SHA)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>id</span><span class=p>:</span><span class=w> </span><span class=l>meta</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=l>echo &#34;tag=${GITHUB_SHA:0:7}&#34; &gt;&gt; $GITHUB_OUTPUT</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Build image (no push — scan first)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>docker/build-push-action@v5</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>platforms</span><span class=p>:</span><span class=w> </span><span class=l>linux/amd64</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>push</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>tags</span><span class=p>:</span><span class=w> </span><span class=l>${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>outputs</span><span class=p>:</span><span class=w> </span><span class=l>type=docker,dest=/tmp/image.tar</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Check for Docker Hub references</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>          VIOLATIONS=$(grep -rn \
+</span></span></span><span class=line><span class=cl><span class=sd>            -e &#39;image: \+[a-zA-Z0-9._-]*:[a-zA-Z0-9._-]*$&#39; \
+</span></span></span><span class=line><span class=cl><span class=sd>            -e &#39;image: \+docker\.io/&#39; \
+</span></span></span><span class=line><span class=cl><span class=sd>            --include=&#34;*.yaml&#34; --include=&#34;*.yml&#34; --include=&#34;Dockerfile*&#34; \
+</span></span></span><span class=line><span class=cl><span class=sd>            . | grep -v &#39;harbor\.&#39; | grep -v &#39;cluster\.mirrorPrefix&#39; || true)
+</span></span></span><span class=line><span class=cl><span class=sd>          if [ -n &#34;$VIOLATIONS&#34; ]; then
+</span></span></span><span class=line><span class=cl><span class=sd>            echo &#34;::error::Docker Hub images detected. All images must come from Harbor.&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>            echo &#34;$VIOLATIONS&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>            exit 1
+</span></span></span><span class=line><span class=cl><span class=sd>          fi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Scan secrets with Trufflehog</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>trufflesecurity/trufflehog@main</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>extra_args</span><span class=p>:</span><span class=w> </span>--<span class=l>only-verified</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Scan image with Trivy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>aquasecurity/trivy-action@master</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class=l>CRITICAL     </span><span class=w> </span><span class=c># HIGH advisory in alpha — intentional</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>exit-code</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>ignore-unfixed</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Push image to Harbor</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>if</span><span class=p>:</span><span class=w> </span><span class=l>github.ref == &#39;refs/heads/main&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>docker/build-push-action@v5</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>platforms</span><span class=p>:</span><span class=w> </span><span class=l>linux/amd64</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>push</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>tags</span><span class=p>:</span><span class=w> </span><span class=l>${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}</span></span></span></code></pre></div></div><p>Trivy scans only CRITICAL CVEs, not HIGH. In an alpha environment with vibe-coded apps using whatever base image the AI chose, blocking on HIGH would produce a wall of unfixable findings that discourages deployment entirely. CRITICAL CVEs are genuinely dangerous. HIGH CVEs are visible in the SARIF upload, addressed at upgrade time.</p><p><strong>CD — GitOps via ArgoCD</strong> (runs after CI succeeds):</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># .github/workflows/cd-argocd.yml — does NOT run kubectl or helm</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>CD — Update image tag for ArgoCD sync</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>workflow_run</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>workflows</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>CI — Build, Scan, Push]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>branches</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>main]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>types</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>completed]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>jobs</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>update-values</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>if</span><span class=p>:</span><span class=w> </span><span class=l>${{ github.event.workflow_run.conclusion == &#39;success&#39; }}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>steps</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@v4</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Update image tag in values file</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>          NEW_TAG=&#34;${{ github.event.workflow_run.head_sha }}&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>          NEW_TAG=&#34;${NEW_TAG:0:7}&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>          sed -i &#34;s|^  tag:.*|  tag: \&#34;${NEW_TAG}\&#34;|&#34; &#34;helm/vibe-stack/values.yaml&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Commit and push tag update</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>          git config user.name &#34;vibe-cd-bot&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>          git commit -m &#34;chore(deploy): update image to ${NEW_TAG} [skip ci]&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>          git push</span></span></span></code></pre></div></div><p>This workflow does not run <code>kubectl</code> or <code>helm</code>. It commits the new image tag to the repository. ArgoCD watches the repository, detects the change, and syncs the cluster.</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-yaml"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># ArgoCD Application — auto-sync with selfHeal</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>argoproj.io/v1alpha1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Application</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>inventory-checker</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>argocd</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>source</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>repoURL</span><span class=p>:</span><span class=w> </span><span class=l>https://git.internal.example.com/vibe/inventory-checker</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>targetRevision</span><span class=p>:</span><span class=w> </span><span class=l>main</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>path</span><span class=p>:</span><span class=w> </span><span class=l>helm/vibe-stack</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>helm</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>valueFiles</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>values.yaml]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>platform-vibe-inventory-checker</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>syncPolicy</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>automated</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>prune</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>selfHeal</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>    </span><span class=c># reverts any manual kubectl changes</span></span></span></code></pre></div></div><p><code>selfHeal: true</code> means if a creator manually applies something with <code>kubectl apply</code>, ArgoCD reverts it on the next sync cycle. The Git repository is the source of truth. Always.</p><hr><h2 id=the-skill-pipeline--ai-onboarding-an-ai-app>The Skill Pipeline — AI Onboarding an AI App</h2><p>Here is where it gets meta. We use an AI coding assistant to transform a vibe-coded app into a contract-compliant deployable workload. The tool onboarding your app is the same kind of tool you used to build it.</p><p>The pipeline is seven sequential steps, each a skill file the assistant reads as context.</p><div class=mermaid id=id-6>flowchart TD
+input(["👤 Vibe App Creator&lt;br/>raw code from Claude/Cursor&lt;br/>no infra knowledge"])
+subgraph context["Platform Context (read at start)"]
+cv["CLAUDE-vibe-app.md&lt;br/>contract requirements"]
+pt["PLATFORM-template.md&lt;br/>cluster topology + values"]
+end
+input -->|"5 questions: name, DB, size, components, runtime"| s1
+subgraph skills["Skills — applied in order"]
+direction TB
+s0["1. app-contract.md&lt;br/>Modifies app SOURCE CODE:&lt;br/>health endpoints :8082&lt;br/>/metrics Prometheus format&lt;br/>JSON structured logging stdout"]
+s1["2. scaffold.md&lt;br/>Generates full k8s manifest set:&lt;br/>namespace · NetworkPolicies · RBAC&lt;br/>Deployment · Service · Ingress&lt;br/>SealedSecret stubs · ConfigMap · HPA"]
+s2["3. db-provision.md&lt;br/>If DB needed:&lt;br/>PVC + Postgres or Mongo pod&lt;br/>exporter sidecar&lt;br/>NetworkPolicy update&lt;br/>initContainer wait-for-db"]
+s3["4. observability.md&lt;br/>Pod annotations → VictoriaMetrics&lt;br/>JSON stdout confirmed → Loki&lt;br/>OTEL tracing endpoint (optional)"]
+s4["5. gitops.md&lt;br/>GitHub Actions CI:&lt;br/>Trufflehog · Trivy · Harbor push&lt;br/>ArgoCD Application + AppProject&lt;br/>CD: tag commit → auto-sync"]
+s_tests["6. tests.md&lt;br/>Test pyramid:&lt;br/>Unit · Integration · E2E smoke&lt;br/>Wired into CI — blocks deploy on fail"]
+s5["7. review.md&lt;br/>35+ checks:&lt;br/>CRITICAL: A1-A6 · B1-B6 · C1-C4&lt;br/> D1-D4 · E1-E7 · G1-G4,G6&lt;br/>WARNING: F1-F3 · H1-H2"]
+s0 --> s1 --> s2 --> s3 --> s4 --> s_tests --> s5
+end
+s5 -->|FAIL| fix["🔧 fix issues&lt;br/>→ re-review"]
+fix --> s5
+s5 -->|PASS| output
+subgraph output["Contract-Compliant App"]
+direction LR
+o1["✓ immutable image in Harbor&lt;br/>✓ namespace isolated + NetworkPolicies&lt;br/>✓ Sealed Secrets — no plain creds in Git"]
+o2["✓ health endpoints + probes&lt;br/>✓ /metrics + JSON logs wired&lt;br/>✓ GitOps → ArgoCD auto-deploy&lt;br/>✓ RBAC scoped to namespace&lt;br/>✓ test pyramid in CI"]
+end
+context -.->|informs| skills
+style input fill:#dbeafe,stroke:#3b82f6
+style context fill:#f3e8ff,stroke:#9333ea
+style skills fill:#fef9c3,stroke:#eab308
+style s5 fill:#fef3c7,stroke:#d97706
+style fix fill:#fee2e2,stroke:#dc2626
+style output fill:#dcfce7,stroke:#16a34a</div><p>The K8s manifest structure is deterministic — every app has the same numbered files in the same order:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+<span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><pre tabindex=0><code>k8s/
+  00-namespace.yaml           ← Namespace + managed-by: vibe-env label
+  01-network-policies.yaml    ← default-deny first, then explicit allows
+  02-sealed-secrets.yaml      ← SealedSecret stubs with sealing instructions
+  03-configmap.yaml           ← Non-sensitive config, LOG_LEVEL, OTEL endpoint
+  04-storage.yaml             ← PVC for every stateful component
+  05-db.yaml                  ← postgres OR mongo (strategy: Recreate — mandatory)
+  06-redis.yaml               ← Redis (if enabled)
+  07-rabbitmq.yaml            ← RabbitMQ (if enabled)
+  08-app.yaml                 ← Deployment + Service (non-root, resource limits)
+  09-nginx.yaml               ← Reverse proxy (Debian-based)
+  10-ingress.yaml
+  11-metrics-exporters.yaml   ← postgres-exporter, mongodb-exporter, redis-exporter
+  12-hpa.yaml</code></pre></div><p>The assistant generates COMPLETE files, never patches. The creator replaces files wholesale. No partial edits, no &ldquo;add this block at line 47.&rdquo; Non-technical users cannot apply partial edits reliably.</p><hr><h2 id=the-raci-collapse>The RACI Collapse</h2><p>Traditional platform RACI has three columns: Platform, Product, Security. Each has clearly bounded accountabilities.</p><p>In Vibe-Env, a vibe app creator is all three simultaneously. They built the app, they own data governance, they own incident response for their namespace.</p><p><strong>What Platform commits to:</strong></p><ul><li>Cluster maintenance and accepting improvement proposals</li><li>Onboarding (namespace + kubeconfig + ArgoCD setup)</li><li>Security violation response (immediate namespace shutdown)</li><li>Maintaining the observability stack</li></ul><p><strong>What Platform does not commit to:</strong></p><ul><li>Fixing your app when it crashes</li><li>Any incident response SLA</li><li>Monitoring your namespace</li></ul><p>If your app breaks at 2 AM on a Saturday, nobody fixes it before Monday. This is intentional. This environment is for apps that don&rsquo;t yet deserve 24/7 attention. If your app needs that, it needs a proper production process.</p><p><strong>The path from vibe app to production</strong> is not this environment. If an app proves its value:</p><ol><li>Architecture reviews the codebase</li><li>A professional team takes ownership</li><li>Full production process: cloud or on-prem EKS equivalent, SonarQube, OAuth2/SSO, Service Catalog, proper RACI</li></ol><p>The vibe prototype may be a complete rewrite informed by what the prototype proved. That is the correct outcome.</p><hr><h2 id=conclusion>Conclusion</h2><p>The infrastructure problem created by AI agentic development is not going away. More people will build software with these tools. The quality will improve. The velocity will increase.</p><p>The organizations that figure out the operational model will capture the value. The ones that don&rsquo;t will either block usage — losing the productivity gain — or let it run unsupervised — accumulating technical debt and security risk at a pace that is very hard to recover from.</p><p>A purpose-built sandbox with an explicit platform contract is the minimum viable operational model. Not because contracts are bureaucratic overhead, but because they are the thing that makes &ldquo;yes, build things&rdquo; a safe answer instead of a deferred problem.</p><p>The contract is the boundary between &ldquo;the AI coded it&rdquo; and &ldquo;the platform runs it.&rdquo; Everything else — the Helm chart, the CI pipeline, the skill pipeline, the review gate — is infrastructure in service of that boundary.</p><p>What follows is harder: how does a vibe app become a production service? Who maintains the code when the creator moves on? Those questions don&rsquo;t have clean answers yet. But they have a prerequisite: a place where the apps can run safely while the answers are worked out.</p><p>That prerequisite is solvable. We solved it.</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2026-06-06</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on X" data-sharer=x data-url=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/ data-title="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem" data-hashtags="kubernetes,ai,automation,monitoring,containers,security,vibe,vibe coding,vibe apps,skills,ai4ai,contracts,platform contract"><i class="fab fa-x-twitter" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Threads" data-sharer=threads data-url=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/ data-title="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem"><i class="fab fa-threads" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/ data-hashtag=kubernetes><i class="fab fa-facebook-square" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/ data-title="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem"><i class="fab fa-hacker-news" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/ data-title="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@16.9.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/ data-title="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem" data-image=/images/vibeenv.png><i class="fab fa-weibo" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Diaspora" data-sharer=diaspora data-url=https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/ data-title="AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem" data-description="Agentic AI tools let non-technical people build working apps. That's great. Where do those apps go? A deep dive into building a safe, self-contained Kubernetes environment with an explicit platform contract for vibe-coded applications."><i class="fab fa-diaspora" aria-hidden=true></i></a><a href="https://t.me/share/url?url=https%3a%2f%2fwww.k8s.it%2fposts%2fai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem%2f&amp;text=AI%20Agentic%20Development%20Changes%20Who%20Builds%20Software%20%e2%80%94%20and%20That%27s%20an%20Infrastructure%20Problem" target=_blank title="Share on Telegram"><i class="fab fa-telegram" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags" aria-hidden=true></i>&nbsp;<a href=/tags/kubernetes/>Kubernetes</a>,&nbsp;<a href=/tags/ai/>Ai</a>,&nbsp;<a href=/tags/automation/>Automation</a>,&nbsp;<a href=/tags/monitoring/>Monitoring</a>,&nbsp;<a href=/tags/containers/>Containers</a>,&nbsp;<a href=/tags/security/>Security</a>,&nbsp;<a href=/tags/vibe/>Vibe</a>,&nbsp;<a href=/tags/vibe-coding/>Vibe Coding</a>,&nbsp;<a href=/tags/vibe-apps/>Vibe Apps</a>,&nbsp;<a href=/tags/skills/>Skills</a>,&nbsp;<a href=/tags/ai4ai/>Ai4ai</a>,&nbsp;<a href=/tags/contracts/>Contracts</a>,&nbsp;<a href=/tags/platform-contract/>Platform Contract</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/posts/monitoring-contentful-usage-with-a-prometheus-exporter/ class=prev rel=prev title="Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You"><i class="fas fa-angle-left" aria-hidden=true></i>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>Powered by <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.162.1">Hugo</a> | Theme - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright" aria-hidden=true></i><span itemprop=copyrightYear>2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/lorenzogirardi target=_blank>Lorenzo Girardi</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up" aria-hidden=true></i></a></div><div id=fixed-buttons-hidden><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment" aria-hidden=true></i></a></div><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js></script><script src=https://cdn.jsdelivr.net/npm/mermaid@11.5.0/dist/mermaid.min.js></script><script>window.config={comment:{},data:{"id-1":`graph TB
+    vpn(["🔒 VPN<br/>corporate only<br/>no public internet"])
+
+    subgraph cluster["k3s Cluster — private VIP via MetalLB"]
+        traefik["Traefik Ingress<br/>MetalLB VIP"]
+
+        subgraph obs["vibe-observability namespace"]
+            grafana["Grafana<br/>dashboards"]
+            vm["VictoriaMetrics<br/>metrics pull"]
+            loki["Loki<br/>+ Minio<br/>7d retention"]
+            otel["OTEL<br/>Collector"]
+            promtail["Promtail<br/>DaemonSet"]
+        end
+
+        subgraph nsA["&lt;prefix&gt;-vibe-&lt;app-A&gt;"]
+            appA["app"]
+            dbA[("DB<br/>PVC")]
+            appA --- dbA
+        end
+
+        subgraph nsB["&lt;prefix&gt;-vibe-&lt;app-B&gt;"]
+            appB["app"]
+            dbB[("DB<br/>PVC")]
+            appB --- dbB
+        end
+
+        subgraph nsN["&lt;prefix&gt;-vibe-&lt;app-N&gt;"]
+            appN["app"]
+            dbN[("DB<br/>PVC")]
+            appN --- dbN
+        end
+    end
+
+    egress["🚫 Egress blocked<br/>cluster-wide<br/>Platform/Arch owns"]
+
+    vpn --> traefik
+    traefik --> appA
+    traefik --> appB
+    traefik --> appN
+    appA -.->|"/metrics + logs"| obs
+    appB -.->|"/metrics + logs"| obs
+    appN -.->|"/metrics + logs"| obs
+    promtail -.->|"ship stdout"| loki
+    cluster -.- egress
+
+    style obs fill:#fef3c7,stroke:#d97706
+    style nsA fill:#dbeafe,stroke:#3b82f6
+    style nsB fill:#dbeafe,stroke:#3b82f6
+    style nsN fill:#dbeafe,stroke:#3b82f6
+    style egress fill:#fee2e2,stroke:#dc2626`,"id-2":`flowchart LR
+    subgraph platform["Platform Team (onboarding)"]
+        plain["plain Secret manifest<br/>(never committed)"]
+        ks["kubeseal CLI<br/>+ cluster public key"]
+        plain -->|seal| ks
+    end
+
+    subgraph git["Git Repo (safe to commit)"]
+        sealed["SealedSecret YAML<br/>encryptedData: AgB3x..."]
+    end
+
+    subgraph cluster["k3s Cluster"]
+        direction TB
+        argocd2["ArgoCD<br/>sync"]
+        controller["Sealed Secrets<br/>controller<br/>(vibe-observability)"]
+        k8ssecret["Kubernetes Secret<br/>(in-memory, namespace-scoped)"]
+        app2["App Pod<br/>env var via secretKeyRef"]
+
+        argocd2 -->|"apply SealedSecret"| controller
+        controller -->|"decrypt with cluster private key"| k8ssecret
+        k8ssecret -->|"secretKeyRef"| app2
+    end
+
+    keybackup[("🔑 Cluster private key<br/>BACKUP REQUIRED<br/>kube-system/sealed-secrets-key")]
+
+    ks -->|output| sealed
+    sealed -->|"git push → ArgoCD detects"| argocd2
+    controller -.->|"key lives here"| keybackup
+
+    never["🚫 NEVER<br/>plain Secret in Git<br/>credentials in ConfigMap<br/>credentials in Dockerfile ENV<br/>credentials in Deployment spec"]
+
+    style platform fill:#dbeafe,stroke:#3b82f6
+    style git fill:#dcfce7,stroke:#16a34a
+    style cluster fill:#fef3c7,stroke:#d97706
+    style keybackup fill:#f3e8ff,stroke:#9333ea
+    style never fill:#fee2e2,stroke:#dc2626`,"id-3":`flowchart TB
+    user(["👤 VPN User"])
+    traefik["Traefik Ingress"]
+
+    user -->|"HTTPS internal URL"| traefik
+
+    subgraph ns["&lt;prefix&gt;-vibe-&lt;app-slug&gt; namespace"]
+        direction TB
+
+        deny["🛡 default-deny-ingress NetworkPolicy<br/>applied FIRST — mandatory"]
+
+        subgraph web["webserver"]
+            nginx["nginx :80<br/>reverse proxy<br/>static files / SPA"]
+        end
+
+        subgraph application["application"]
+            app["app container<br/>:8081 http<br/>:8082 mgmt — NEVER public<br/><br/>/readiness  /liveness<br/>/metrics    /info"]
+        end
+
+        subgraph storage["stateful components (optional)"]
+            postgres[("PostgreSQL<br/>:5432<br/>PVC<br/>Recreate")]
+            mongo[("MongoDB<br/>:27017<br/>PVC<br/>Recreate")]
+            redis[("Redis<br/>:6379<br/>PVC")]
+            rmq["RabbitMQ<br/>:5672<br/>PVC"]
+        end
+
+        subgraph exporters["metrics exporters"]
+            pgexp["postgres-exporter<br/>:9187"]
+            mgexp["mongo-exporter<br/>:9216"]
+        end
+    end
+
+    subgraph observability["vibe-observability (cross-namespace)"]
+        vm["VictoriaMetrics"]
+        loki["Loki"]
+        otel["OTEL Collector"]
+    end
+
+    traefik -->|"allow-ingress-controller :80"| nginx
+    nginx -->|"proxy :8081"| app
+    app -->|"allow-app-to-db"| postgres
+    app -->|"OR"| mongo
+    app -.->|"allow-app-to-redis"| redis
+    app -.->|"allow-app-to-rabbitmq"| rmq
+    postgres --- pgexp
+    mongo --- mgexp
+    app -->|"allow-metrics-scrape :8081"| vm
+    pgexp -->|"allow-metrics-scrape :9187"| vm
+    mgexp -->|"allow-metrics-scrape :9216"| vm
+    app -->|"stdout JSON → Promtail"| loki
+    app -->|"allow-otel-egress :4318"| otel
+
+    style deny fill:#fee2e2,stroke:#dc2626
+    style web fill:#dbeafe,stroke:#3b82f6
+    style application fill:#dcfce7,stroke:#16a34a
+    style storage fill:#fef3c7,stroke:#d97706
+    style exporters fill:#f3e8ff,stroke:#9333ea
+    style observability fill:#fef3c7,stroke:#d97706`,"id-4":`flowchart LR
+    subgraph apps["vibe app pods (all namespaces *-vibe-*)"]
+        a1["app-A<br/>stdout JSON"]
+        a2["app-B<br/>stdout JSON"]
+        metrics1["/metrics<br/>Prometheus fmt"]
+        metrics2["/metrics<br/>Prometheus fmt"]
+    end
+
+    subgraph obs["vibe-observability"]
+        direction TB
+        promtail["Promtail<br/>DaemonSet<br/>/var/log/pods"]
+        vm["VictoriaMetrics<br/>auto-scrape<br/>annotations"]
+        loki["Loki<br/>log aggregation"]
+        minio[("Minio<br/>S3 backend")]
+        grafana["Grafana<br/>dashboards<br/>+ Loki Explore"]
+        otel["OTEL Collector<br/>:4317 gRPC<br/>:4318 HTTP"]
+    end
+
+    a1 -->|stdout| promtail
+    a2 -->|stdout| promtail
+    promtail -->|push| loki
+    loki --> minio
+    metrics1 -->|"pull :8081"| vm
+    metrics2 -->|"pull :8081"| vm
+    vm --> grafana
+    loki --> grafana
+    a1 -.->|traces| otel
+    a2 -.->|traces| otel
+
+    note["📌 App MUST:<br/>1. log JSON to stdout<br/>2. expose /metrics<br/>3. pod annotation:<br/>prometheus.io/scrape: true<br/><br/>Both CRITICAL —<br/>blocks deploy if missing"]
+
+    style obs fill:#fef3c7,stroke:#d97706
+    style note fill:#fee2e2,stroke:#dc2626`,"id-5":`flowchart LR
+    dev(["👤 App Creator"])
+
+    subgraph git["CODE"]
+        repo["Git repo<br/>(main branch)"]
+    end
+
+    subgraph ci["CI / Actions"]
+        direction TB
+        t1["1. Trufflehog<br/>secret scan"]
+        t2["2. Trivy<br/>CRITICAL only"]
+        t3["3. Build<br/>linux/amd64"]
+        t1 --> t2 --> t3
+    end
+
+    subgraph reg["IMAGES"]
+        harbor["Harbor<br/>internal registry<br/>&lt;slug&gt;:&lt;sha7&gt;<br/>NEVER :latest"]
+    end
+
+    subgraph cd["CD / GitOps"]
+        tag["commit tag<br/>update to values.yaml"]
+        argocd["ArgoCD<br/>auto-sync<br/>prune + selfHeal"]
+        tag --> argocd
+    end
+
+    dev -->|"git push main"| repo
+    repo -->|"webhook trigger"| ci
+    t3 -->|"push image"| harbor
+    harbor -->|"tag written to values.yaml"| tag
+    argocd -->|"sync"| cluster(["k3s Cluster<br/>~2 min total"])
+
+    style git fill:#dbeafe,stroke:#3b82f6
+    style ci fill:#fef9c3,stroke:#eab308
+    style reg fill:#dcfce7,stroke:#16a34a
+    style cd fill:#f3e8ff,stroke:#9333ea`,"id-6":`flowchart TD
+    input(["👤 Vibe App Creator<br/>raw code from Claude/Cursor<br/>no infra knowledge"])
+
+    subgraph context["Platform Context (read at start)"]
+        cv["CLAUDE-vibe-app.md<br/>contract requirements"]
+        pt["PLATFORM-template.md<br/>cluster topology + values"]
+    end
+
+    input -->|"5 questions: name, DB, size, components, runtime"| s1
+
+    subgraph skills["Skills — applied in order"]
+        direction TB
+
+        s0["1. app-contract.md<br/>Modifies app SOURCE CODE:<br/>health endpoints :8082<br/>/metrics Prometheus format<br/>JSON structured logging stdout"]
+
+        s1["2. scaffold.md<br/>Generates full k8s manifest set:<br/>namespace · NetworkPolicies · RBAC<br/>Deployment · Service · Ingress<br/>SealedSecret stubs · ConfigMap · HPA"]
+
+        s2["3. db-provision.md<br/>If DB needed:<br/>PVC + Postgres or Mongo pod<br/>exporter sidecar<br/>NetworkPolicy update<br/>initContainer wait-for-db"]
+
+        s3["4. observability.md<br/>Pod annotations → VictoriaMetrics<br/>JSON stdout confirmed → Loki<br/>OTEL tracing endpoint (optional)"]
+
+        s4["5. gitops.md<br/>GitHub Actions CI:<br/>Trufflehog · Trivy · Harbor push<br/>ArgoCD Application + AppProject<br/>CD: tag commit → auto-sync"]
+
+        s_tests["6. tests.md<br/>Test pyramid:<br/>Unit · Integration · E2E smoke<br/>Wired into CI — blocks deploy on fail"]
+
+        s5["7. review.md<br/>35+ checks:<br/>CRITICAL: A1-A6 · B1-B6 · C1-C4<br/>           D1-D4 · E1-E7 · G1-G4,G6<br/>WARNING:   F1-F3 · H1-H2"]
+
+        s0 --> s1 --> s2 --> s3 --> s4 --> s_tests --> s5
+    end
+
+    s5 -->|FAIL| fix["🔧 fix issues<br/>→ re-review"]
+    fix --> s5
+
+    s5 -->|PASS| output
+
+    subgraph output["Contract-Compliant App"]
+        direction LR
+        o1["✓ immutable image in Harbor<br/>✓ namespace isolated + NetworkPolicies<br/>✓ Sealed Secrets — no plain creds in Git"]
+        o2["✓ health endpoints + probes<br/>✓ /metrics + JSON logs wired<br/>✓ GitOps → ArgoCD auto-deploy<br/>✓ RBAC scoped to namespace<br/>✓ test pyramid in CI"]
+    end
+
+    context -.->|informs| skills
+
+    style input fill:#dbeafe,stroke:#3b82f6
+    style context fill:#f3e8ff,stroke:#9333ea
+    style skills fill:#fef9c3,stroke:#eab308
+    style s5 fill:#fef3c7,stroke:#d97706
+    style fix fill:#fee2e2,stroke:#dc2626
+    style output fill:#dcfce7,stroke:#16a34a`},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:30,type:"lunr"}}</script><script src=/js/theme.js></script></body></html>

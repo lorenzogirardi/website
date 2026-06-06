@@ -1,4 +1,38 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 02 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 06 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/vibeenv.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Shift Is Already Happening</li>
+<li>The Problem Nobody Prepared For</li>
+<li>The Design Principle: Safe by Default</li>
+<li>The Platform Contract — What Every App Must Be
+<ul>
+<li>Supported Languages and Base Images</li>
+<li>Supported Components</li>
+<li>T-shirt Sizing</li>
+<li>Port Contract</li>
+<li>Health Endpoints</li>
+<li>Secrets: Sealed, Always</li>
+<li>Images: Commit SHA, Never Latest</li>
+<li>Network: Default Deny, Every Time</li>
+</ul>
+</li>
+<li>The Three-Tier Monitoring Contract
+<ul>
+<li>System Tier — Automatic</li>
+<li>Framework Tier — App Metrics</li>
+<li>Business Tier — What the App Actually Does</li>
+</ul>
+</li>
+<li>The Review Gate — 35+ Checks Before Deploy</li>
+<li>The Helm Chart — Five Questions, Full Platform</li>
+<li>The CI/CD Pipeline — AI App Meets GitOps</li>
+<li>The Skill Pipeline — AI Onboarding an AI App</li>
+<li>The RACI Collapse</li>
+<li>Conclusion</li>
+</ul>
+<hr>
+<p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -334,8 +368,4 @@
 </ol>
 <p>Both work. Both have trade-offs. Let me go through each one.</p>
 <h2 id="the-code-way">The Code Way</h2>
-<p>This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce <em>false</em> metrics if you&rsquo;re not tracking it carefully.</p>]]></description></item><item><title>YA VPN Service in Kubernetes</title><link>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</link><pubDate>Mon, 18 Jul 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/ya-vpn-service-in-kubernetes/wirecardmobile.png" referrerpolicy="no-referrer">
-            </div><h2 id="why">Why</h2>
-<p>I had my beloved IPsec setup based on strongswan running in Kubernetes for a while — you can read about that <a href="/posts/kubernetes-strongswan/" rel="">here</a>. It worked fine. I wasn&rsquo;t looking to change it. Then a colleague pointed out WireGuard&rsquo;s overhead numbers and I got curious enough to evaluate it myself.</p>
-<p>WireGuard is a modern VPN protocol that lives in the Linux kernel. It&rsquo;s designed to be simple, fast, and have a minimal attack surface compared to IPsec or OpenVPN. The numbers people throw around are impressive, but I wanted to see them in practice.</p>]]></description></item></channel></rss>
+<p>This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce <em>false</em> metrics if you&rsquo;re not tracking it carefully.</p>]]></description></item></channel></rss>

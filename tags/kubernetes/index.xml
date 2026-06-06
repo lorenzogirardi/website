@@ -1,4 +1,38 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/kubernetes/</link><description>Kubernetes - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 02 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/kubernetes/</link><description>Kubernetes - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 06 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/vibeenv.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Shift Is Already Happening</li>
+<li>The Problem Nobody Prepared For</li>
+<li>The Design Principle: Safe by Default</li>
+<li>The Platform Contract — What Every App Must Be
+<ul>
+<li>Supported Languages and Base Images</li>
+<li>Supported Components</li>
+<li>T-shirt Sizing</li>
+<li>Port Contract</li>
+<li>Health Endpoints</li>
+<li>Secrets: Sealed, Always</li>
+<li>Images: Commit SHA, Never Latest</li>
+<li>Network: Default Deny, Every Time</li>
+</ul>
+</li>
+<li>The Three-Tier Monitoring Contract
+<ul>
+<li>System Tier — Automatic</li>
+<li>Framework Tier — App Metrics</li>
+<li>Business Tier — What the App Actually Does</li>
+</ul>
+</li>
+<li>The Review Gate — 35+ Checks Before Deploy</li>
+<li>The Helm Chart — Five Questions, Full Platform</li>
+<li>The CI/CD Pipeline — AI App Meets GitOps</li>
+<li>The Skill Pipeline — AI Onboarding an AI App</li>
+<li>The RACI Collapse</li>
+<li>Conclusion</li>
+</ul>
+<hr>
+<p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -136,9 +170,4 @@
 <li>Monitor</li>
 </ul>
 <p>Each could be its own post. This one will cut across all of them because they&rsquo;re connected.</p>
-<p><em>This is not a post about how to create a blog. This post inspects some technology that can simplify your life or your work with small but important concepts.</em></p>]]></description></item><item><title>Kubernetes Destroyed the Virtualization... or NOT</title><link>https://www.k8s.it/posts/kubernetes-destroyed-the-virtualization-or-not/</link><pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-destroyed-the-virtualization-or-not/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png" referrerpolicy="no-referrer">
-            </div><p></p>
-<p><strong>NO.</strong></p>
-<p>That&rsquo;s the short answer. Kubernetes has not destroyed virtualization. Let me explain why.</p>
-<p>I&rsquo;ve been watching the &ldquo;Kubernetes rush&rdquo; for a few years now. Companies highlight success stories and cost savings, but I often wonder if they&rsquo;re sharing the complete picture. I want to focus specifically on Kubernetes and virtualization — not the broader data center ecosystem with databases, legacy systems, and corporate infrastructure.</p>]]></description></item></channel></rss>
+<p><em>This is not a post about how to create a blog. This post inspects some technology that can simplify your life or your work with small but important concepts.</em></p>]]></description></item></channel></rss>
