@@ -23,7 +23,7 @@ tags:
   - platform contract
 featuredImage: /images/vibeenv1.0.png
 ---
-## Table of Contents
+### Table of Contents
 
 - The Shift Is Already Happening
 - The Problem Nobody Prepared For
@@ -99,51 +99,16 @@ The platform does all of this automatically. Where it cannot be automated, it bl
 Safe by default. No exceptions.
 
 ```mermaid
-graph TB
-    vpn(["🔒 VPN<br/>corporate only<br/>no public internet"])
-
-    subgraph cluster["k3s Cluster — private VIP via MetalLB"]
-        traefik["Traefik Ingress<br/>MetalLB VIP"]
-
-        subgraph obs["vibe-observability namespace"]
-            grafana["Grafana<br/>dashboards"]
-            vm["VictoriaMetrics<br/>metrics pull"]
-            loki["Loki<br/>+ Minio<br/>7d retention"]
-            otel["OTEL<br/>Collector"]
-            promtail["Promtail<br/>DaemonSet"]
-        end
-
-        subgraph nsA["&lt;prefix&gt;-vibe-&lt;app-A&gt;"]
-            appA["app"]
-            dbA[("DB<br/>PVC")]
-            appA --- dbA
-        end
-
-        subgraph nsB["&lt;prefix&gt;-vibe-&lt;app-B&gt;"]
-            appB["app"]
-            dbB[("DB<br/>PVC")]
-            appB --- dbB
-        end
-
-        subgraph nsN["&lt;prefix&gt;-vibe-&lt;app-N&gt;"]
-            appN["app"]
-            dbN[("DB<br/>PVC")]
-            appN --- dbN
-        end
-    end
-
-    egress["🚫 Egress blocked<br/>cluster-wide<br/>Platform/Arch owns"]
-
-    vpn --> traefik
-    traefik --> appA
-    traefik --> appB
-    traefik --> appN
-    appA -.->|"/metrics + logs"| obs
-    appB -.->|"/metrics + logs"| obs
-    appN -.->|"/metrics + logs"| obs
-    promtail -.->|"ship stdout"| loki
-    cluster -.- egress
-
+graph LR
+    VPN -->|HTTPS| Traefik
+    Traefik --> app-A
+    Traefik --> app-B
+    Traefik --> app-N
+    app-A -.->|metrics + logs| Observability
+    app-B -.->|metrics + logs| Observability
+    app-N -.->|metrics + logs| Observability
+    Observability --> Grafana
+    Internet -->|blocked| Egress-Wall
 ```
 
 ---
@@ -322,36 +287,10 @@ Vibe-Env uses **Bitnami Sealed Secrets**. The full flow — from plaintext to ru
 
 ```mermaid
 flowchart LR
-    subgraph platform["Platform Team (onboarding)"]
-        plain["plain Secret manifest<br/>(never committed)"]
-        ks["kubeseal CLI<br/>+ cluster public key"]
-        plain -->|seal| ks
-    end
-
-    subgraph git["Git Repo (safe to commit)"]
-        sealed["SealedSecret YAML<br/>encryptedData: AgB3x..."]
-    end
-
-    subgraph cluster["k3s Cluster"]
-        direction TB
-        argocd2["ArgoCD<br/>sync"]
-        controller["Sealed Secrets<br/>controller<br/>(vibe-observability)"]
-        k8ssecret["Kubernetes Secret<br/>(in-memory, namespace-scoped)"]
-        app2["App Pod<br/>env var via secretKeyRef"]
-
-        argocd2 -->|"apply SealedSecret"| controller
-        controller -->|"decrypt with cluster private key"| k8ssecret
-        k8ssecret -->|"secretKeyRef"| app2
-    end
-
-    keybackup[("🔑 Cluster private key<br/>BACKUP REQUIRED<br/>kube-system/sealed-secrets-key")]
-
-    ks -->|output| sealed
-    sealed -->|"git push → ArgoCD detects"| argocd2
-    controller -.->|"key lives here"| keybackup
-
-    never["🚫 NEVER<br/>plain Secret in Git<br/>credentials in ConfigMap<br/>credentials in Dockerfile ENV<br/>credentials in Deployment spec"]
-
+    A["plaintext credential"] -->|kubeseal| B["SealedSecret in Git"]
+    B -->|ArgoCD sync| C["Sealed Secrets controller"]
+    C -->|decrypt| D["Kubernetes Secret"]
+    D -->|secretKeyRef| E["App Pod env var"]
 ```
 
 The sealing workflow:
@@ -418,58 +357,17 @@ image: {{ .Values.cluster.registry }}/{{ .Values.app.image.repository }}:{{
 Every namespace has the same runtime anatomy: nginx reverse proxy in front, app container on two ports (8081 for traffic, 8082 for management only), stateful components only reachable via explicit NetworkPolicy, and the observability stack cross-namespace but allowed only for metrics scrape and log shipping.
 
 ```mermaid
-flowchart TB
-    user(["👤 VPN User"])
-    traefik["Traefik Ingress"]
-
-    user -->|"HTTPS internal URL"| traefik
-
-    subgraph ns["&lt;prefix&gt;-vibe-&lt;app-slug&gt; namespace"]
-        direction TB
-
-        deny["🛡 default-deny-ingress NetworkPolicy<br/>applied FIRST — mandatory"]
-
-        subgraph web["webserver"]
-            nginx["nginx :80<br/>reverse proxy<br/>static files / SPA"]
-        end
-
-        subgraph application["application"]
-            app["app container<br/>:8081 http<br/>:8082 mgmt — NEVER public<br/><br/>/readiness  /liveness<br/>/metrics    /info"]
-        end
-
-        subgraph storage["stateful components (optional)"]
-            postgres[("PostgreSQL<br/>:5432<br/>PVC<br/>Recreate")]
-            mongo[("MongoDB<br/>:27017<br/>PVC<br/>Recreate")]
-            redis[("Redis<br/>:6379<br/>PVC")]
-            rmq["RabbitMQ<br/>:5672<br/>PVC"]
-        end
-
-        subgraph exporters["metrics exporters"]
-            pgexp["postgres-exporter<br/>:9187"]
-            mgexp["mongo-exporter<br/>:9216"]
-        end
-    end
-
-    subgraph observability["vibe-observability (cross-namespace)"]
-        vm["VictoriaMetrics"]
-        loki["Loki"]
-        otel["OTEL Collector"]
-    end
-
-    traefik -->|"allow-ingress-controller :80"| nginx
-    nginx -->|"proxy :8081"| app
-    app -->|"allow-app-to-db"| postgres
-    app -->|"OR"| mongo
-    app -.->|"allow-app-to-redis"| redis
-    app -.->|"allow-app-to-rabbitmq"| rmq
-    postgres --- pgexp
-    mongo --- mgexp
-    app -->|"allow-metrics-scrape :8081"| vm
-    pgexp -->|"allow-metrics-scrape :9187"| vm
-    mgexp -->|"allow-metrics-scrape :9216"| vm
-    app -->|"stdout JSON → Promtail"| loki
-    app -->|"allow-otel-egress :4318"| otel
-
+flowchart LR
+    VPN -->|HTTPS| Traefik
+    Traefik -->|port 80| nginx
+    nginx -->|port 8081| app
+    app -->|port 5432| postgres
+    app -->|port 6379| redis
+    postgres --> postgres-exporter
+    postgres-exporter -.->|scrape| VictoriaMetrics
+    app -.->|metrics port 8081| VictoriaMetrics
+    app -.->|stdout JSON| Loki
+    app -.->|traces| OTEL
 ```
 
 First manifest applied to every namespace, before anything else:
@@ -561,36 +459,15 @@ The platform defines a three-tier monitoring model. System metrics are free. Fra
 
 ```mermaid
 flowchart LR
-    subgraph apps["vibe app pods (all namespaces *-vibe-*)"]
-        a1["app-A<br/>stdout JSON"]
-        a2["app-B<br/>stdout JSON"]
-        metrics1["/metrics<br/>Prometheus fmt"]
-        metrics2["/metrics<br/>Prometheus fmt"]
-    end
-
-    subgraph obs["vibe-observability"]
-        direction TB
-        promtail["Promtail<br/>DaemonSet<br/>/var/log/pods"]
-        vm["VictoriaMetrics<br/>auto-scrape<br/>annotations"]
-        loki["Loki<br/>log aggregation"]
-        minio[("Minio<br/>S3 backend")]
-        grafana["Grafana<br/>dashboards<br/>+ Loki Explore"]
-        otel["OTEL Collector<br/>:4317 gRPC<br/>:4318 HTTP"]
-    end
-
-    a1 -->|stdout| promtail
-    a2 -->|stdout| promtail
-    promtail -->|push| loki
-    loki --> minio
-    metrics1 -->|"pull :8081"| vm
-    metrics2 -->|"pull :8081"| vm
-    vm --> grafana
-    loki --> grafana
-    a1 -.->|traces| otel
-    a2 -.->|traces| otel
-
-    note["📌 App MUST:<br/>1. log JSON to stdout<br/>2. expose /metrics<br/>3. pod annotation:<br/>prometheus.io/scrape: true<br/><br/>Both CRITICAL —<br/>blocks deploy if missing"]
-
+    app-A -->|stdout JSON| Promtail
+    app-B -->|stdout JSON| Promtail
+    Promtail --> Loki
+    Loki --> Grafana
+    app-A -->|"/metrics pull"| VictoriaMetrics
+    app-B -->|"/metrics pull"| VictoriaMetrics
+    VictoriaMetrics --> Grafana
+    app-A -.->|traces| OTEL
+    app-B -.->|traces| OTEL
 ```
 
 ### System Tier — Automatic
@@ -995,36 +872,12 @@ The deploy pipeline is fully automatic from the moment it is set up. The creator
 
 ```mermaid
 flowchart LR
-    dev(["👤 App Creator"])
-
-    subgraph git["CODE"]
-        repo["Git repo<br/>(main branch)"]
-    end
-
-    subgraph ci["CI / Actions"]
-        direction TB
-        t1["1. Trufflehog<br/>secret scan"]
-        t2["2. Trivy<br/>CRITICAL only"]
-        t3["3. Build<br/>linux/amd64"]
-        t1 --> t2 --> t3
-    end
-
-    subgraph reg["IMAGES"]
-        harbor["Harbor<br/>internal registry<br/>&lt;slug&gt;:&lt;sha7&gt;<br/>NEVER :latest"]
-    end
-
-    subgraph cd["CD / GitOps"]
-        tag["commit tag<br/>update to values.yaml"]
-        argocd["ArgoCD<br/>auto-sync<br/>prune + selfHeal"]
-        tag --> argocd
-    end
-
-    dev -->|"git push main"| repo
-    repo -->|"webhook trigger"| ci
-    t3 -->|"push image"| harbor
-    harbor -->|"tag written to values.yaml"| tag
-    argocd -->|"sync"| cluster(["k3s Cluster<br/>~2 min total"])
-
+    dev["git push main"] --> secret-scan
+    secret-scan["Trufflehog scan"] --> vuln-scan
+    vuln-scan["Trivy CRITICAL"] --> build
+    build["Build linux/amd64"] --> Harbor
+    Harbor -->|"tag update in values.yaml"| ArgoCD
+    ArgoCD -->|"auto-sync"| Cluster
 ```
 
 **CI — Build, Scan, Push** (generated by the skill pipeline, runs on every push to main):
@@ -1156,48 +1009,32 @@ The pipeline is seven sequential steps, each a skill file the assistant reads as
 
 ```mermaid
 flowchart TD
-    input(["👤 Vibe App Creator<br/>raw code from Claude/Cursor<br/>no infra knowledge"])
+    input(["Vibe App Creator"])
 
-    subgraph context["Platform Context (read at start)"]
-        cv["CLAUDE-vibe-app.md<br/>contract requirements"]
-        pt["PLATFORM-template.md<br/>cluster topology + values"]
+    subgraph context["Platform Context"]
+        cv["CLAUDE-vibe-app.md"]
+        pt["PLATFORM-template.md"]
     end
 
-    input -->|"5 questions: name, DB, size, components, runtime"| s1
+    input -->|"name, DB, size, components, runtime"| s1
 
-    subgraph skills["Skills — applied in order"]
+    subgraph skills["Skill Pipeline"]
         direction TB
-
-        s0["1. app-contract.md<br/>Modifies app SOURCE CODE:<br/>health endpoints :8082<br/>/metrics Prometheus format<br/>JSON structured logging stdout"]
-
-        s1["2. scaffold.md<br/>Generates full k8s manifest set:<br/>namespace · NetworkPolicies · RBAC<br/>Deployment · Service · Ingress<br/>SealedSecret stubs · ConfigMap · HPA"]
-
-        s2["3. db-provision.md<br/>If DB needed:<br/>PVC + Postgres or Mongo pod<br/>exporter sidecar<br/>NetworkPolicy update<br/>initContainer wait-for-db"]
-
-        s3["4. observability.md<br/>Pod annotations → VictoriaMetrics<br/>JSON stdout confirmed → Loki<br/>OTEL tracing endpoint (optional)"]
-
-        s4["5. gitops.md<br/>GitHub Actions CI:<br/>Trufflehog · Trivy · Harbor push<br/>ArgoCD Application + AppProject<br/>CD: tag commit → auto-sync"]
-
-        s_tests["6. tests.md<br/>Test pyramid:<br/>Unit · Integration · E2E smoke<br/>Wired into CI — blocks deploy on fail"]
-
-        s5["7. review.md<br/>35+ checks:<br/>CRITICAL: A1-A6 · B1-B6 · C1-C4<br/>           D1-D4 · E1-E7 · G1-G4,G6<br/>WARNING:   F1-F3 · H1-H2"]
-
+        s0["app-contract"]
+        s1["scaffold"]
+        s2["db-provision"]
+        s3["observability"]
+        s4["gitops"]
+        s_tests["tests"]
+        s5["review — 35+ checks"]
         s0 --> s1 --> s2 --> s3 --> s4 --> s_tests --> s5
     end
 
-    s5 -->|FAIL| fix["🔧 fix issues<br/>→ re-review"]
+    s5 -->|FAIL| fix["fix and re-review"]
     fix --> s5
-
-    s5 -->|PASS| output
-
-    subgraph output["Contract-Compliant App"]
-        direction LR
-        o1["✓ immutable image in Harbor<br/>✓ namespace isolated + NetworkPolicies<br/>✓ Sealed Secrets — no plain creds in Git"]
-        o2["✓ health endpoints + probes<br/>✓ /metrics + JSON logs wired<br/>✓ GitOps → ArgoCD auto-deploy<br/>✓ RBAC scoped to namespace<br/>✓ test pyramid in CI"]
-    end
+    s5 -->|PASS| output["Contract-Compliant App"]
 
     context -.->|informs| skills
-
 ```
 
 The K8s manifest structure is deterministic — every app has the same numbered files in the same order:
