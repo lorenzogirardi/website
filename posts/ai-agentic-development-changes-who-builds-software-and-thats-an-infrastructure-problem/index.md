@@ -1,29 +1,29 @@
 # AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem
 
-### Table of Contents
+## Table of Contents
 
-  * The Shift Is Already Happening
-  * The Problem Nobody Prepared For
-  * The Design Principle: Safe by Default
-  * The Platform Contract — What Every App Must Be
-    * Supported Languages and Base Images
-    * Supported Components
-    * T-shirt Sizing
-    * Port Contract
-    * Health Endpoints
-    * Secrets: Sealed, Always
-    * Images: Commit SHA, Never Latest
-    * Network: Default Deny, Every Time
-  * The Three-Tier Monitoring Contract
-    * System Tier — Automatic
-    * Framework Tier — App Metrics
-    * Business Tier — What the App Actually Does
-  * The Review Gate — 35+ Checks Before Deploy
-  * The Helm Chart — Five Questions, Full Platform
-  * The CI/CD Pipeline — AI App Meets GitOps
-  * The Skill Pipeline — AI Onboarding an AI App
-  * The RACI Collapse
-  * Conclusion
+- The Shift Is Already Happening
+- The Problem Nobody Prepared For
+- The Design Principle: Safe by Default
+- The Platform Contract — What Every App Must Be
+  - Supported Languages and Base Images
+  - Supported Components
+  - T-shirt Sizing
+  - Port Contract
+  - Health Endpoints
+  - Secrets: Sealed, Always
+  - Images: Commit SHA, Never Latest
+  - Network: Default Deny, Every Time
+- The Three-Tier Monitoring Contract
+  - System Tier — Automatic
+  - Framework Tier — App Metrics
+  - Business Tier — What the App Actually Does
+- The Review Gate — 35+ Checks Before Deploy
+- The Helm Chart — Five Questions, Full Platform
+- The CI/CD Pipeline — AI App Meets GitOps
+- The Skill Pipeline — AI Onboarding an AI App
+- The RACI Collapse
+- Conclusion
 
 ---
 
@@ -57,7 +57,7 @@ The options are obvious, and they are all wrong.
 
 **A shared development server.** Everyone is root. One person's experiment kills everyone else's. Data from different projects bleeds together. There is no deployment process — it's `scp` and `nohup`. Eventually someone pastes real data into a seed script and you have a security incident.
 
-**Production.** Naaaa. A vibe-coded app — built by someone who doesn't know what a liveness probe is, whose "error handling" is whatever Claude decided to generate — in production, serving real users, touching real data. The support cost alone would be catastrophic.
+**Production.** Naaaa. A vibe-coded app built by someone who doesn't know what a liveness probe is, whose "error handling" is whatever Claude decided to generate, running in production serving real users and touching real data. The support cost alone would be catastrophic.
 
 None of these work. And if you give people the ability to build software without giving them a safe place to run it, you have created a problem, not solved one.
 
@@ -121,11 +121,6 @@ graph TB
     promtail -.->|"ship stdout"| loki
     cluster -.- egress
 
-    style obs fill:#fef3c7,stroke:#d97706
-    style nsA fill:#dbeafe,stroke:#3b82f6
-    style nsB fill:#dbeafe,stroke:#3b82f6
-    style nsN fill:#dbeafe,stroke:#3b82f6
-    style egress fill:#fee2e2,stroke:#dc2626
 ```
 
 ---
@@ -334,11 +329,6 @@ flowchart LR
 
     never["🚫 NEVER<br/>plain Secret in Git<br/>credentials in ConfigMap<br/>credentials in Dockerfile ENV<br/>credentials in Deployment spec"]
 
-    style platform fill:#dbeafe,stroke:#3b82f6
-    style git fill:#dcfce7,stroke:#16a34a
-    style cluster fill:#fef3c7,stroke:#d97706
-    style keybackup fill:#f3e8ff,stroke:#9333ea
-    style never fill:#fee2e2,stroke:#dc2626
 ```
 
 The sealing workflow:
@@ -457,12 +447,6 @@ flowchart TB
     app -->|"stdout JSON → Promtail"| loki
     app -->|"allow-otel-egress :4318"| otel
 
-    style deny fill:#fee2e2,stroke:#dc2626
-    style web fill:#dbeafe,stroke:#3b82f6
-    style application fill:#dcfce7,stroke:#16a34a
-    style storage fill:#fef3c7,stroke:#d97706
-    style exporters fill:#f3e8ff,stroke:#9333ea
-    style observability fill:#fef3c7,stroke:#d97706
 ```
 
 First manifest applied to every namespace, before anything else:
@@ -584,8 +568,6 @@ flowchart LR
 
     note["📌 App MUST:<br/>1. log JSON to stdout<br/>2. expose /metrics<br/>3. pod annotation:<br/>prometheus.io/scrape: true<br/><br/>Both CRITICAL —<br/>blocks deploy if missing"]
 
-    style obs fill:#fef3c7,stroke:#d97706
-    style note fill:#fee2e2,stroke:#dc2626
 ```
 
 ### System Tier — Automatic
@@ -745,7 +727,7 @@ const activeUsers = new Gauge({
 
 These metrics answer "is the app doing what it is supposed to do?" — not just "is it up and fast?" but "is business actually flowing through it?"
 
-The three tiers together give the creator a Grafana dashboard that answers four questions in sequence: Is everything running? (status row — green/red per pod). Is the infrastructure healthy? (system row — CPU, memory). Is the app behaving correctly? (framework row — request rate, error rate, DB connections). Is the business flowing? (business row — orders, searches, inventory).
+The three tiers together give the creator a Grafana dashboard that answers four questions in sequence. Is everything running? Is the infrastructure healthy? Is the app behaving correctly? Is the business flowing? Each question maps to a row, from pod status at the top to business counters at the bottom.
 
 ### Logging Contract
 
@@ -1020,10 +1002,6 @@ flowchart LR
     harbor -->|"tag written to values.yaml"| tag
     argocd -->|"sync"| cluster(["k3s Cluster<br/>~2 min total"])
 
-    style git fill:#dbeafe,stroke:#3b82f6
-    style ci fill:#fef9c3,stroke:#eab308
-    style reg fill:#dcfce7,stroke:#16a34a
-    style cd fill:#f3e8ff,stroke:#9333ea
 ```
 
 **CI — Build, Scan, Push** (generated by the skill pipeline, runs on every push to main):
@@ -1197,12 +1175,6 @@ flowchart TD
 
     context -.->|informs| skills
 
-    style input fill:#dbeafe,stroke:#3b82f6
-    style context fill:#f3e8ff,stroke:#9333ea
-    style skills fill:#fef9c3,stroke:#eab308
-    style s5 fill:#fef3c7,stroke:#d97706
-    style fix fill:#fee2e2,stroke:#dc2626
-    style output fill:#dcfce7,stroke:#16a34a
 ```
 
 The K8s manifest structure is deterministic — every app has the same numbered files in the same order:
@@ -1260,7 +1232,7 @@ The vibe prototype may be a complete rewrite informed by what the prototype prov
 
 The infrastructure problem created by AI agentic development is not going away. More people will build software with these tools. The quality will improve. The velocity will increase.
 
-The organizations that figure out the operational model will capture the value. The ones that don't will either block usage — losing the productivity gain — or let it run unsupervised — accumulating technical debt and security risk at a pace that is very hard to recover from.
+The organizations that figure out the operational model will capture the value. The ones that block it lose the productivity gain. The ones that let it run unsupervised accumulate technical debt and security risk at a pace that is very hard to recover from.
 
 A purpose-built sandbox with an explicit platform contract is the minimum viable operational model. Not because contracts are bureaucratic overhead, but because they are the thing that makes "yes, build things" a safe answer instead of a deferred problem.
 
@@ -1269,4 +1241,3 @@ The contract is the boundary between "the AI coded it" and "the platform runs it
 What follows is harder: how does a vibe app become a production service? Who maintains the code when the creator moves on? Those questions don't have clean answers yet. But they have a prerequisite: a place where the apps can run safely while the answers are worked out.
 
 That prerequisite is solvable. We solved it.
-
