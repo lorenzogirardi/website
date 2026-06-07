@@ -1,4 +1,21 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Monitoring - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/monitoring/</link><description>Monitoring - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 06 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/monitoring/" rel="self" type="application/rss+xml"/><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Monitoring - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/monitoring/</link><description>Monitoring - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 07 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/monitoring/" rel="self" type="application/rss+xml"/><item><title>Running a Local LLM on AMD Radeon 780M — gfx1103, ROCm, and the GPU That Wasn't Supposed to Work</title><link>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</link><pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/Screenshot%202026-06-07%20at%2013.10.19.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Machine</li>
+<li>The Problem: gfx1103 Doesn&rsquo;t Exist</li>
+<li>GTT Memory — 24 GB for Free</li>
+<li>The ROCm Stack</li>
+<li>Getting GPU Inference Working</li>
+<li>Optimizing: The Hidden GPU Clock Problem</li>
+<li>Benchmarks — Every Configuration Tested</li>
+<li>The Surprising Finding: CPU Beats GPU on Generation</li>
+<li>Monitoring with Collectd and Grafana</li>
+<li>What the Dashboard Actually Shows</li>
+<li>Lessons Learned</li>
+</ul>
+<hr>
+<p>I wanted a local AI box. Not a cloud API with latency and per-token billing. Not a GPU workstation that sounds like a jet engine. A quiet mini-PC that runs a capable model at home, on my desk, forever, for free.</p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/vibeenv1.0.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
