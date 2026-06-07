@@ -92,7 +92,7 @@ That's it. One environment variable. GPU inference works.
 
 The reason `11.0.2` (not `11.0.3`) is the mapping: Ollama's bundled ROCm 7.2 includes highly optimized Tensile kernel libraries for gfx1102 (RDNA3 chips like the RX 6650 XT, a common gaming card with large community usage). Those kernels run on gfx1103 hardware because the architectures are close relatives — same RDNA3 generation, similar CU layout.
 
-```mermaid
+{{< mermaid >}}
 flowchart TD
     A[Ollama starts] --> B{GPU detection}
     B -->|gfx1103 found| C[Check supported list]
@@ -103,7 +103,7 @@ flowchart TD
     G --> H[GPU inference active]
     D --> I[CPU-only inference ~5 tok/s]
     H --> I2[GPU inference ~4.5 tok/s gen / 54 tok/s prefill]
-```
+{{< /mermaid >}}
 
 ---
 
@@ -131,7 +131,7 @@ cat /sys/class/drm/card0/device/mem_info_gtt_used
 
 The model loads entirely into GTT. The GPU can access it directly via DMA without copying.
 
-```mermaid
+{{< mermaid >}}
 graph LR
     subgraph DDR5["DDR5-5600 32 GB (89.6 GB/s)"]
         UMA["UMA VRAM\n~512 MB\n(BIOS carved)"]
@@ -146,7 +146,7 @@ graph LR
     MODEL["/Storage/models/\ngemma4-qat:12b\n7.6 GB GGUF"] -->|loaded into| GTT
     ROCm <-->|DMA access| GTT
     ROCm <-->|direct| UMA
-```
+{{< /mermaid >}}
 
 ---
 
