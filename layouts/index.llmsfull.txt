@@ -1,0 +1,16 @@
+# {{ .Site.Title }} — Full Content
+
+> {{ with .Site.Params.description }}{{ . }}{{ else }}Personal blog{{ end }} by {{ .Site.Params.author.name }}. Full Markdown text of every post, concatenated for LLM ingestion. Generated {{ now.Format "2006-01-02" }}.
+{{ range (where .Site.RegularPages "Section" "posts").ByDate.Reverse }}
+{{ "" }}
+================================================================================
+# {{ .Title }}
+
+URL: {{ .Permalink }}
+Date: {{ .Date.Format "2006-01-02" }}
+{{ with .Params.tags }}Tags: {{ delimit . ", " }}{{ end }}
+{{ with .Description }}Description: {{ . }}{{ end }}
+--------------------------------------------------------------------------------
+
+{{ .RawContent }}
+{{ end }}

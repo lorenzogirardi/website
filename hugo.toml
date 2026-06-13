@@ -75,8 +75,20 @@ enableEmoji = true
     startLevel = 2
     endLevel = 6
 
+[outputFormats]
+  [outputFormats.LLMS]
+    mediaType = "text/plain"
+    baseName = "llms"
+    isPlainText = true
+    rel = "alternate"
+  [outputFormats.LLMSFULL]
+    mediaType = "text/plain"
+    baseName = "llms-full"
+    isPlainText = true
+    rel = "alternate"
+
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "LLMS", "LLMSFULL"]
   page = ["HTML", "MarkDown"]
   section = ["HTML", "RSS"]
   taxonomy = ["HTML", "RSS"]

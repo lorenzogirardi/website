@@ -1,0 +1,14 @@
+# {{ .Site.Title }}
+
+> {{ with .Site.Params.description }}{{ . }}{{ else }}Personal blog{{ end }} — Kubernetes, homelab, AI infrastructure, monitoring, and self-hosting by {{ .Site.Params.author.name }}.
+
+This file follows the llms.txt convention (https://llmstxt.org). Each post is also available as clean Markdown by appending `index.md` to its URL. A full-text dump of every post is at {{ "llms-full.txt" | absURL }}.
+
+## Posts
+{{ range (where .Site.RegularPages "Section" "posts").ByDate.Reverse }}
+- [{{ .Title }}]({{ .Permalink }}): {{ with .Description }}{{ . }}{{ else }}{{ .Summary | plainify | chomp | replaceRE "\\s+" " " }}{{ end }}{{ end }}
+
+## About
+- [Whoami]({{ "whoami/" | absURL }})
+- [All tags]({{ "tags/" | absURL }})
+- [RSS feed]({{ "index.xml" | absURL }})
