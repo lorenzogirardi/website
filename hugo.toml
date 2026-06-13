@@ -69,6 +69,13 @@ enableEmoji = true
       id = "G-5Q67F19PK4"
       respectDoNotTrack = false
 
+  [params.cookieconsent]
+    enable = true
+    [params.cookieconsent.content]
+      message = "This site uses cookies (Google Analytics) to understand traffic."
+      dismiss = "Got it!"
+      link = "Learn more"
+
 [markup]
   [markup.highlight]
     codeFences = true
