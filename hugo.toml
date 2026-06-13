@@ -63,6 +63,12 @@ enableEmoji = true
       maxShownLines = 50
       render.mermaid = true
 
+  [params.analytics]
+    enable = true
+    [params.analytics.google]
+      id = "G-5Q67F19PK4"
+      respectDoNotTrack = false
+
 [markup]
   [markup.highlight]
     codeFences = true
