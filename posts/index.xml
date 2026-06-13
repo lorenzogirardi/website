@@ -10,6 +10,8 @@
 <li>Optimizing: The Hidden GPU Clock Problem</li>
 <li>Benchmarks — Every Configuration Tested</li>
 <li>The Surprising Finding: CPU Beats GPU on Generation</li>
+<li>The Real Bottleneck: Single-Channel RAM</li>
+<li>The Breakthrough: MoE on CPU</li>
 <li>Monitoring with Collectd and Grafana</li>
 <li>What the Dashboard Actually Shows</li>
 <li>Lessons Learned</li>
