@@ -12,10 +12,10 @@ enableEmoji = true
   defaultTheme = "auto"
   dateFormat = "2006-01-02"
   description = "Personal blog"
-  images = ["/images/og-default.png"]
+  images = ["/images/og-default.jpg"]
 
   [params.seo]
-    image = "/images/og-default.png"
+    image = "/images/og-default.jpg"
 
   [params.author]
     name = "Lorenzo Girardi"
