@@ -11,6 +11,8 @@ tags:
   - terraform
   - waf
 featuredImage: /images/terraform-your-free-cloudflare-account/git-terraform-cloudflare.png
+images:
+  - "/images/terraform-your-free-cloudflare-account/git-terraform-cloudflare.png"
 ---
 
 ## Introduction

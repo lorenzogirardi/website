@@ -10,6 +10,8 @@ tags:
   - proxmox
   - vmware
 featuredImage: /images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/proxmox-import-vmware-vms-01.jpg
+images:
+  - "/images/migrating-homelab-from-vmware-esxi-to-proxmox-a-new-era/proxmox-import-vmware-vms-01.jpg"
 ---
 
 ## Introduction

@@ -9,6 +9,8 @@ tags:
   - email
   - dkim
 featuredImage: /images/kubernetes-postfix/vps.png
+images:
+  - "/images/kubernetes-postfix/vps.png"
 ---
 
 ![VPS to Kubernetes migration](/images/kubernetes-postfix/vps.png)

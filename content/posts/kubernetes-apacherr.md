@@ -10,6 +10,8 @@ tags:
   - kubernetes
   - rewrite rules
 featuredImage: /images/kubernetes-apacherr/front-controller.png
+images:
+  - "/images/kubernetes-apacherr/front-controller.png"
 ---
 
 ## The Semi-Unuseful Apache Implementation in Kubernetes

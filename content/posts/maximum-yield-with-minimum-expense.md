@@ -12,6 +12,8 @@ tags:
   - minio
   - workers
 featuredImage: /images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png
+images:
+  - "/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png"
 ---
 
 ![Security headers scan result](/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png)

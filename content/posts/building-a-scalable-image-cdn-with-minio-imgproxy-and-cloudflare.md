@@ -11,6 +11,8 @@ tags:
   - kubernetes
   - minio
 featuredImage: /images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.png
+images:
+  - "/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.png"
 ---
 
 ## Intro

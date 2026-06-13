@@ -18,6 +18,8 @@ tags:
   - inference
   - monitoring
 featuredImage: /images/Screenshot 2026-06-07 at 13.10.19.png
+images:
+  - "/images/Screenshot 2026-06-07 at 13.10.19.png"
 ---
 ### Table of Contents
 

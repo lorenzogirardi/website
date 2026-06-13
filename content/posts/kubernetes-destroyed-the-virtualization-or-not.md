@@ -9,6 +9,8 @@ tags:
   - containers
   - cloud
 featuredImage: /images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png
+images:
+  - "/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png"
 ---
 
 ![VM vs Pod](/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png)

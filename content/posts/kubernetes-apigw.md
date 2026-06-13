@@ -10,6 +10,8 @@ tags:
   - rate-limiting
   - monitoring
 featuredImage: /images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.png
+images:
+  - "/images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.png"
 ---
 
 ![Kong API gateway overview](/images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.png)

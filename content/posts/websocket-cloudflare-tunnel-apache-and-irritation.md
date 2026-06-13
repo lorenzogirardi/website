@@ -14,6 +14,8 @@ tags:
   - websocket
   - workers
 featuredImage: /images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png
+images:
+  - "/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png"
 ---
 
 ## The Infrastructure Overview

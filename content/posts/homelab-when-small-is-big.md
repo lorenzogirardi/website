@@ -10,6 +10,8 @@ tags:
   - grafana
   - proxmox
 featuredImage: /images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png
+images:
+  - "/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png"
 ---
 
 ![Homelab monitoring dashboard](/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png)

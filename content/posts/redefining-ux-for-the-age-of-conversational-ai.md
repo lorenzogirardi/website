@@ -11,6 +11,8 @@ tags:
   - mcp
   - ux
 featuredImage: /images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.png
+images:
+  - "/images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.png"
 ---
 
 ## Introduction

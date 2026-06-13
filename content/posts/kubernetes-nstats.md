@@ -9,6 +9,8 @@ tags:
   - monitoring
   - grafana
 featuredImage: /images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png
+images:
+  - "/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png"
 ---
 
 ![nstats in Grafana](/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png)

@@ -15,6 +15,8 @@ tags:
   - kubernetes
   - automation
 featuredImage: /images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png
+images:
+  - "/images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png"
 ---
 ### Table of Contents
 

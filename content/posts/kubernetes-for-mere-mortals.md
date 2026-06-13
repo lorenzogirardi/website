@@ -10,6 +10,8 @@ tags:
   - hardware
   - monitoring
 featuredImage: /images/kubernetes-for-mere-mortals/k8s.arm-lg.jpeg
+images:
+  - "/images/kubernetes-for-mere-mortals/k8s.arm-lg.jpeg"
 ---
 
 ## Hardware Setup

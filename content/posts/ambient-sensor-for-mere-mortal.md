@@ -10,6 +10,8 @@ tags:
   - monitoring
   - temperature
 featuredImage: /images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png
+images:
+  - "/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png"
 ---
 
 ![Grafana temperature dashboard](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png)

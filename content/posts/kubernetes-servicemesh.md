@@ -10,6 +10,8 @@ tags:
   - cilium
   - networking
 featuredImage: /images/kubernetes-servicemesh/img_flow.png
+images:
+  - "/images/kubernetes-servicemesh/img_flow.png"
 ---
 
 ![Service mesh flow diagram](/images/kubernetes-servicemesh/img_flow.png)

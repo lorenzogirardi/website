@@ -8,6 +8,8 @@ tags:
   - vpn
   - wireguard
 featuredImage: /images/ya-vpn-service-in-kubernetes/wirecardmobile.png
+images:
+  - "/images/ya-vpn-service-in-kubernetes/wirecardmobile.png"
 ---
 
 ## Why

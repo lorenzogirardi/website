@@ -10,6 +10,8 @@ tags:
   - grafana
   - performance
 featuredImage: /images/kubernetes-sitespeedio/reaction.png
+images:
+  - "/images/kubernetes-sitespeedio/sitespeedresults.png"
 ---
 
 ![Performance reaction](/images/kubernetes-sitespeedio/reaction.png)

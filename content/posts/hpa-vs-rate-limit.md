@@ -11,6 +11,8 @@ tags:
   - rate limiting
   - kubernetes
 featuredImage: /images/hpa-vs-rate-limit/Screenshot_2023-02-14_at_20.15.33-removebg-preview-2.png
+images:
+  - "/images/hpa-vs-rate-limit/Screenshot_2023-02-14_at_20.15.33-removebg-preview-2.png"
 ---
 
 ## INTRO

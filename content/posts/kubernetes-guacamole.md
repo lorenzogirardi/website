@@ -11,6 +11,8 @@ tags:
   - ssh
   - security
 featuredImage: /images/kubernetes-guacamole/guacamole-linux.png
+images:
+  - "/images/kubernetes-guacamole/guacamole-linux.png"
 ---
 
 ## Another Guacamole in Kubernetes

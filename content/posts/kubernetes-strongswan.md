@@ -11,6 +11,8 @@ tags:
   - ldap
   - active directory
 featuredImage: /images/kubernetes-strongswan/vpn_diagram.jpg
+images:
+  - "/images/kubernetes-strongswan/vpn_diagram.jpg"
 ---
 
 ## How to Manage VPN in a Kubernetes Environment

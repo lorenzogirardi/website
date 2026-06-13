@@ -13,6 +13,8 @@ tags:
   - observability
   - alerting
 featuredImage: /images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png
+images:
+  - "/images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.png"
 ---
 
 Contrary to popular belief, monitoring an infrastructure is the opposite of just having some metrics about applications and network.

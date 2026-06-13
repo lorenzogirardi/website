@@ -11,6 +11,8 @@ tags:
   - performance
   - metrics
 featuredImage: /images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png
+images:
+  - "/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png"
 ---
 
 ![HPA autoscaling dashboard](/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png)

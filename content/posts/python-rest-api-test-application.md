@@ -10,6 +10,8 @@ tags:
   - docker
   - api
 featuredImage: /images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.png
+images:
+  - "/images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.png"
 ---
 
 ![Python REST API application](/images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.png)

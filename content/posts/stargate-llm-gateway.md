@@ -7,6 +7,8 @@ tags:
   - gateway
   - llm
 featuredImage: /images/herostargate.png
+images:
+  - "/images/herostargate.png"
 ---
 # Stargate LLM Gateway
 

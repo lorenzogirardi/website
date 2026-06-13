@@ -22,6 +22,8 @@ tags:
   - contracts
   - platform contract
 featuredImage: /images/vibeenv1.0.png
+images:
+  - "/images/vibeenv1.0.png"
 ---
 ### Table of Contents
 

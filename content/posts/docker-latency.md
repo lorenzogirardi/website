@@ -10,6 +10,8 @@ tags:
   - networking
   - latency
 featuredImage: /images/docker-latency/grafana_home.png
+images:
+  - "/images/docker-latency/grafana_home.png"
 ---
 
 ## aka the network blaming tool
