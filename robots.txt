@@ -1,64 +1,78 @@
-User-agent: *
+# AI / LLM crawlers — explicitly welcomed
+User-agent: GPTBot
+Allow: /
 
-Disallow: /images/
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Default — allow everything except heavy asset dirs
+User-agent: *
 Disallow: /js/
 Disallow: /css/
 
+# Aggressive SEO / scraper bots — blocked
 User-agent: MJ12bot
 Disallow: /
-
 User-agent: AhrefsBot
 Disallow: /
-
 User-agent: BLEXBot
 Disallow: /
-
-# Block SISTRIX
 User-agent: SISTRIX Crawler
 Disallow: /
 User-agent: sistrix
 Disallow: /
 User-agent: 007ac9
 Disallow: /
-User-agent: 007ac9 Crawler
-Disallow: /
-
-# Block Uptime robot
 User-agent: UptimeRobot/2.0
 Disallow: /
-
-# Block Ezooms Robot
 User-agent: Ezooms Robot
 Disallow: /
-
-# Block Perl LWP
 User-agent: Perl LWP
 Disallow: /
-
-# Block netEstate NE Crawler (+http://www.website-datenbank.de/)
-User-agent: netEstate NE Crawler (+http://www.website-datenbank.de/)
-Disallow: /
-
-# Block WiseGuys Robot
 User-agent: WiseGuys Robot
 Disallow: /
-
-# Block Turnitin Robot
 User-agent: Turnitin Robot
 Disallow: /
-
-# Block Heritrix
 User-agent: Heritrix
 Disallow: /
-
-# Block pricepi
 User-agent: pimonster
 Disallow: /
-
 User-agent: SurdotlyBot
 Disallow: /
-
 User-agent: ZoominfoBot
+Disallow: /
+User-agent: Bytespider
 Disallow: /
 
 Sitemap: https://www.k8s.it/sitemap.xml
+# LLM index: https://www.k8s.it/llms.txt
