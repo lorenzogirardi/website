@@ -1,4 +1,19 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 07 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>Running a Local LLM on AMD Radeon 780M — gfx1103, ROCm, and the GPU That Wasn't Supposed to Work</title><link>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</link><pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 18 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>Who Is Your AI Agent Acting For? RFC 8693 On-Behalf-Of Delegation</title><link>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</link><pubDate>Sat, 18 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem: agents are anonymous proxies</li>
+<li>Enter RFC 8693: Token Exchange, On-Behalf-Of</li>
+<li>The Architecture</li>
+<li>The Identity Flow, Step by Step</li>
+<li>Token Anatomy</li>
+<li>Where Authorization Actually Happens</li>
+<li>Security Properties</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. Everyone is wiring AI agents to real systems — Kubernetes clusters, CI pipelines, internal APIs — and almost nobody is asking the boring question first: <strong>when the agent calls a tool, who is it?</strong></p>]]></description></item><item><title>Running a Local LLM on AMD Radeon 780M — gfx1103, ROCm, and the GPU That Wasn't Supposed to Work</title><link>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</link><pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/Screenshot%202026-06-07%20at%2013.10.19.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -310,72 +325,4 @@
                 <img src="/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png" referrerpolicy="no-referrer">
             </div><h2 id="the-infrastructure-overview">The Infrastructure Overview</h2>
 <p>Exposing home lab services to the internet can be both necessary and risky. Traditional methods — port forwarding, VPNs, reverse proxies with open inbound ports — come with their own set of challenges. This is where Cloudflare Tunnel (formerly Argo Tunnel) comes in as an elegant solution.</p>
-<p>In this article, I&rsquo;ll walk you through how I&rsquo;ve implemented a secure infrastructure using Cloudflare Tunnel with WebSocket support, running on a Kubernetes cluster with Apache HTTPD as a reverse proxy. This setup allows me to securely expose internal services without opening ports on my residential firewall.</p>]]></description></item><item><title>HPA vs Rate-limit</title><link>https://www.k8s.it/posts/hpa-vs-rate-limit/</link><pubDate>Tue, 14 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/hpa-vs-rate-limit/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/hpa-vs-rate-limit/Screenshot_2023-02-14_at_20.15.33-removebg-preview-2.png" referrerpolicy="no-referrer">
-            </div><h2 id="intro">INTRO</h2>
-<p>Strange&hellip; we are using HPA to increase availability and introducing rate limiting to reduce it?</p>
-<p>Well, let&rsquo;s create the context.</p>
-<p>This analysis is based on specific assumptions:</p>
-<ul>
-<li>Cloud environment</li>
-<li>Dynamic infrastructure</li>
-<li>Minimum resources available</li>
-</ul>
-<h3 id="hpa">HPA</h3>
-<p>In Kubernetes, a <em>HorizontalPodAutoscaler</em> automatically updates a workload resource (Deployment, StatefulSet) to match demand.</p>
-<h4 id="patterns">Patterns</h4>
-<table>
-	<thead>
-			<tr>
-					<th>Type</th>
-					<th>Behaviour</th>
-			</tr>
-	</thead>
-	<tbody>
-			<tr>
-					<td>Slow and temporary</td>
-					<td>Daily fluctuations, peaking during the day and troughing at night</td>
-			</tr>
-			<tr>
-					<td>Rapid and temporary</td>
-					<td>Short bursts from poorly-behaved downstream services</td>
-			</tr>
-			<tr>
-					<td>Slow and persistent</td>
-					<td>Request volume slowly increases as the product sees adoption</td>
-			</tr>
-			<tr>
-					<td>Rapid and persistent</td>
-					<td>Abrupt shift from low to high volumes — e.g. called by batch jobs</td>
-			</tr>
-	</tbody>
-</table>
-<h4 id="ideal-practice">Ideal Practice</h4>
-<table>
-	<thead>
-			<tr>
-					<th>Type</th>
-					<th>Ideal Practice</th>
-			</tr>
-	</thead>
-	<tbody>
-			<tr>
-					<td>Slow and temporary</td>
-					<td>HPA should add and remove pods as necessary</td>
-			</tr>
-			<tr>
-					<td>Rapid and temporary</td>
-					<td>HPA should NOT modify pod count — leave headroom for brief spikes</td>
-			</tr>
-			<tr>
-					<td>Slow and persistent</td>
-					<td>HPA should add and remove pods as necessary</td>
-			</tr>
-			<tr>
-					<td>Rapid and persistent</td>
-					<td>Leave headroom; HPA adds pods quickly to restore target utilization</td>
-			</tr>
-	</tbody>
-</table>
-<h3 id="rate-limit">Rate Limit</h3>
-<p>A rate limit is the number of API calls an app or user can make within a given time period. If this limit is exceeded — or if CPU or time limits are exceeded — the app may be throttled. Throttled requests fail.</p>]]></description></item></channel></rss>
+<p>In this article, I&rsquo;ll walk you through how I&rsquo;ve implemented a secure infrastructure using Cloudflare Tunnel with WebSocket support, running on a Kubernetes cluster with Apache HTTPD as a reverse proxy. This setup allows me to securely expose internal services without opening ports on my residential firewall.</p>]]></description></item></channel></rss>
