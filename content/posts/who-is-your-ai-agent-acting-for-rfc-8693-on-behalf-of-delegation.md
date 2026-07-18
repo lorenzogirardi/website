@@ -47,8 +47,6 @@ Spoiler: yes. The standard has existed since 2020. It's **RFC 8693 Token Exchang
 
 In this article, I'll walk you through the architecture: a broker that exchanges the user's token for a delegated one, an agent that never sees the user's raw credential, and an audit trail that can finally answer *"what did alice actually do through this agent?"*
 
-![Delegated identity flow overview](/images/agent-identity-rfc-8693-on-behalf-of/featured.jpg)
-
 Everything runs in Docker on localhost — no cloud, no VPN, no TLS ceremony. Keycloak, a Python broker, a FastAPI agent, LiteLLM, a mock MCP server, Redis — plus Prometheus and Grafana, because a delegation chain you can't observe is a delegation chain you can't trust.
 
 ## The Problem: agents are anonymous proxies
@@ -83,8 +81,6 @@ Could you just pass alice's access token straight to the agent? Naaaa... Now the
 `**sub**` = who owns the action. `**act.sub**` = who is executing it. Every downstream system that validates this token can enforce rules on both — and it's a real **RS256 JWT signed by Keycloak**, not something the gateway invented.
 
 ## The Architecture
-
-![How the delegation chain works](/images/agent-identity-rfc-8693-on-behalf-of/how-it-works.png)
 
 Nine containers, all local:
 
