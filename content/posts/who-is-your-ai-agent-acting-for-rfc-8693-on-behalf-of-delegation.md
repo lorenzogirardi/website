@@ -150,7 +150,7 @@ Four things worth noticing:
 
 1. The **user JWT stops at the gateway**. What crosses into the agent backend is only the delegated token.
 2. The agent stores the grant **encrypted at rest** (AES-256-GCM in Redis), keyed by run id.
-3. The OBO token is short-lived (1h) but comes with a **rotating refresh token** — the broker can renew it offline, so a long-running task survives without the human being present. The `act` claim is preserved across refreshes.
+3. The OBO token is short-lived (1h) but comes with a **rotating refresh token** — the broker can renew it offline, so a long-running task survives without the human being present. The `act` claim is preserved across refreshes. One Keycloak gotcha here: when you ask the exchange for `requested_token_type=access_token`, Keycloak **omits the refresh token entirely** — the broker has to request the `refresh_token` type (with `offline_access` in scope) or long-running renewability silently doesn't exist.
 4. Operator-only audit endpoints reconstruct everything after the fact:
 
 ```bash
@@ -165,7 +165,7 @@ The logs alone are already worth the exercise:
 [MCP] run=abc123 tools/call sub=8c8af53c act=agent-service ok=True
 ```
 
-The webapp visualizes the whole chain live — login, exchange, agent run, audit — with every JWT decoded on screen. Step 2 should show `fallback=False` and `alg=RS256`, meaning Keycloak performed the real RFC 8693 exchange, not a local shortcut (more on that below):
+The webapp visualizes the whole chain live — login, exchange, agent run, audit — with every JWT decoded on screen. In Step 2 you can see the exchange result: same `sub` as the user token, `act.sub=agent-service`, and `iss` pointing at the realm — a real RS256 exchange performed by Keycloak, not a local shortcut (more on that below):
 
 ![Webapp — identity delegation chain, every JWT decoded](/images/agent-identity-rfc-8693-on-behalf-of/webapp-flow.png)
 
@@ -257,13 +257,24 @@ The fix has two halves, and the second one is the interesting one:
 
 Every Python service exposes `/metrics` (RED per route plus domain metrics: `agent_runs_total{status}`, `agent_mcp_requests_total{tool}`, `mcp_tool_calls_total`, `webapp_flows_total{fallback}`), `/healthz` and `/readyz`. Prometheus scrapes everything, and Grafana ships two auto-provisioned dashboards.
 
-The *Delegation Flow* dashboard is the one that matters: exchange rate, **fallback ratio** (any nonzero value turns red — it means Keycloak stopped doing real RFC 8693 and the broker is minting demo tokens), run outcomes, per-tool MCP traffic, hop latencies:
+The *Delegation Flow* dashboard is the one that matters: exchange rate, **fallback ratio** (in the screenshot it reads "No data" — zero fallback samples, which is exactly what healthy looks like; any nonzero value turns it red, meaning Keycloak stopped doing real RFC 8693 and the broker is minting demo tokens), Keycloak reachability, run outcomes, token refreshes, per-tool MCP traffic on both the agent and server side, hop latencies:
 
 ![Grafana — delegation flow dashboard with the fallback-ratio stat](/images/agent-identity-rfc-8693-on-behalf-of/grafana-identity-flow.png)
 
-The *Service RED* dashboard covers rate / errors / duration per service — the boring one you look at when something is slow:
+The *Service RED* dashboard covers rate / errors / duration per service, plus scrape-target availability and Redis memory — the boring one you look at when something is slow. Look at the errors panel: those `webapp 500` and `mcp-mock 500` spikes are exactly the latent defects described below, caught on camera:
 
 ![Grafana — service RED dashboard](/images/agent-identity-rfc-8693-on-behalf-of/grafana-service-red.png)
+
+### The dashboards paid for themselves within hours
+
+This is the part I want to insist on. Four latent defects became visible that log-grepping had never surfaced:
+
+1. **The E2E test was silently exercising the HMAC fallback on every run.** The fallback-ratio stat sat at 50% and pointed straight at it: the test passed the user JWT where the actor token belonged, and — bonus finding — dev-mode Keycloak derives the token `iss` from the request Host header, so tokens minted via `localhost:8180` get rejected as `invalid_token` by the in-network exchange at `keycloak:8080`. The test now logs in through the internal issuer and **fails** when the exchange degrades.
+2. **Real RS256 grants were not renewable.** Only the fallback tokens carried a refresh token (see the Keycloak gotcha above) — the POC's core "renewability" property worked only on the degraded path. Ouch.
+3. **The webapp returned 500 on agent timeout** under concurrent runs — unhandled `httpx.ReadTimeout`, now a clean 504/502.
+4. **The MCP server crashed on `"params": null`** — LLM-driven JSON-RPC clients send explicit nulls, and `.get(k, {})` does not cover them.
+
+Number 1 and 2 are the humbling ones: the system *looked* like it was demonstrating real RFC 8693 delegation, and half the time it was demonstrating a locally-signed simulation of it. No log line said so. A single red ratio stat did.
 
 And because "it works on my laptop" is not a claim, there's a test pyramid — `./scripts/test-flow.sh`, unit → integration → E2E, 31 checks with the stack up. The key assertions: `fallback=False` on the real exchange, and the metrics counters actually incrementing after the E2E run.
 
@@ -285,7 +296,7 @@ Agent identity is not an exotic problem requiring an exotic solution. RFC 8693 h
 
 Intellectual honesty time: this POC demonstrates identity **transport**, not enforcement.
 
-What is verified: the token reaching MCP really carries `sub=alice act=agent-service`, the agent never holds alice's raw token, every call is traced and now *measured*. An EA/SRE critical review pass (`docs/CRITICAL_REVIEW.md`) already forced two fixes — the fail-open HMAC fallback is gated and counted, and the config naming drift is gone. What is still missing?
+What is verified: the token reaching MCP really carries `sub=alice act=agent-service`, the agent never holds alice's raw token, every call is traced and now *measured*. An EA/SRE critical review pass (`docs/CRITICAL_REVIEW.md`) already forced a round of fixes: the fail-open HMAC fallback is gated and counted, the trace store is an atomic Redis list (concurrent tool calls were losing audit entries to a read-modify-write race — an audit trail that loses entries under load is worse than none, it lies), Redis is a readiness dependency (`/readyz`), so a replica that loses it stops receiving traffic instead of silently splitting state, and the broker went fully async — one slow Keycloak round-trip no longer stalls every in-flight exchange. What is still missing?
 
 - **Downstream services don't verify the RS256 signature** — agent, MCP server and webapp decode the JWT without checking it against Keycloak's JWKS. The audit trail records *claimed* identity, not *proven* identity. This is the highest-value next increment.
 - The gateway is **simulated** by the webapp — no real CEL policy on `/mcp`. Production wants agentgateway with an extAuth filter.
