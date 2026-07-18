@@ -5,20 +5,22 @@ draft: false
 description: How I built a local POC where every LLM and MCP call carries
   both   the human's and the agent's identity, using Keycloak and RFC 8693
   token   exchange. Per-user policy, audit and revocation for autonomous agents.
+tags:
+  - "ai "
 featuredImage: /images/featured.jpg
 ---
 ### Table of Contents
 
-  * Introduction
-  * The Problem: agents are anonymous proxies
-  * Enter RFC 8693: Token Exchange, On-Behalf-Of
-  * The Architecture
-  * The Identity Flow, Step by Step
-  * Token Anatomy
-  * Where Authorization Actually Happens
-  * Security Properties
-  * Conclusion
-  * Reflections
+- Introduction
+- The Problem: agents are anonymous proxies
+- Enter RFC 8693: Token Exchange, On-Behalf-Of
+- The Architecture
+- The Identity Flow, Step by Step
+- Token Anatomy
+- Where Authorization Actually Happens
+- Security Properties
+- Conclusion
+- Reflections
 
 
 
@@ -67,14 +69,15 @@ Could you just pass alice's access token straight to the agent? Naaaa... Now the
 }
 ```
 
-**`sub`** = who owns the action. **`act.sub`** = who is executing it. Every downstream system that validates this token can enforce rules on both — and it's a real **RS256 JWT signed by Keycloak**, not something the gateway invented.
+`**sub**` = who owns the action. `**act.sub**` = who is executing it. Every downstream system that validates this token can enforce rules on both — and it's a real **RS256 JWT signed by Keycloak**, not something the gateway invented.
 
 ## The Architecture
 
 Seven containers, all local:
 
+
 | Port | Container | Role |
-|---|---|---|
+| ---- | ------------------ | ---------------------------------------------------------- |
 | 8180 | `poc-keycloak` | Real IdP (Keycloak 24), runs the RFC 8693 exchange |
 | 8081 | `poc-obo-exchange` | OBO broker — **sole holder** of the exchange client secret |
 | 8082 | `poc-agent` | AI agent: tool-calling loop, grant store, audit endpoints |
@@ -82,6 +85,7 @@ Seven containers, all local:
 | 4000 | `poc-litellm` | OpenAI-compatible LLM proxy (Ollama / OpenAI / Anthropic) |
 | 8080 | `poc-webapp` | Identity-flow visualizer (simulates the gateway) |
 | 6379 | `poc-redis` | Grant store, AES-256-GCM encrypted at rest |
+
 
 Three Keycloak clients define the trust topology:
 
