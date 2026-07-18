@@ -7,6 +7,14 @@ description: How I built a local POC where every LLM and MCP call carries
   token   exchange. Per-user policy, audit and revocation for autonomous agents.
 tags:
   - "ai "
+  - oauth
+  - security
+  - keycloak
+  - mcp
+  - agents
+  - identity
+  - docker
+  - RFC 8693
 featuredImage: /images/featured.jpg
 ---
 ### Table of Contents
