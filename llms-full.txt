@@ -8,7 +8,7 @@
 
 URL: https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/
 Date: 2026-07-18
-Tags: ai 
+Tags: ai , oauth, security, keycloak, mcp, agents, identity, docker, RFC 8693
 Description: How I built a local POC where every LLM and MCP call carries both   the human's and the agent's identity, using Keycloak and RFC 8693 token   exchange. Per-user policy, audit and revocation for autonomous agents.
 --------------------------------------------------------------------------------
 

@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Keycloak - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/keycloak/</link><description>Keycloak - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 18 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/keycloak/" rel="self" type="application/rss+xml"/><item><title>Who Is Your AI Agent Acting For? RFC 8693 On-Behalf-Of Delegation</title><link>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</link><pubDate>Sat, 18 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem: agents are anonymous proxies</li>
+<li>Enter RFC 8693: Token Exchange, On-Behalf-Of</li>
+<li>The Architecture</li>
+<li>The Identity Flow, Step by Step</li>
+<li>Token Anatomy</li>
+<li>Where Authorization Actually Happens</li>
+<li>Security Properties</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. Everyone is wiring AI agents to real systems — Kubernetes clusters, CI pipelines, internal APIs — and almost nobody is asking the boring question first: <strong>when the agent calls a tool, who is it?</strong></p>]]></description></item></channel></rss>
