@@ -9,6 +9,7 @@
 - The Identity Flow, Step by Step
 - Token Anatomy
 - Where Authorization Actually Happens
+- Observability: Watching Delegation Happen
 - Security Properties
 - Conclusion
 - Reflections
@@ -29,7 +30,7 @@ In this article, I'll walk you through the architecture: a broker that exchanges
 
 ![Delegated identity flow overview](/images/agent-identity-rfc-8693-on-behalf-of/featured.jpg)
 
-Everything runs in Docker on localhost — no cloud, no VPN, no TLS ceremony. Keycloak, a Python broker, a FastAPI agent, LiteLLM, a mock MCP server, Redis. That's it.
+Everything runs in Docker on localhost — no cloud, no VPN, no TLS ceremony. Keycloak, a Python broker, a FastAPI agent, LiteLLM, a mock MCP server, Redis — plus Prometheus and Grafana, because a delegation chain you can't observe is a delegation chain you can't trust.
 
 ## The Problem: agents are anonymous proxies
 
@@ -64,7 +65,9 @@ Could you just pass alice's access token straight to the agent? Naaaa... Now the
 
 ## The Architecture
 
-Seven containers, all local:
+![How the delegation chain works](/images/agent-identity-rfc-8693-on-behalf-of/how-it-works.png)
+
+Nine containers, all local:
 
 
 | Port | Container | Role |
@@ -76,6 +79,8 @@ Seven containers, all local:
 | 4000 | `poc-litellm` | OpenAI-compatible LLM proxy (Ollama / OpenAI / Anthropic) |
 | 8080 | `poc-webapp` | Identity-flow visualizer (simulates the gateway) |
 | 6379 | `poc-redis` | Grant store, AES-256-GCM encrypted at rest |
+| 9090 | `poc-prometheus` | Metrics — scrapes every service + Keycloak + Redis |
+| 3000 | `poc-grafana` | Two auto-provisioned dashboards (delegation flow, service RED) |
 
 
 Three Keycloak clients define the trust topology:
@@ -140,6 +145,10 @@ The logs alone are already worth the exercise:
 [OBO] run=abc123 sub=8c8af53c act=agent-service has_refresh=True
 [MCP] run=abc123 tools/call sub=8c8af53c act=agent-service ok=True
 ```
+
+The webapp visualizes the whole chain live — login, exchange, agent run, audit — with every JWT decoded on screen. Step 2 should show `fallback=False` and `alg=RS256`, meaning Keycloak performed the real RFC 8693 exchange, not a local shortcut (more on that below):
+
+![Webapp — identity delegation chain, every JWT decoded](/images/agent-identity-rfc-8693-on-behalf-of/webapp-flow.png)
 
 ## Token Anatomy
 
@@ -218,6 +227,27 @@ flowchart TD
     C -->|allowed| E
 ```
 
+## Observability: Watching Delegation Happen
+
+The first version of this POC had a problem I only saw after a critical review pass: the broker had a **fail-open** path. If Keycloak returned non-200 on the exchange — outage, misconfiguration, even an invalid subject token — the broker silently fell back to a locally-signed HMAC token that *looked* like a valid delegated token. The system degraded to a weaker trust model and nobody was forced to notice.
+
+The fix has two halves, and the second one is the interesting one:
+
+1. The fallback is now gated behind `ALLOW_LOCAL_FALLBACK` — `true` locally for demo ergonomics, **`false` in the Kubernetes deployment**, where a Keycloak failure means a failed exchange, full stop. Fail closed.
+2. Every exchange outcome is **counted**: `obo_exchange_total{result="ok|fallback|error"}`. A security downgrade you can't measure is a security downgrade you'll discover during the incident.
+
+Every Python service exposes `/metrics` (RED per route plus domain metrics: `agent_runs_total{status}`, `agent_mcp_requests_total{tool}`, `mcp_tool_calls_total`, `webapp_flows_total{fallback}`), `/healthz` and `/readyz`. Prometheus scrapes everything, and Grafana ships two auto-provisioned dashboards.
+
+The *Delegation Flow* dashboard is the one that matters: exchange rate, **fallback ratio** (any nonzero value turns red — it means Keycloak stopped doing real RFC 8693 and the broker is minting demo tokens), run outcomes, per-tool MCP traffic, hop latencies:
+
+![Grafana — delegation flow dashboard with the fallback-ratio stat](/images/agent-identity-rfc-8693-on-behalf-of/grafana-identity-flow.png)
+
+The *Service RED* dashboard covers rate / errors / duration per service — the boring one you look at when something is slow:
+
+![Grafana — service RED dashboard](/images/agent-identity-rfc-8693-on-behalf-of/grafana-service-red.png)
+
+And because "it works on my laptop" is not a claim, there's a test pyramid — `./scripts/test-flow.sh`, unit → integration → E2E, 31 checks with the stack up. The key assertions: `fallback=False` on the real exchange, and the metrics counters actually incrementing after the E2E run.
+
 ## Security Properties
 
 1. **The agent never sees the user's raw credential** — only the delegated OBO token, scoped to this task.
@@ -226,22 +256,25 @@ flowchart TD
 4. **Tokens are real RS256 JWTs signed by Keycloak** — verifiable by anyone with the realm public key, forgeable by no one.
 5. **Every MCP call is traced with the identity it presented** — audit is a query, not an archaeology project.
 6. **Revocation works** — alice's session ends, her `sub` becomes unauthorized, and in-flight tool calls fail closed.
+7. **The trust downgrade path is gated and measured** — the local-token fallback is off in production (`ALLOW_LOCAL_FALLBACK=false`) and alertable via the `obo_exchange_total{result="fallback"}` metric when it's on.
 
 ## Conclusion
 
-Agent identity is not an exotic problem requiring an exotic solution. RFC 8693 has been sitting there since 2020, Keycloak implements it, and the whole delegation chain — login, exchange, agent run, LLM call, MCP call, audit — fits in seven containers on a laptop. The `sub` + `act` pair turns "is this agent allowed?" into "is this *user* allowed to do this *via* this agent?", which is the question your security team actually wants answered. If you're wiring agents to real infrastructure, put the identity plumbing in before the agents get interesting.
+Agent identity is not an exotic problem requiring an exotic solution. RFC 8693 has been sitting there since 2020, Keycloak implements it, and the whole delegation chain — login, exchange, agent run, LLM call, MCP call, audit, dashboards — fits in nine containers on a laptop. When the laptop stops being enough, there's a Helm chart (`helm/agent-identity-poc`) where every component is optional and externally wireable: point it at your existing Keycloak and Redis, swap LiteLLM for your LLM gateway, and the defaults fail closed, run non-root with a read-only rootfs, and ship HPAs for the broker and the agent. The `sub` + `act` pair turns "is this agent allowed?" into "is this *user* allowed to do this *via* this agent?", which is the question your security team actually wants answered. If you're wiring agents to real infrastructure, put the identity plumbing in before the agents get interesting.
 
 ## Reflections
 
 Intellectual honesty time: this POC demonstrates identity **transport**, not enforcement.
 
-What is verified: the token reaching MCP really carries `sub=alice act=agent-service`, the agent never holds alice's raw token, every call is traced. What is still missing?
+What is verified: the token reaching MCP really carries `sub=alice act=agent-service`, the agent never holds alice's raw token, every call is traced and now *measured*. An EA/SRE critical review pass (`docs/CRITICAL_REVIEW.md`) already forced two fixes — the fail-open HMAC fallback is gated and counted, and the config naming drift is gone. What is still missing?
 
+- **Downstream services don't verify the RS256 signature** — agent, MCP server and webapp decode the JWT without checking it against Keycloak's JWKS. The audit trail records *claimed* identity, not *proven* identity. This is the highest-value next increment.
 - The gateway is **simulated** by the webapp — no real CEL policy on `/mcp`. Production wants agentgateway with an extAuth filter.
 - The MCP server **logs** `sub` and `act` but blocks nothing. The per-tool role check above is a code sketch, not shipped behavior.
 - No custom `mcp:read` / `mcp:write` scopes yet — the OBO token carries plain `openid profile email`.
 - HITL is disabled (`ENABLE_HITL=0`). The durable-workflow pause/resume exists as stubs.
-- Login uses ROPC (password grant) for demo simplicity — production means PKCE in a browser, plus mTLS everywhere.
+- Login uses ROPC (password grant) for demo simplicity — production means PKCE in a browser, plus mTLS everywhere (the refresh token travels in a custom header, which is only acceptable on a local bridge network).
+- Keycloak's token exchange here is the **legacy preview** feature (`KC_FEATURES=token-exchange`); Keycloak 26.2+ ships standard v2 token exchange, which would remove most of the permission-bootstrap fragility in `setup.sh`.
 
 Each gap is deliberate: transport first, because without `sub=alice` in the token, no enforcement layer has anything to enforce. The enforcement layers are the fun part — and they're all one `if` statement away once the identity is there.
 
