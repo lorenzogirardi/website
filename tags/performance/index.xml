@@ -1,5 +1,5 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Performance - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/performance/</link><description>Performance - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 19 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/performance/" rel="self" type="application/rss+xml"/><item><title>I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math</title><link>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</link><pubDate>Sun, 19 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-terminal.png" referrerpolicy="no-referrer">
+                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>Introduction</li>
