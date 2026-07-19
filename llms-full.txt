@@ -102,38 +102,93 @@ exchange-app        confidential        ← holds the skeleton key; runs RFC 869
 
 The design choice I care most about: the `exchange-app` client secret — the **skeleton key** that can mint delegated tokens for any user — lives in exactly one small, auditable service: the `obo-exchange` broker. The agent never touches it. If it isn't there, it can't leak.
 
+### OBO the pattern vs obo-exchange the service
+
+Two easily-confused names, worth separating:
+
+- **OBO** is a *pattern*, not software: "On-Behalf-Of", the RFC 8693 flow where a user token is exchanged for a delegated token `{sub=user, act=agent}`. It's an OAuth2 grant type (`urn:ietf:params:oauth:grant-type:token-exchange`), and the exchange itself is performed **by Keycloak**.
+- **obo-exchange** is the small application that brokers it — ~330 lines of FastAPI. It mints nothing itself; its whole job is three things: hold the `exchange-app` secret (the only container that has it), call Keycloak (`/exchange` and `/refresh`, `act` preserved), and serve `/authz` for a gateway's extAuth filter.
+
+It's small on purpose: zero business logic means easy audit and minimal attack surface, and in Kubernetes a tight NetworkPolicy (only the gateway and the agent may reach it). You can remove the service entirely — gateway extAuth talking to Keycloak directly, or clients calling Keycloak themselves with standard token exchange v2 (Keycloak 26.2+). The dedicated broker stays the right choice when you want the secret in exactly one place and centralized audit of every exchange.
+
+The full component map:
+
+```mermaid
+flowchart LR
+    subgraph client["Client"]
+        B([Browser<br/>alice])
+    end
+    subgraph gateway["Gateway zone"]
+        W["webapp :8080<br/><i>simulates extAuth</i>"]
+        O["obo-exchange :8081<br/><b>sole holder of<br/>exchange-app secret</b>"]
+    end
+    subgraph idp["Identity"]
+        K["Keycloak :8180<br/>realm poc · RFC 8693"]
+    end
+    subgraph backend["Agent backend"]
+        A["agent :8082<br/>tool-calling loop"]
+        R[("Redis :6379<br/>grants AES-256-GCM")]
+        L["litellm :4000<br/>OpenAI-compat proxy"]
+        M["mcp-mock :8083<br/>4 demo tools"]
+    end
+    subgraph obs["Observability"]
+        P["Prometheus :9090"]
+        G["Grafana :3000"]
+    end
+
+    B -->|"1· login (ROPC)"| W
+    W -->|"2· user JWT"| K
+    W -->|"3· subject_token"| O
+    O -->|"4· RFC 8693 exchange"| K
+    W -->|"5· OBO JWT only"| A
+    A <-->|grants + traces| R
+    A -->|"OBO JWT as bearer"| L
+    A -->|"OBO JWT on every tools/call"| M
+    P -.->|"scrape /metrics"| W & O & A & M & K & R
+    G -.-> P
+```
+
 ## The Identity Flow, Step by Step
 
 ```mermaid
 sequenceDiagram
-    actor Human as Human (alice)
-    participant KC as Keycloak
-    participant GW as Gateway / Webapp
-    participant OBO as obo-exchange
-    participant Agent as Agent
-    participant LLM as LiteLLM /v1
-    participant MCP as MCP tools
+    actor U as alice
+    participant W as webapp<br/>(gateway)
+    participant K as Keycloak
+    participant O as obo-exchange
+    participant A as agent
+    participant L as litellm → LLM
+    participant M as mcp-mock
 
-    Note over Human,KC: Step 1 — Login
-    Human->>KC: POST /token (alice)
-    KC-->>Human: user JWT {sub=alice, aud=exchange-app}
+    U->>W: task + credentials
+    W->>K: ROPC login
+    K-->>W: user JWT {sub=alice, aud=exchange-app}
 
-    Note over Human,OBO: Step 2 — Task submit, gateway intercepts
-    Human->>GW: POST /task + Bearer user JWT
-    GW->>OBO: POST /exchange (subject_token=user JWT)
-    OBO->>KC: RFC 8693 exchange (subject=alice, actor=agent-service)
-    KC-->>OBO: OBO JWT {sub=alice, act={sub=agent-service}}
-    GW->>Agent: POST /a2a/run + Bearer OBO JWT
-    Note right of GW: user JWT never reaches the agent
+    W->>O: POST /exchange (subject_token = user JWT)
+    O->>K: client_credentials → actor token (agent-service)
+    O->>K: RFC 8693: subject + actor + exchange-app secret
+    K-->>O: OBO JWT {sub=alice, act.sub=agent-service} + refresh_token
+    O-->>W: OBO grant
 
-    Note over Agent,MCP: Step 3 — Agent executes
-    Agent->>Agent: store grant (AES-256-GCM, Redis)
-    loop tool-calling loop
-        Agent->>LLM: /v1/chat/completions + OBO JWT
-        Agent->>MCP: tools/call + OBO JWT
-        Note right of MCP: every hop sees sub=alice, act=agent-service
+    W->>A: POST /a2a/run (Bearer OBO JWT — user JWT never forwarded)
+    A->>A: seal grant (AES-256-GCM) → Redis
+
+    loop tool-calling (≤6 turns)
+        A->>L: chat/completions (Bearer OBO JWT)
+        L-->>A: tool call or final answer
+        opt tool requested
+            A->>M: tools/call (Bearer OBO JWT)
+            Note over M: sees sub=alice, act=agent-service<br/>→ can enforce per-user policy
+            M-->>A: result (traced with identity)
+        end
+        opt near expiry
+            A->>O: /refresh — act preserved, RT rotates
+        end
     end
-    Agent-->>Human: {status: COMPLETED}
+
+    A-->>W: result + run_id
+    W->>A: GET /admin/instances/{run_id}/identity + /trace
+    A-->>U: answer + audit trail
 ```
 
 Four things worth noticing:
@@ -206,6 +261,8 @@ http://localhost:8180/realms/poc/protocol/openid-connect/certs   ← JWKS
 
 The signature covers header + payload, made with Keycloak's *private* key. Anyone can fetch the JWKS and verify; only Keycloak can sign. That asymmetry is the entire trust model: the MCP server never needs a shared secret with the gateway, it needs one HTTP GET.
 
+Two properties people mix up: a JWT is **stateless** (any service verifies it offline, no call to Keycloak) but it is **not encrypted** — it's just base64. Anyone holding the token reads every claim. Never put secrets in claims.
+
 ### The claims that matter
 
 | Claim | Set by | What it does in this flow |
@@ -213,8 +270,9 @@ The signature covers header + payload, made with Keycloak's *private* key. Anyon
 | `iss` | Keycloak | Which realm minted it. Verifiers reject any other issuer. |
 | `sub` | Keycloak | Stable user UUID — **not** the username, which can change. This is the audit anchor. |
 | `aud` | Keycloak | Who the token is *for*. The user token says `exchange-app`; the OBO token can be re-audienced per resource server. Verifiers reject tokens not addressed to them. |
-| `azp` | Keycloak | Which client *requested* it (authorized party). |
-| `exp` / `iat` | Keycloak | Lifetime. OBO tokens are short-lived (1h); long tasks live on the refresh token, not on a long `exp`. |
+| `azp` | Keycloak | Which client *requested* it (authorized party). Also how the broker derives a readable actor name: the actor token's `sub` is a UUID, its `azp` is `agent-service`. |
+| `exp` / `iat` | Keycloak | Lifetime. OBO tokens are short-lived (1h); long tasks live on the refresh token, not on a long `exp` — the agent refreshes when `now >= exp - 60s`. |
+| `jti` | Keycloak | Unique token id — revocation lists and replay detection key on it. |
 | `scope` | negotiated | What *kind* of operations the token allows (`openid profile email`, later `mcp:read` / `mcp:write`). Exchange can only **narrow** scope, never widen it. |
 | `act` | RFC 8693 | The actor. Nests on repeated exchange: `act.act` records a delegation *chain* (agent A delegates to agent B — the whole lineage stays in the token). |
 | `realm_access.roles` | role mappings | The user's realm roles — the input for per-tool RBAC. |
@@ -309,6 +367,8 @@ Two things make this pattern stronger than app-level ACLs:
 
 - **The same claims work everywhere.** A Postgres proxy can key row-level security on `sub`; an internal API gateway can require `groups`; the MCP server gates tools on roles. One identity, one policy language, enforced at N independent points — and every denial logs *which human*, via *which agent*, was refused *what*.
 - **Per-task narrowing.** The broker can mint the OBO token with `audience=mcp-db` and `scope=mcp:read` for a reporting task, and the same user gets `mcp:write` only for a deployment task. The blast radius of a compromised agent run is the intersection of *user roles* × *task scope* × *token audience*, not the union of everything the platform can do.
+
+> ⚠️ Corollary: anything in the chain that *ignores* the token breaks the model. An LLM response cache keyed only on the prompt would happily serve alice's cached answer to bob. If you add caching anywhere in an identity-carrying pipeline, the cache key must include `sub`.
 
 ## Where Authorization Actually Happens
 
