@@ -101,83 +101,88 @@ It's small on purpose: zero business logic means easy audit and minimal attack s
 
 The full component map:
 
-```mermaid
+{{< mermaid >}}
 flowchart LR
-    subgraph client["Client"]
-        B([Browser<br/>alice])
+    subgraph client[Client]
+        B[alice's browser]
     end
-    subgraph gateway["Gateway zone"]
-        W["webapp :8080<br/><i>simulates extAuth</i>"]
-        O["obo-exchange :8081<br/><b>sole holder of<br/>exchange-app secret</b>"]
+    subgraph gateway[Gateway zone]
+        W[webapp :8080 simulates extAuth]
+        O[obo-exchange :8081 sole holder of exchange-app secret]
     end
-    subgraph idp["Identity"]
-        K["Keycloak :8180<br/>realm poc · RFC 8693"]
+    subgraph idp[Identity]
+        K[Keycloak :8180 realm poc, RFC 8693]
     end
-    subgraph backend["Agent backend"]
-        A["agent :8082<br/>tool-calling loop"]
-        R[("Redis :6379<br/>grants AES-256-GCM")]
-        L["litellm :4000<br/>OpenAI-compat proxy"]
-        M["mcp-mock :8083<br/>4 demo tools"]
+    subgraph backend[Agent backend]
+        A[agent :8082 tool-calling loop]
+        R[(Redis :6379 grants AES-256-GCM)]
+        L[litellm :4000 OpenAI-compat proxy]
+        M[mcp-mock :8083 4 demo tools]
     end
-    subgraph obs["Observability"]
-        P["Prometheus :9090"]
-        G["Grafana :3000"]
+    subgraph obs[Observability]
+        P[Prometheus :9090]
+        G[Grafana :3000]
     end
 
-    B -->|"1· login (ROPC)"| W
-    W -->|"2· user JWT"| K
-    W -->|"3· subject_token"| O
-    O -->|"4· RFC 8693 exchange"| K
-    W -->|"5· OBO JWT only"| A
-    A <-->|grants + traces| R
-    A -->|"OBO JWT as bearer"| L
-    A -->|"OBO JWT on every tools/call"| M
-    P -.->|"scrape /metrics"| W & O & A & M & K & R
+    B -->|1. login ROPC| W
+    W -->|2. user JWT| K
+    W -->|3. subject_token| O
+    O -->|4. RFC 8693 exchange| K
+    W -->|5. OBO JWT only| A
+    A -->|grants + traces| R
+    A -->|OBO JWT as bearer| L
+    A -->|OBO JWT on every tools/call| M
+    P -.->|scrape /metrics| W
+    P -.-> O
+    P -.-> A
+    P -.-> M
+    P -.-> K
+    P -.-> R
     G -.-> P
-```
+{{< /mermaid >}}
 
 ## The Identity Flow, Step by Step
 
-```mermaid
+{{< mermaid >}}
 sequenceDiagram
     actor U as alice
-    participant W as webapp<br/>(gateway)
+    participant W as webapp (gateway)
     participant K as Keycloak
     participant O as obo-exchange
     participant A as agent
-    participant L as litellm → LLM
+    participant L as litellm / LLM
     participant M as mcp-mock
 
     U->>W: task + credentials
     W->>K: ROPC login
-    K-->>W: user JWT {sub=alice, aud=exchange-app}
+    K-->>W: user JWT (sub=alice, aud=exchange-app)
 
     W->>O: POST /exchange (subject_token = user JWT)
-    O->>K: client_credentials → actor token (agent-service)
-    O->>K: RFC 8693: subject + actor + exchange-app secret
-    K-->>O: OBO JWT {sub=alice, act.sub=agent-service} + refresh_token
+    O->>K: client_credentials, mint actor token (agent-service)
+    O->>K: RFC 8693 exchange (subject + actor + exchange-app secret)
+    K-->>O: OBO JWT (sub=alice, act.sub=agent-service) + refresh token
     O-->>W: OBO grant
 
-    W->>A: POST /a2a/run (Bearer OBO JWT — user JWT never forwarded)
-    A->>A: seal grant (AES-256-GCM) → Redis
+    W->>A: POST /a2a/run, Bearer OBO JWT (user JWT never forwarded)
+    A->>A: seal grant (AES-256-GCM) in Redis
 
-    loop tool-calling (≤6 turns)
-        A->>L: chat/completions (Bearer OBO JWT)
+    loop tool-calling, max 6 turns
+        A->>L: chat/completions, Bearer OBO JWT
         L-->>A: tool call or final answer
         opt tool requested
-            A->>M: tools/call (Bearer OBO JWT)
-            Note over M: sees sub=alice, act=agent-service<br/>→ can enforce per-user policy
-            M-->>A: result (traced with identity)
+            A->>M: tools/call, Bearer OBO JWT
+            Note over M: sees sub=alice, act=agent-service
+            M-->>A: result, traced with identity
         end
         opt near expiry
-            A->>O: /refresh — act preserved, RT rotates
+            A->>O: /refresh (act preserved, RT rotates)
         end
     end
 
     A-->>W: result + run_id
-    W->>A: GET /admin/instances/{run_id}/identity + /trace
+    W->>A: GET /admin/instances/run_id/identity + trace
     A-->>U: answer + audit trail
-```
+{{< /mermaid >}}
 
 Four things worth noticing:
 
@@ -397,7 +402,7 @@ agent wants to call: delete_namespace
 
 The end-to-end picture, when everything is on:
 
-```mermaid
+{{< mermaid >}}
 flowchart TD
     A([OBO token sub=alice, act=agent-service]) --> B{Gateway PDP - CEL on JWT}
     B -->|deny| Z1([403 at the edge])
@@ -407,7 +412,7 @@ flowchart TD
     D -->|reject| Z3([agent told: rejected])
     D -->|approve| E([tool executes])
     C -->|allowed| E
-```
+{{< /mermaid >}}
 
 ## Observability: Watching Delegation Happen
 
