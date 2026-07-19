@@ -1,4 +1,21 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 18 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>Who Is Your AI Agent Acting For? RFC 8693 On-Behalf-Of Delegation</title><link>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</link><pubDate>Sat, 18 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 19 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math</title><link>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</link><pubDate>Sun, 19 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-terminal.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem: Verbose Agents Cost Real Money</li>
+<li>Enter Caveman Mode</li>
+<li>The Question I Actually Wanted Answered</li>
+<li>Method: Mining 27 Session Logs</li>
+<li>The Results, Per Model</li>
+<li>Where the Money Actually Goes</li>
+<li>How Big Were These Sessions, Really?</li>
+<li>The Fable 5 Shift</li>
+<li>From a Homelab Toy to an Enterprise Line Item</li>
+<li>Reflections</li>
+<li>Conclusion</li>
+</ul>
+<p>Strange&hellip; an AI assistant that talks less should cost less. Obvious, right? I wanted a number, not a vibe.</p>]]></description></item><item><title>Who Is Your AI Agent Acting For? RFC 8693 On-Behalf-Of Delegation</title><link>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</link><pubDate>Sat, 18 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -323,8 +340,4 @@
 <li><strong>imgproxy</strong> — A fast and secure image processing service that resizes and optimizes images on-the-fly</li>
 <li><strong>Cloudflare</strong> — Providing CDN capabilities through Cloudflare Tunnel</li>
 </ol>
-<p></p>]]></description></item><item><title>Websocket, Cloudflare Tunnel, Apache httpd and a Bit of Security</title><link>https://www.k8s.it/posts/websocket-cloudflare-tunnel-apache-and-irritation/</link><pubDate>Thu, 03 Aug 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/websocket-cloudflare-tunnel-apache-and-irritation/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png" referrerpolicy="no-referrer">
-            </div><h2 id="the-infrastructure-overview">The Infrastructure Overview</h2>
-<p>Exposing home lab services to the internet can be both necessary and risky. Traditional methods — port forwarding, VPNs, reverse proxies with open inbound ports — come with their own set of challenges. This is where Cloudflare Tunnel (formerly Argo Tunnel) comes in as an elegant solution.</p>
-<p>In this article, I&rsquo;ll walk you through how I&rsquo;ve implemented a secure infrastructure using Cloudflare Tunnel with WebSocket support, running on a Kubernetes cluster with Apache HTTPD as a reverse proxy. This setup allows me to securely expose internal services without opening ports on my residential firewall.</p>]]></description></item></channel></rss>
+<p></p>]]></description></item></channel></rss>
