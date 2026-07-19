@@ -27,6 +27,7 @@ featuredImage: /images/featured.jpg
 - The Architecture
 - The Identity Flow, Step by Step
 - Token Anatomy
+- Inside the JWT: Claims, Exchange Mechanics, Group-Based Permissions
 - Where Authorization Actually Happens
 - Observability: Watching Delegation Happen
 - Security Properties
@@ -190,6 +191,131 @@ OBO token, minted by Keycloak via RFC 8693:
 ```
 
 Same `sub`, same issuer, same signature chain — plus the `act` claim. Any service with the realm's public key can verify it independently. No shared secrets between tool servers and the gateway, no "trust me, it's alice" headers.
+
+## Inside the JWT: Claims, Exchange Mechanics, Group-Based Permissions
+
+The `sub` + `act` pair is the headline, but the rest of the token is where per-user authorization actually comes from. Let's open it up.
+
+### Three parts, one signature
+
+A JWT is three base64url segments joined by dots: `header.payload.signature`.
+
+```json
+// header — tells the verifier HOW to check the token
+{ "alg": "RS256", "typ": "JWT", "kid": "f3a1..." }
+```
+
+The header's `kid` (key id) points at one of the realm's public keys, published at a well-known URL:
+
+```
+http://localhost:8180/realms/poc/protocol/openid-connect/certs   ← JWKS
+```
+
+The signature covers header + payload, made with Keycloak's *private* key. Anyone can fetch the JWKS and verify; only Keycloak can sign. That asymmetry is the entire trust model: the MCP server never needs a shared secret with the gateway, it needs one HTTP GET.
+
+### The claims that matter
+
+| Claim | Set by | What it does in this flow |
+| ----- | ------ | ------------------------- |
+| `iss` | Keycloak | Which realm minted it. Verifiers reject any other issuer. |
+| `sub` | Keycloak | Stable user UUID — **not** the username, which can change. This is the audit anchor. |
+| `aud` | Keycloak | Who the token is *for*. The user token says `exchange-app`; the OBO token can be re-audienced per resource server. Verifiers reject tokens not addressed to them. |
+| `azp` | Keycloak | Which client *requested* it (authorized party). |
+| `exp` / `iat` | Keycloak | Lifetime. OBO tokens are short-lived (1h); long tasks live on the refresh token, not on a long `exp`. |
+| `scope` | negotiated | What *kind* of operations the token allows (`openid profile email`, later `mcp:read` / `mcp:write`). Exchange can only **narrow** scope, never widen it. |
+| `act` | RFC 8693 | The actor. Nests on repeated exchange: `act.act` records a delegation *chain* (agent A delegates to agent B — the whole lineage stays in the token). |
+| `realm_access.roles` | role mappings | The user's realm roles — the input for per-tool RBAC. |
+| `groups` | protocol mapper | Group membership emitted as a claim — the bridge from AD (next section). |
+
+### What the exchange actually does with these fields
+
+The broker's call to Keycloak, unwrapped:
+
+```bash
+curl -s http://localhost:8180/realms/poc/protocol/openid-connect/token \
+  -d grant_type=urn:ietf:params:oauth:grant-type:token-exchange \
+  -d client_id=exchange-app \
+  -d client_secret=$EXCHANGE_SECRET \
+  -d subject_token=$USER_JWT \
+  -d subject_token_type=urn:ietf:params:oauth:token-type:access_token \
+  -d requested_token_type=urn:ietf:params:oauth:token-type:refresh_token \
+  -d audience=agent-service \
+  -d scope="openid offline_access"
+```
+
+Keycloak then:
+
+1. **Verifies the subject token** — its own signature, `exp` not passed, `iss` is itself, `aud` includes `exchange-app`. An expired or foreign user token means no exchange: delegation dies with the session.
+2. **Checks the exchange permission** — `exchange-app` must be explicitly allowed to exchange toward the target client. That's the fine-grained authz permission `setup.sh` configures; without it Keycloak returns 403 regardless of the secret.
+3. **Mints a new token** — `sub`, `email`, roles and groups are re-read **from the user model at mint time** (not copied blindly from the subject token — disable the user and the next exchange fails), `act` is injected from the actor identity, `aud` is rewritten, `scope` is intersected with what was requested, fresh `exp`.
+
+That third point is subtle and important: because claims are re-derived at every exchange and refresh, revoking a role or disabling a user propagates within one token lifetime — no "the agent still has a 30-day-old token with admin roles" scenario.
+
+### From AD group to token claim
+
+None of this works in an enterprise unless it plugs into the directory you already have. The chain is:
+
+```
+AD / Entra ID group  →  Keycloak group  →  realm role  →  JWT claim
+  "GG-Platform-Admins"    /platform-admins    platform-admin   realm_access.roles
+```
+
+Two standard ways to wire the first arrow:
+
+- **LDAP user federation** — Keycloak reads AD directly; an *ldap group mapper* imports AD groups as Keycloak groups on sync.
+- **Identity brokering** — login is delegated to Azure AD / Entra via OIDC or SAML, and the incoming `groups` claim is mapped through an *identity-provider mapper*.
+
+Then a **group-to-role mapping** (or a plain protocol mapper emitting the `groups` claim) makes membership appear in every token — including the OBO token, because as we just saw, claims are re-read from the user model at exchange time. Alice's OBO token becomes:
+
+```json
+{
+  "sub": "8c8af53c-...",
+  "act": { "sub": "agent-service" },
+  "groups": ["/platform-admins", "/db-readers"],
+  "realm_access": { "roles": ["platform-admin", "db-reader"] }
+}
+```
+
+Remove alice from `GG-Platform-Admins` in AD and — after the next directory sync + token refresh — every agent acting on her behalf loses `platform-admin`. The directory team keeps its existing workflow; the agent platform inherits it for free.
+
+### From claims to tool permissions
+
+Now the payoff: the MCP server (or any resource server — a DB proxy, an API gateway) reads those claims and enforces per-tool policy. A permission matrix stops being architecture and becomes a lookup:
+
+| Tool | Requires |
+| ---- | -------- |
+| `query_database` (read-only) | role `db-reader` |
+| `execute_sql` (write) | role `db-writer` **and** HITL approval |
+| `call_billing_api` | group `/billing-team` and scope `mcp:write` |
+| `delete_deployment` | role `platform-admin` |
+
+```python
+TOOL_POLICY = {
+    "query_database":    {"roles": {"db-reader"}},
+    "execute_sql":       {"roles": {"db-writer"}, "hitl": True},
+    "call_billing_api":  {"groups": {"/billing-team"}, "scopes": {"mcp:write"}},
+    "delete_deployment": {"roles": {"platform-admin"}},
+}
+
+def authorize(tool, claims):
+    policy = TOOL_POLICY.get(tool, {})
+    roles  = set(claims.get("realm_access", {}).get("roles", []))
+    groups = set(claims.get("groups", []))
+    scopes = set(claims.get("scope", "").split())
+    if policy.get("roles") and not policy["roles"] & roles:
+        raise PermissionError(
+            f"{tool}: needs role {policy['roles']}, sub={claims['sub']} has {roles}")
+    if policy.get("groups") and not policy["groups"] & groups:
+        raise PermissionError(f"{tool}: needs group {policy['groups']}")
+    if policy.get("scopes") and not policy["scopes"] <= scopes:
+        raise PermissionError(f"{tool}: needs scope {policy['scopes']}")
+    return policy.get("hitl", False)   # caller pauses for approval if True
+```
+
+Two things make this pattern stronger than app-level ACLs:
+
+- **The same claims work everywhere.** A Postgres proxy can key row-level security on `sub`; an internal API gateway can require `groups`; the MCP server gates tools on roles. One identity, one policy language, enforced at N independent points — and every denial logs *which human*, via *which agent*, was refused *what*.
+- **Per-task narrowing.** The broker can mint the OBO token with `audience=mcp-db` and `scope=mcp:read` for a reporting task, and the same user gets `mcp:write` only for a deployment task. The blast radius of a compromised agent run is the intersection of *user roles* × *task scope* × *token audience*, not the union of everything the platform can do.
 
 ## Where Authorization Actually Happens
 
