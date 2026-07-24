@@ -1,4 +1,34 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 19 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math</title><link>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</link><pubDate>Sun, 19 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 24 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>The Safe Zone: Where AI Actually Belongs in Business Processes</title><link>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</link><pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem With Urgency</li>
+<li>The Safe Zone Framework</li>
+<li>The Case: Algolia Usage Exporter
+<ul>
+<li>Before / After</li>
+<li>How It&rsquo;s Built</li>
+<li>What It Exposes</li>
+<li>Numbers That Weren&rsquo;t Visible Before</li>
+</ul>
+</li>
+<li>Why the Pattern Replicates</li>
+<li>The Honest Challenges
+<ul>
+<li>AI Amplifies Whatever Maturity Already Exists</li>
+<li>Tech Debt Doesn&rsquo;t Disappear</li>
+<li>Creating Is Easy. Deploying on Shared Platform Isn&rsquo;t</li>
+<li>Ownership Is Still Informal</li>
+<li>The Escalation Risk: Safe Today, Critical Tomorrow</li>
+</ul>
+</li>
+<li>A Maturity Model, Not a Tech Roadmap</li>
+<li>Security Considerations</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. I recently put together an internal presentation on introducing AI into business processes, and the hardest part wasn&rsquo;t the technology. It was convincing people to look in the opposite direction of where they instinctively point AI.</p>]]></description></item><item><title>I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math</title><link>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</link><pubDate>Sun, 19 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -329,15 +359,4 @@
             </div><h2 id="introduction">Introduction</h2>
 <p>For years, VMware ESXi was the foundation of my homelab — stable, dependable, and familiar. Then Broadcom acquired VMware, and the writing was on the wall.</p>
 <p>The free ESXi license disappeared. Support for consumer-grade hardware like MiniPCs and NUCs became problematic. The platform that had &ldquo;just worked&rdquo; for years was now actively working against the homelab use case.</p>
-<p>Enter <strong>Proxmox</strong> — an open-source virtualization platform built on Debian Linux, offering KVM, LXC, ZFS, and native clustering without a licensing fee.</p>]]></description></item><item><title>Building a Scalable Image CDN with MinIO, imgproxy, and Cloudflare</title><link>https://www.k8s.it/posts/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/</link><pubDate>Thu, 24 Apr 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.png" referrerpolicy="no-referrer">
-            </div><h2 id="intro">Intro</h2>
-<p>In today&rsquo;s digital landscape, efficiently serving images is critical for website performance. Users expect fast-loading, responsive websites, and images often account for the majority of a page&rsquo;s weight. In this article, I&rsquo;ll walk you through building a powerful, scalable image CDN using open-source tools that you can deploy in your own infrastructure.</p>
-<h2 id="the-architecture">The Architecture</h2>
-<p>Our image CDN consists of three main components:</p>
-<ol>
-<li><strong>MinIO</strong> — An S3-compatible object storage backend that stores original images</li>
-<li><strong>imgproxy</strong> — A fast and secure image processing service that resizes and optimizes images on-the-fly</li>
-<li><strong>Cloudflare</strong> — Providing CDN capabilities through Cloudflare Tunnel</li>
-</ol>
-<p></p>]]></description></item></channel></rss>
+<p>Enter <strong>Proxmox</strong> — an open-source virtualization platform built on Debian Linux, offering KVM, LXC, ZFS, and native clustering without a licensing fee.</p>]]></description></item></channel></rss>
