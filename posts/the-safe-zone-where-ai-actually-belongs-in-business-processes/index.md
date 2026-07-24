@@ -8,6 +8,8 @@
   * The Case: Algolia Usage Exporter
     * Before / After
     * How It's Built
+    * The Skill Framework: Three Skills, Not One Prompt
+    * From API Schema to Natural-Language Contract
     * What It Exposes
     * Numbers That Weren't Visible Before
   * Why the Pattern Replicates
@@ -44,6 +46,26 @@ Plot any business process on two axes: how urgent it feels, and how important it
 | **Strategic neglected** | Low | High | **Nobody owns it. Nobody has time. This is the target.** |
 
 That last quadrant is where AI actually has room to move. Nobody is fighting AI for the attention budget there, because nobody was spending attention on it in the first place. A monthly usage report that takes four hours to assemble by hand isn't urgent. It won't page anyone if it's late. But it feeds a contract renewal decision worth real money, and it has been quietly under-resourced for years because it never screamed loud enough to earn a fix.
+
+Same map, plotted instead of tabulated, with a handful of real processes dropped onto it:
+
+{{< mermaid >}}
+quadrantChart
+    title Urgency vs Importance
+    x-axis Low Urgency --> High Urgency
+    y-axis Low Importance --> High Importance
+    quadrant-1 Customer-Facing Critical
+    quadrant-2 Strategic Neglected - AI Target
+    quadrant-3 Background Noise
+    quadrant-4 False Urgency
+    Algolia Usage Reporting: [0.2, 0.85]
+    Customer Checkout Flow: [0.9, 0.9]
+    Internal Wiki Cleanup: [0.15, 0.2]
+    Vendor Escalation Emails: [0.8, 0.25]
+    Tech Debt Backlog: [0.25, 0.75]
+{{< /mermaid >}}
+
+Top-left is empty on most companies' actual roadmaps, not because it's hard to fill, but because nothing in the top-left ever forces its own way onto anyone's calendar. Everything in the top-right and bottom-right gets a Jira ticket by itself. Nothing in the top-left does, until someone deliberately goes looking for it.
 
 ## The Safe Zone Framework
 
@@ -104,6 +126,36 @@ flowchart LR
     S1["Skill 1: Metric Design - reads API docs, maps endpoints to Prometheus types, checks cardinality"] --> S2["Skill 2: Python Exporter - background thread, thread-safe cache, retry logic"]
     S2 --> S3["Skill 3: Deploy - Helm chart, Kubernetes secrets, Datadog autodiscovery, dashboard JSON"]
 {{< /mermaid >}}
+
+### The Skill Framework: Three Skills, Not One Prompt
+
+A "skill" here isn't a clever one-liner prompt, it's a written, reusable set of instructions that encodes a specific kind of decision-making, handed to the model as its own bounded task. Splitting the work into three of them instead of asking for "an Algolia exporter" in one shot is the actual design decision that made this replicable, so it's worth unpacking each one.
+
+**Skill 1, Metric Design, never touches code.** Its only input is the target API's documentation, in this case Algolia's Usage API and Monitoring API references. Its output is a specification: which endpoints map to which Prometheus metric type (all Gauges here, since Algolia returns snapshots, not cumulative counters), what labels each metric carries, where cardinality could blow up (the 48h hourly window times 29 stats times N indexes was flagged at this stage, before a line of Python existed), and what naming convention to follow so metric names still make sense once Datadog rewrites underscores to dots. Getting this wrong is a design mistake. Getting it wrong after the collectors are already written is a rewrite.
+
+**Skill 2, the Python Exporter, consumes that spec and produces working code.** This is where the background-refresh-thread-plus-cache architecture actually gets decided and built: a daemon thread calls the Algolia client on an interval, updates a thread-safe `MetricsCache` under a lock, and the `/metrics`, `/health`, `/ready` endpoints only ever read from that cache, never from the network. This skill also owns the retry policy, three retries with backoff, scoped to GET/HEAD/OPTIONS only, retrying on 429/500/502/503/504, treating a 403 on infrastructure metrics as an expected plan-tier skip rather than an error, and raising immediately on any other 4xx because that means a bad key, not a transient failure. It also scaffolds the test pyramid, unit tests with mocked HTTP, integration tests against the cache's update/generate cycle, and e2e smoke tests asserting the `/metrics` output is valid Prometheus text.
+
+**Skill 3, Deploy, takes the built exporter and makes it runnable on shared infrastructure.** It generates the Helm chart, sizes resource requests and limits for what is admittedly a lightweight process (50m/200m CPU, 64Mi/128Mi memory), sets `runAsUser: 1000` and `readOnlyRootFilesystem: true`, wires liveness and readiness probes to the app's own `/health` and `/ready` semantics rather than generic defaults, points secrets at a Kubernetes `Secret` via `secretKeyRef` instead of `values.yaml`, configures Datadog pod-annotation autodiscovery so no `ServiceMonitor` is needed, and generates the dashboard JSON using the exact metric names Skill 1 decided on three steps earlier.
+
+Three narrow skills chained together instead of one broad prompt buys two things. First, each skill's output becomes an explicit, inspectable contract for the next one, closer to a design review followed by a code review followed by a deploy review than to a single undifferentiated generation step, just compressed into hours instead of weeks. Second, and this connects directly to the maturity problem covered later: a skill is only as good as the standard baked into it. Skill 1 encodes naming and cardinality conventions. Skill 3 encodes the security posture (non-root, no secrets in chart values, probes tied to real readiness). If nobody had written those standards into the skills beforehand, the model would still produce something that runs, it would just be something that runs while quietly violating conventions nobody told it about.
+
+It's also why the pattern replicates so cheaply across SaaS targets. Skill 1 is the only one that actually changes shape per vendor, since every API has its own quirks to read and map. Skills 2 and 3 are close to identical every time, because the exporter shape (background thread, cache, three endpoints) and the deployment shape (Helm chart, K8s Secret, Datadog autodiscovery) don't depend on whether the upstream is Algolia, Contentful, or Akamai. That's the real reason Contentful landed at 4-6 hours right behind Algolia's 4, not a coincidence.
+
+### From API Schema to Natural-Language Contract
+
+There's a bigger shift hiding inside Skill 1 that's worth naming on its own, because it changes what "the contract" between your code and a vendor's API actually is.
+
+The traditional way to integrate with a third-party API is to pull an OpenAPI or Swagger spec, run it through a codegen tool, and get a typed client out the other end. The contract is enforced by the compiler: if the vendor changes a field type or a required parameter, your build breaks in CI before it ever reaches production. That's the entire value of a formal schema, it turns "did the API change under us" into a machine-checkable question.
+
+Most usage and monitoring endpoints never come with one. Algolia's Usage API and Monitoring API are documented the way most SaaS vendors document this class of endpoint: prose descriptions, a handful of curl examples, a paragraph explaining wildcard fallback behavior, a note three headings down clarifying that a 403 means your plan doesn't include Monitoring rather than that something's broken. There's no spec file to diff. There's no generated client that fails to compile when something drifts.
+
+That's the gap Skill 1 actually fills, and it's the shift worth calling out directly: the contract moved from a machine-readable schema to a natural-language instruction set. The skill reads the same prose a human integrator would read, and does the job a formal spec used to do: deciding types, labels, cardinality, error semantics. Except now the artifact holding those decisions is a written skill definition, not a `.yaml` or `.json` schema.
+
+This is exactly why the pattern stays uniform across vendors whose documentation looks nothing alike, Algolia, Contentful, Commerce Layer, Akamai. The skill doesn't need a shared schema format to normalize against, it needs to read prose and land on the same shape of decision every time: what's a Gauge versus a Counter, what belongs in a label versus a metric name, what error code means "expected, skip it" versus "misconfigured, fail loudly."
+
+But a natural-language contract doesn't fail the way a schema does. A broken OpenAPI diff shows up as a compile error, loudly, before deploy. A vendor quietly rewording a paragraph about rate limits, or redefining what a 403 means, breaks nothing at build time. It just means the skill would decide differently if it were run again today, and nothing forces that rerun. This is precisely the exporter's own stated known gap: no integration test against a real, non-mocked API response, so a schema change upstream sails through unit tests and fails silently in production until a dashboard goes quietly empty.
+
+The contract now lives in prose on both ends: the vendor's documentation, and the skill's instructions for reading it. Nothing keeps those two in sync automatically, the way a schema validator would. Which means maintaining one of these exporters isn't just patching a CVE in `requests` every quarter, it's periodically re-checking that the skill's reading of the vendor's docs still matches what the vendor's docs currently say, a review step with no compiler around to fail loudly if it gets skipped.
 
 Configuration is entirely environment variables, and required ones raise a `ValueError` at startup, so a misconfigured pod crash-loops visibly instead of running silently with half its metrics missing:
 
