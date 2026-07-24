@@ -150,7 +150,7 @@ The summary JSON gives you everything in one document:
 }
 ```
 
-Real data from a production run against a Gucci Fashion Show space — 7 environments, 28 content types, 21 locales, nearly 5000 entries, 6000 assets. The tool handles it in seconds.
+Real data from a production run against a fashion show content space: 7 environments, 28 content types, 21 locales, nearly 5000 entries, 6000 assets. The tool handles it in seconds.
 
 ## Prometheus Mode — Continuous Monitoring
 
