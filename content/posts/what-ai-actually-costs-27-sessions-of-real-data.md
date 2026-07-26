@@ -10,9 +10,9 @@ tags:
   - automation
   - dora
   - platform engineering
-featuredImage: /images/what-ai-actually-costs-27-sessions-of-real-data/featured.png
+featuredImage: /images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg
 images:
-  - "/images/what-ai-actually-costs-27-sessions-of-real-data/featured.png"
+  - "/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg"
 ---
 ### Table of Contents
 
