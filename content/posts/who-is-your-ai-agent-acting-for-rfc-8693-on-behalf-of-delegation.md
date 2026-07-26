@@ -224,7 +224,7 @@ The logs alone are already worth the exercise:
 
 The webapp visualizes the whole chain live — login, exchange, agent run, audit — with every JWT decoded on screen. In Step 2 you can see the exchange result: same `sub` as the user token, `act.sub=agent-service`, and `iss` pointing at the realm — a real RS256 exchange performed by Keycloak, not a local shortcut (more on that below):
 
-![Webapp — identity delegation chain, every JWT decoded](/images/agent-identity-rfc-8693-on-behalf-of/webapp-flow.png)
+![Webapp — identity delegation chain, every JWT decoded](/images/agent-identity-rfc-8693-on-behalf-of/webapp-flow.jpg)
 
 ## Token Anatomy
 
@@ -444,15 +444,15 @@ The fix has two halves, and the second one is the interesting one:
 
 Every Python service exposes `/metrics` (RED per route plus domain metrics: `agent_runs_total{status}`, `agent_mcp_requests_total{tool}`, `mcp_tool_calls_total`, `webapp_flows_total{fallback}`), `/healthz` and `/readyz`. Prometheus scrapes all seven targets — the four Python services plus Keycloak (`KC_METRICS_ENABLED=true`), Redis via `redis_exporter`, and itself — and Grafana ships two auto-provisioned dashboards:
 
-![Prometheus — all seven scrape targets up](/images/agent-identity-rfc-8693-on-behalf-of/prometheus-targets.png)
+![Prometheus — all seven scrape targets up](/images/agent-identity-rfc-8693-on-behalf-of/prometheus-targets.jpg)
 
 The *Delegation Flow* dashboard is the one that matters: exchange rate, **fallback ratio** (in the screenshot it reads "No data" — zero fallback samples, which is exactly what healthy looks like; any nonzero value turns it red, meaning Keycloak stopped doing real RFC 8693 and the broker is minting demo tokens), Keycloak reachability, run outcomes, token refreshes, per-tool MCP traffic on both the agent and server side, hop latencies:
 
-![Grafana — delegation flow dashboard with the fallback-ratio stat](/images/agent-identity-rfc-8693-on-behalf-of/grafana-identity-flow.png)
+![Grafana — delegation flow dashboard with the fallback-ratio stat](/images/agent-identity-rfc-8693-on-behalf-of/grafana-identity-flow.jpg)
 
 The *Service RED* dashboard covers rate / errors / duration per service, plus scrape-target availability and Redis memory — the boring one you look at when something is slow. Look at the errors panel: those `webapp 500` and `mcp-mock 500` spikes are exactly the latent defects described below, caught on camera:
 
-![Grafana — service RED dashboard](/images/agent-identity-rfc-8693-on-behalf-of/grafana-service-red.png)
+![Grafana — service RED dashboard](/images/agent-identity-rfc-8693-on-behalf-of/grafana-service-red.jpg)
 
 ### The dashboards paid for themselves within hours
 

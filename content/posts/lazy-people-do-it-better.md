@@ -10,12 +10,12 @@ tags:
   - autoscaling
   - performance
   - metrics
-featuredImage: /images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png
+featuredImage: /images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.jpg
 images:
-  - "/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png"
+  - "/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.jpg"
 ---
 
-![HPA autoscaling dashboard](/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png)
+![HPA autoscaling dashboard](/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.jpg)
 
 There's a reactive way to manage infrastructure and there's a proactive way. The reactive way is: traffic increases, you notice the service is suffering, you add resources. The proactive way is: you understand your system well enough that it handles demand changes automatically, without you needing to be in the loop.
 

@@ -11,12 +11,12 @@ tags:
   - kubernetes
   - minio
   - workers
-featuredImage: /images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png
+featuredImage: /images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.jpg
 images:
-  - "/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png"
+  - "/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.jpg"
 ---
 
-![Security headers scan result](/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png)
+![Security headers scan result](/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.jpg)
 
 Great marketing quote in the title — but honestly, the underlying principle is always true: _keep it simple, keep it safe._
 

@@ -10,9 +10,9 @@ tags:
   - imgproxy
   - kubernetes
   - minio
-featuredImage: /images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.png
+featuredImage: /images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.jpg
 images:
-  - "/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.png"
+  - "/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.jpg"
 ---
 
 ## Intro
@@ -27,7 +27,7 @@ Our image CDN consists of three main components:
 2. **imgproxy** — A fast and secure image processing service that resizes and optimizes images on-the-fly
 3. **Cloudflare** — Providing CDN capabilities through Cloudflare Tunnel
 
-![Architecture overview](/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-24-at-19.42.20.png)
+![Architecture overview](/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-24-at-19.42.20.jpg)
 
 This architecture gives us several advantages:
 
@@ -38,7 +38,7 @@ This architecture gives us several advantages:
 
 ## How It Works
 
-![Request flow](/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-24-at-19.42.47.png)
+![Request flow](/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-24-at-19.42.47.jpg)
 
 The request flow:
 
@@ -174,7 +174,7 @@ env:
 2. Create a Cloudflare Tunnel pointing to imgproxy's ClusterIP service
 3. Add a DNS record in Cloudflare pointing to your tunnel hostname
 
-![Cloudflare tunnel config](/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-24-at-19.42.31.png)
+![Cloudflare tunnel config](/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-24-at-19.42.31.jpg)
 
 ## Usage Examples
 

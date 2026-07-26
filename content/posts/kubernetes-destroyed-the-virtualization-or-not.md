@@ -8,12 +8,12 @@ tags:
   - virtualization
   - containers
   - cloud
-featuredImage: /images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png
+featuredImage: /images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.jpg
 images:
-  - "/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png"
+  - "/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.jpg"
 ---
 
-![VM vs Pod](/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png)
+![VM vs Pod](/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.jpg)
 
 **NO.**
 
@@ -45,11 +45,11 @@ The issues cascade:
 - Single points of failure
 - New hardware generations requiring fresh provisioning just because the label doesn't match
 
-![VM fragmentation pattern 1](/images/kubernetes-destroyed-the-virtualization-or-not/vm_1.png)
+![VM fragmentation pattern 1](/images/kubernetes-destroyed-the-virtualization-or-not/vm_1.jpg)
 
-![VM fragmentation pattern 2](/images/kubernetes-destroyed-the-virtualization-or-not/vm_2.png)
+![VM fragmentation pattern 2](/images/kubernetes-destroyed-the-virtualization-or-not/vm_2.jpg)
 
-![VM fragmentation pattern 3](/images/kubernetes-destroyed-the-virtualization-or-not/vm_3.png)
+![VM fragmentation pattern 3](/images/kubernetes-destroyed-the-virtualization-or-not/vm_3.jpg)
 
 ## The Resource Density Problem
 
@@ -78,7 +78,7 @@ Running Kubernetes on virtualized infrastructure solves these problems cleanly:
 
 **Operational flexibility:** Easier datacenter migration. Team scaling becomes more straightforward — different teams can own different parts of the virtualization stack.
 
-![Team and scale considerations](/images/kubernetes-destroyed-the-virtualization-or-not/team_scale.png)
+![Team and scale considerations](/images/kubernetes-destroyed-the-virtualization-or-not/team_scale.jpg)
 
 **Consolidated technology:** VMware-based operations with unified management means your ops team has one operational model instead of two.
 

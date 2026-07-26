@@ -9,12 +9,12 @@ tags:
   - kong
   - rate-limiting
   - monitoring
-featuredImage: /images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.png
+featuredImage: /images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.jpg
 images:
-  - "/images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.png"
+  - "/images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.jpg"
 ---
 
-![Kong API gateway overview](/images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.png)
+![Kong API gateway overview](/images/kubernetes-apigw/Screenshot-2020-11-20-at-22.20.25-2.jpg)
 
 It's time to talk about the API gateway.
 
@@ -103,9 +103,9 @@ I tried cloud solutions like AWS and Mashery. I played with several on-premises 
 - Konga admin UI
 - WAF (free Cloudflare service)
 
-![API gateway diagram](/images/kubernetes-apigw/apigw.png)
+![API gateway diagram](/images/kubernetes-apigw/apigw.jpg)
 
-![API gateway vs service mesh](/images/kubernetes-apigw/apigw_vs_servicemesh.png)
+![API gateway vs service mesh](/images/kubernetes-apigw/apigw_vs_servicemesh.jpg)
 
 ## Backend Application
 
@@ -222,7 +222,7 @@ kong    postgres-0                       1/1     Running     2     7d
 
 Kong Enterprise has its own UI. The community version needs a third-party tool — [Konga](https://github.com/pantsel/konga).
 
-![Konga UI](/images/kubernetes-apigw/konga_ui.png)
+![Konga UI](/images/kubernetes-apigw/konga_ui.jpg)
 
 Like Kong, Konga needs a database. A couple of tips:
 

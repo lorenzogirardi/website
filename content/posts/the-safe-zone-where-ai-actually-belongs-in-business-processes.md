@@ -11,9 +11,9 @@ tags:
   - monitoring
   - cost saving
   - dynamic infrastructure
-featuredImage: /images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.png
+featuredImage: /images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.jpg
 images:
-  - "/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.png"
+  - "/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.jpg"
 ---
 ### Table of Contents
 

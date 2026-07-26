@@ -8,12 +8,12 @@ tags:
   - networking
   - monitoring
   - grafana
-featuredImage: /images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png
+featuredImage: /images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.jpg
 images:
-  - "/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png"
+  - "/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.jpg"
 ---
 
-![nstats in Grafana](/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png)
+![nstats in Grafana](/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.jpg)
 
 Here we go... another weird sidecar container.
 
@@ -23,17 +23,17 @@ I've always been interested in the observability area. There are many aspects th
 
 This is not about network issues:
 
-![Network issue](/images/kubernetes-nstats/networkissue.png)
+![Network issue](/images/kubernetes-nstats/networkissue.jpg)
 
 It's about understanding _where_ bandwidth is actually going.
 
 You're probably used to seeing something like this for your VMs:
 
-![VM network IN and OUT](/images/kubernetes-nstats/vm_net.png)
+![VM network IN and OUT](/images/kubernetes-nstats/vm_net.jpg)
 
 Traditional IN and OUT. With Kubernetes you get the same view at the pod level:
 
-![Pod network IN and OUT](/images/kubernetes-nstats/pod_net.png)
+![Pod network IN and OUT](/images/kubernetes-nstats/pod_net.jpg)
 
 Still just IN and OUT. But **where** is this bandwidth actually being used? Which destinations? Which services?
 
@@ -47,7 +47,7 @@ Service mesh is a good tool but for the reasons I explained [elsewhere](/posts/k
 
 Even in 2021, I still reach for **iftop** to understand network usage in real time. The problem is that iftop is a point-in-time view — I have no long-term visibility.
 
-![iftop output](/images/kubernetes-nstats/iftop.png)
+![iftop output](/images/kubernetes-nstats/iftop.jpg)
 
 ## Goals
 
@@ -213,15 +213,15 @@ The pipeline is:
 
 This runs iftop for a 10-second window, sorted on the last-10-seconds column:
 
-![iftop dump](/images/kubernetes-nstats/iftop_dump.png)
+![iftop dump](/images/kubernetes-nstats/iftop_dump.jpg)
 
 Then awk parses the output:
 
-![awk parsing](/images/kubernetes-nstats/iftop_awk.png)
+![awk parsing](/images/kubernetes-nstats/iftop_awk.jpg)
 
 Python formats it into InfluxDB line protocol:
 
-![Python formatting](/images/kubernetes-nstats/iftop_format.png)
+![Python formatting](/images/kubernetes-nstats/iftop_format.jpg)
 
 And finally curl ships it to InfluxDB:
 
@@ -260,6 +260,6 @@ containers:
 
 And in Grafana you get visibility into which hosts your pod is actually talking to, with send and receive rates per connection:
 
-![nstats in Grafana](/images/kubernetes-nstats/iftop_grafana.png)
+![nstats in Grafana](/images/kubernetes-nstats/iftop_grafana.jpg)
 
 This is what was missing. Now when someone asks "where is this bandwidth going?" you have an answer.

@@ -9,12 +9,12 @@ tags:
   - hardware
   - grafana
   - proxmox
-featuredImage: /images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png
+featuredImage: /images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.jpg
 images:
-  - "/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png"
+  - "/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.jpg"
 ---
 
-![Homelab monitoring dashboard](/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png)
+![Homelab monitoring dashboard](/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.jpg)
 
 When I first got into IT, devices ran continuously. My first lab was an impressive tower from 1999 with substantial disk and memory banks, a quality CPU cooled by a massive copper heatsink and a 12cm fan. During the night, those components produced noise comparable to a helicopter. Neighbors complained. I didn't sleep well.
 
@@ -33,7 +33,7 @@ I want something that covers hobby and experimental needs without requiring raw 
 
 ## Hardware
 
-![j5005 vs Q6600 comparison](/images/homelab-when-small-is-big/j5005vsq6600.png)
+![j5005 vs Q6600 comparison](/images/homelab-when-small-is-big/j5005vsq6600.jpg)
 
 **Base:** Intel NUC NUC7PJYH
 
@@ -65,7 +65,7 @@ I want something that covers hobby and experimental needs without requiring raw 
 
 Grafana and InfluxDB handle monitoring, tracking both host and virtual machine metrics:
 
-![VMs in Grafana](/images/homelab-when-small-is-big/vmsgrafana.png)
+![VMs in Grafana](/images/homelab-when-small-is-big/vmsgrafana.jpg)
 
 ## Backup
 

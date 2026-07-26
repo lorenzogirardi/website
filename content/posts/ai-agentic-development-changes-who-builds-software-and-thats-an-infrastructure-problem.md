@@ -21,9 +21,9 @@ tags:
   - ai4ai
   - contracts
   - platform contract
-featuredImage: /images/vibeenv1.0.png
+featuredImage: /images/vibeenv1.0.jpg
 images:
-  - "/images/vibeenv1.0.png"
+  - "/images/vibeenv1.0.jpg"
 ---
 ### Table of Contents
 
