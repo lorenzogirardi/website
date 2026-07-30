@@ -5,7 +5,7 @@ url: "/whoami/"
 summary: "About me"
 ---
 
-## Lorenzo Girardi — #semi-serious
+## Lorenzo Girardi: #semi-serious
 
 <p align="center"><img src="/images/whoami/lorenzo.jpg" alt="Lorenzo Girardi" width="50%"></p>
 
@@ -14,22 +14,40 @@ summary: "About me"
 **Nationality:** Italian · **Driving license:** yes
 **Resume:** [Download CV (PDF)](/files/CV_Lorenzo_Girardi_ENG_2026.pdf)
 
-Platform & Development Engineering Manager. Tech enthusiast since before it was a LinkedIn buzzword.
+Platform & Development Engineering Manager.
 
-In the late '90s I haunted IRC exploit channels — not to cause damage, but because I quickly realized how much I didn't know. Early 2000s were spent on packetstormsecurity learning the hard way. Humility: acquired.
+Tech enthusiast since before it was a LinkedIn buzzword.
 
-My family wanted me to be an architect (the buildings kind — I trained as a geometra). Instead I enrolled at Università degli Studi dell'Insubria for IT, which turned out to be *"very far from the needs of the world of work."* Classic.
+In the late '90s I haunted IRC exploit channels, not to cause damage, but because I quickly realized how much I didn't know.
+
+Early 2000s were spent on packetstormsecurity learning the hard way.
+
+Humility: acquired.
+
+My family wanted me to be an architect (the buildings kind, I trained as a geometra).
+
+Instead I enrolled at Università degli Studi dell'Insubria for IT, which turned out to be *"very far from the needs of the world of work."*
+
+Classic.
 
 Career milestones:
 
-- **Eprice srl** — helpdesk, server room, production servers. Verdict on humans vs. machines: machines won.
-- **Body rental / contracting** — exposure to varied environments and scales, zero job security, maximum learning.
-- **lastminute.com / BravoNEXT (2012–2023)** — startup to something more. Sysadmin → Team Leader → Team Manager → Platform Architect.
-- **Gucci (2023–present)** — build everything from scratch. No internal resources, only an idea.
+- **Eprice srl**: helpdesk, server room, production servers. Verdict on humans vs. machines: machines won.
+- **Body rental / contracting**: exposure to varied environments and scales, zero job security, maximum learning.
+- **lastminute.com / BravoNEXT (2012–2023)**: startup to something more. Sysadmin → Team Leader → Team Manager → Platform Architect.
+- **Gucci (2023–present)**: build everything from scratch. No internal resources, only an idea.
 
-Landed at BravoNEXT (bravofly at the time) in 2011, a company mid-jump from startup to something bigger. First job: the Windows infrastructure running the .NET applications, quite different from the "usual" I was used to. Kept leaning on my Linux side too, never stopped poking at open source.
+Landed at BravoNEXT (bravofly at the time) in 2011, a company mid-jump from startup to something bigger.
 
-A few years in, I had enough scope and enough impact on decisions to earn the confidence for team leadership. Turned out watching a team ship results made me happier than shipping alone, so I took the managerial jump: 12+ people, for about three years. Summary: *everyone remained alive, no one was mistreated.*
+First job: the Windows infrastructure running the .NET applications, quite different from the "usual" I was used to.
+
+Kept leaning on my Linux side too, never stopped poking at open source.
+
+A few years in, I had enough scope and enough impact on decisions to earn the confidence for team leadership.
+
+Turned out watching a team ship results made me happier than shipping alone, so I took the managerial jump: 12+ people, for about three years.
+
+Summary: *everyone remained alive, no one was mistreated.*
 
 Personal mantras:
 
@@ -40,15 +58,25 @@ Personal mantras:
 
 ## The New Adventure
 
-I moved for the chance to build everything from zero — not a small challenge: no internal resources, only an idea. A very clear idea on paper and blueprints (draw.io addicted) ... then reality.
+I moved for the chance to build everything from zero, not a small challenge: no internal resources, only an idea.
 
-Not a digital transformation: a transformation of people, towards a different way of looking at the product than the one they were used to. Not only the layout, but the speed to get there and make it visible. Not standards for the sake of the word, but the ability to reproduce new things quickly.
+A very clear idea on paper and blueprints (draw.io addicted) ... then reality.
+
+Not a digital transformation: a transformation of people, towards a different way of looking at the product than the one they were used to.
+
+Not only the layout, but the speed to get there and make it visible.
+
+Not standards for the sake of the word, but the ability to reproduce new things quickly.
 
 Well ... the site is up, now they are microservices, divergency is minimal, every operation runs in CI/CD, and I'm quite satisfied.
 
-Going back? Too easy to say it now, but I would change something — and not because of the technology, but because of the kind of transformation that was *thought* (perception) to be in progress. Something you only understand after many months of feeling and context building.
+Going back? Too easy to say it now, but I would change something, and not because of the technology, but because of the kind of transformation that was *thought* (perception) to be in progress.
 
-And now? Now there is AI ... an immense pile of marketing buzzwords hiding the reality of large language models. If you know how they work and how to use them, they will be part of a transformation too.
+Something you only understand after many months of feeling and context building.
+
+And now? Now there is AI ... an immense pile of marketing buzzwords hiding the reality of large language models.
+
+If you know how they work and how to use them, they will be part of a transformation too.
 
 What got built:
 
@@ -60,7 +88,7 @@ What got built:
 - GitOps operations with ArgoCD, security via SCA, SAST, Falco and Kyverno to avoid (and track) any divergency
 - Metrics, log and trace framework on open standards, portable to Dynatrace, Datadog or Grafana
 - An error budget framework, to discipline the time spent on improvements
-- AI pilot: LiteLLM, Grafana, Langfuse, LangGraph — plus the adoption model, the framework for AI components, a Cilium policy model for them, and an on-behalf-of permission model based on RFC 8693
+- AI pilot: LiteLLM, Grafana, Langfuse, LangGraph, plus the adoption model, the framework for AI components, a Cilium policy model for them, and an on-behalf-of permission model based on RFC 8693
 
 ---
 
