@@ -26,13 +26,6 @@ Instead I enrolled at Università degli Studi dell'Insubria for IT, which turned
 
 Classic.
 
-Career milestones:
-
-- **Eprice srl**: helpdesk, server room, production servers. Verdict on humans vs. machines: machines won.
-- **Body rental / contracting**: exposure to varied environments and scales, zero job security, maximum learning.
-- **lastminute.com / BravoNEXT (2012–2023)**: startup to something more. Sysadmin → Team Leader → Team Manager → Platform Architect.
-- **Gucci (2023–present)**: build everything from scratch. No internal resources, only an idea.
-
 Landed at BravoNEXT (bravofly at the time) in 2011, a company mid-jump from startup to something bigger.
 
 First job: the Windows infrastructure running the .NET applications, quite different from the "usual" I was used to.
