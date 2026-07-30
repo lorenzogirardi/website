@@ -9,21 +9,21 @@ For years, the typical customer journey followed one of several well-established
 
 - **Traditional Website Experience:** Customers access product information via desktop or mobile browsers, interacting with a backend-for-frontend (BFF) architecture that serves tailored content.
 
-![Traditional Website Experience](/images/redefining-ux-for-the-age-of-conversational-ai/traditional1.png)
+![Traditional Website Experience](/images/redefining-ux-for-the-age-of-conversational-ai/traditional1.jpg)
 
 - **Mobile App Direct API Access:** Users connected through native apps, directly hitting underlying APIs for transactional or product data.
 
-![Mobile App Direct API Access](/images/redefining-ux-for-the-age-of-conversational-ai/traditional2.png)
+![Mobile App Direct API Access](/images/redefining-ux-for-the-age-of-conversational-ai/traditional2.jpg)
 
 - **Partner Integrations:** Third-party platforms aggregate or resell products by connecting directly to the e-commerce native APIs.
 
-![Partner Integrations](/images/redefining-ux-for-the-age-of-conversational-ai/traditional3.png)
+![Partner Integrations](/images/redefining-ux-for-the-age-of-conversational-ai/traditional3.jpg)
 
 What's new — and truly disruptive — is the rise of AI-powered chat interfaces.
 
 - **Conversational AI Discovery:** The customer asks an AI assistant for product information. Instead of static, pre-built pages, content is dynamically constructed on demand, tailored to the specific user question, intent, and context.
 
-![Conversational AI Discovery](/images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.png)
+![Conversational AI Discovery](/images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.jpg)
 
 This shift means that sites must expose product data in ways instantly consumable by AI — not just for classic SEO, but for rich, contextual, real-time answers. JSON-LD becomes the bridge.
 
@@ -48,15 +48,15 @@ Both were containerized and exposed via ngrok for real-world testing with AI cha
 
 ### Application overview
 
-![PLP Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/plp-traditional.png)
+![PLP Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/plp-traditional.jpg)
 
 Traditional product listing page — no machine-readable product data.
 
-![PDP Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/pdp-traditional.png)
+![PDP Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/pdp-traditional.jpg)
 
 Traditional product detail page — AI cannot extract price, availability, or schema.
 
-![PDP Source Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/pdp-source-traditional.png)
+![PDP Source Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/pdp-source-traditional.jpg)
 
 Source view shows no structured data — just HTML and Open Graph.
 
@@ -88,7 +88,7 @@ return (
 );
 ```
 
-![GitHub Commit JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/github-commit-jsonld.png)
+![GitHub Commit JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/github-commit-jsonld.jpg)
 
 One commit. Minimal engineering effort.
 
@@ -106,17 +106,17 @@ One commit. Minimal engineering effort.
 - Contextual matching to natural language queries
 - Compatibility across chatbots, voice assistants, and future channels
 
-![Schema Validation JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/schema-validation-jsonld.png)
+![Schema Validation JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/schema-validation-jsonld.jpg)
 
-![Rich Test JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/rich-test-jsonld.png)
+![Rich Test JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/rich-test-jsonld.jpg)
 
 ### Query-Optimized Content
 
 When Perplexity queries the JSON-LD enhanced site, it returns detailed product information — price, currency, availability, description — compared to the traditional version which returns generic page content.
 
-![Perplexity Chat Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/perplexity-chat-traditional.png)
+![Perplexity Chat Traditional](/images/redefining-ux-for-the-age-of-conversational-ai/perplexity-chat-traditional.jpg)
 
-![Perplexity Chat JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/perplexity-chat-json.png)
+![Perplexity Chat JSON-LD](/images/redefining-ux-for-the-age-of-conversational-ai/perplexity-chat-json.jpg)
 
 ## Business Impact of AI-Friendly Content
 

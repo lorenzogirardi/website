@@ -1,5 +1,5 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Containers - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/containers/</link><description>Containers - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 06 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/containers/" rel="self" type="application/rss+xml"/><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/vibeenv1.0.png" referrerpolicy="no-referrer">
+                <img src="/images/vibeenv1.0.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Shift Is Already Happening</li>
@@ -38,7 +38,7 @@
 <p>For years, VMware ESXi was the foundation of my homelab — stable, dependable, and familiar. Then Broadcom acquired VMware, and the writing was on the wall.</p>
 <p>The free ESXi license disappeared. Support for consumer-grade hardware like MiniPCs and NUCs became problematic. The platform that had &ldquo;just worked&rdquo; for years was now actively working against the homelab use case.</p>
 <p>Enter <strong>Proxmox</strong> — an open-source virtualization platform built on Debian Linux, offering KVM, LXC, ZFS, and native clustering without a licensing fee.</p>]]></description></item><item><title>Kubernetes Destroyed the Virtualization... or NOT</title><link>https://www.k8s.it/posts/kubernetes-destroyed-the-virtualization-or-not/</link><pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-destroyed-the-virtualization-or-not/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.png" referrerpolicy="no-referrer">
+                <img src="/images/kubernetes-destroyed-the-virtualization-or-not/vm_vs_pod.jpg" referrerpolicy="no-referrer">
             </div><p></p>
 <p><strong>NO.</strong></p>
 <p>That&rsquo;s the short answer. Kubernetes has not destroyed virtualization. Let me explain why.</p>

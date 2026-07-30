@@ -1,5 +1,5 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Ollama - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/ollama/</link><description>Ollama - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 07 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/ollama/" rel="self" type="application/rss+xml"/><item><title>Running a Local LLM on AMD Radeon 780M — gfx1103, ROCm, and the GPU That Wasn't Supposed to Work</title><link>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</link><pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/Screenshot%202026-06-07%20at%2013.10.19.png" referrerpolicy="no-referrer">
+                <img src="/images/Screenshot%202026-06-07%20at%2013.10.19.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Machine</li>

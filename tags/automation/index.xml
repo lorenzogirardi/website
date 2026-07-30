@@ -1,5 +1,47 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Automation - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/automation/</link><description>Automation - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 24 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/automation/" rel="self" type="application/rss+xml"/><item><title>The Safe Zone: Where AI Actually Belongs in Business Processes</title><link>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</link><pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.png" referrerpolicy="no-referrer">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Automation - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/automation/</link><description>Automation - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/automation/" rel="self" type="application/rss+xml"/><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Question Nobody Answers</li>
+<li>The Dataset: 27 Sessions, 61 Days</li>
+<li>Where the Money Actually Goes
+<ul>
+<li>Cache Read Is the Bill</li>
+<li>The Whale Session</li>
+<li>Head and Tail</li>
+</ul>
+</li>
+<li>The Model Mix Problem</li>
+<li>Output Compression: The Lever Everyone Reaches For First</li>
+<li>The Velocity Half of the Question
+<ul>
+<li>km/l Is Not the Metric. km/€ Is.</li>
+<li>The Efficiency Gap Between People</li>
+</ul>
+</li>
+<li>A Framework for Getting the Data
+<ul>
+<li>Step 1: Parse Your Own Logs</li>
+<li>Step 2: The Ticket Protocol</li>
+<li>Step 3: The Metrics That Matter</li>
+</ul>
+</li>
+<li>From Measurement to a Development Framework
+<ul>
+<li>Rule 1: One Ticket, One Session</li>
+<li>Rule 2: Route the Model to the Task</li>
+<li>Rule 3: Compress the Output</li>
+<li>Rule 4: Build Skills, Not Prompts</li>
+</ul>
+</li>
+<li>The Maturity Path</li>
+<li>The Honest Caveats</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. Every conversation about AI in engineering right now runs on vibes. It&rsquo;s faster. It&rsquo;s cheaper. It&rsquo;s transformative. Ask for a number and the room goes quiet.</p>]]></description></item><item><title>The Safe Zone: Where AI Actually Belongs in Business Processes</title><link>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</link><pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>Introduction</li>
@@ -31,7 +73,7 @@
 <li>Reflections</li>
 </ul>
 <p>Here we are. I recently put together an internal presentation on introducing AI into business processes, and the hardest part wasn&rsquo;t the technology. It was convincing people to look in the opposite direction of where they instinctively point AI.</p>]]></description></item><item><title>I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math</title><link>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</link><pubDate>Sun, 19 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.png" referrerpolicy="no-referrer">
+                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>Introduction</li>
@@ -48,7 +90,7 @@
 <li>Conclusion</li>
 </ul>
 <p>Strange&hellip; an AI assistant that talks less should cost less. Obvious, right? I wanted a number, not a vibe.</p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/vibeenv1.0.png" referrerpolicy="no-referrer">
+                <img src="/images/vibeenv1.0.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Shift Is Already Happening</li>

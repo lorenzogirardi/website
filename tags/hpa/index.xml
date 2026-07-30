@@ -67,7 +67,7 @@
 </table>
 <h3 id="rate-limit">Rate Limit</h3>
 <p>A rate limit is the number of API calls an app or user can make within a given time period. If this limit is exceeded — or if CPU or time limits are exceeded — the app may be throttled. Throttled requests fail.</p>]]></description></item><item><title>Lazy People Do It Better</title><link>https://www.k8s.it/posts/lazy-people-do-it-better/</link><pubDate>Sun, 20 Feb 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/lazy-people-do-it-better/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png" referrerpolicy="no-referrer">
+                <img src="/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.jpg" referrerpolicy="no-referrer">
             </div><p></p>
 <p>There&rsquo;s a reactive way to manage infrastructure and there&rsquo;s a proactive way. The reactive way is: traffic increases, you notice the service is suffering, you add resources. The proactive way is: you understand your system well enough that it handles demand changes automatically, without you needing to be in the loop.</p>
 <p>I prefer the lazy way.</p>

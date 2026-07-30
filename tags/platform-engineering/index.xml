@@ -1,0 +1,43 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Platform Engineering - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/platform-engineering/</link><description>Platform Engineering - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/platform-engineering/" rel="self" type="application/rss+xml"/><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Question Nobody Answers</li>
+<li>The Dataset: 27 Sessions, 61 Days</li>
+<li>Where the Money Actually Goes
+<ul>
+<li>Cache Read Is the Bill</li>
+<li>The Whale Session</li>
+<li>Head and Tail</li>
+</ul>
+</li>
+<li>The Model Mix Problem</li>
+<li>Output Compression: The Lever Everyone Reaches For First</li>
+<li>The Velocity Half of the Question
+<ul>
+<li>km/l Is Not the Metric. km/€ Is.</li>
+<li>The Efficiency Gap Between People</li>
+</ul>
+</li>
+<li>A Framework for Getting the Data
+<ul>
+<li>Step 1: Parse Your Own Logs</li>
+<li>Step 2: The Ticket Protocol</li>
+<li>Step 3: The Metrics That Matter</li>
+</ul>
+</li>
+<li>From Measurement to a Development Framework
+<ul>
+<li>Rule 1: One Ticket, One Session</li>
+<li>Rule 2: Route the Model to the Task</li>
+<li>Rule 3: Compress the Output</li>
+<li>Rule 4: Build Skills, Not Prompts</li>
+</ul>
+</li>
+<li>The Maturity Path</li>
+<li>The Honest Caveats</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. Every conversation about AI in engineering right now runs on vibes. It&rsquo;s faster. It&rsquo;s cheaper. It&rsquo;s transformative. Ask for a number and the room goes quiet.</p>]]></description></item></channel></rss>

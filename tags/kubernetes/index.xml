@@ -1,5 +1,5 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/kubernetes/</link><description>Kubernetes - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 24 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>The Safe Zone: Where AI Actually Belongs in Business Processes</title><link>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</link><pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.png" referrerpolicy="no-referrer">
+                <img src="/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>Introduction</li>
@@ -31,7 +31,7 @@
 <li>Reflections</li>
 </ul>
 <p>Here we are. I recently put together an internal presentation on introducing AI into business processes, and the hardest part wasn&rsquo;t the technology. It was convincing people to look in the opposite direction of where they instinctively point AI.</p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/vibeenv1.0.png" referrerpolicy="no-referrer">
+                <img src="/images/vibeenv1.0.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Shift Is Already Happening</li>
@@ -81,7 +81,7 @@
 <li>Reflections</li>
 </ul>
 <p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item><item><title>Building a Scalable Image CDN with MinIO, imgproxy, and Cloudflare</title><link>https://www.k8s.it/posts/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/</link><pubDate>Thu, 24 Apr 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.png" referrerpolicy="no-referrer">
+                <img src="/images/building-a-scalable-image-cdn-with-minio-imgproxy-and-cloudflare/Screenshot-2025-04-26-at-00.36.24.jpg" referrerpolicy="no-referrer">
             </div><h2 id="intro">Intro</h2>
 <p>In today&rsquo;s digital landscape, efficiently serving images is critical for website performance. Users expect fast-loading, responsive websites, and images often account for the majority of a page&rsquo;s weight. In this article, I&rsquo;ll walk you through building a powerful, scalable image CDN using open-source tools that you can deploy in your own infrastructure.</p>
 <h2 id="the-architecture">The Architecture</h2>
@@ -160,7 +160,7 @@
 </table>
 <h3 id="rate-limit">Rate Limit</h3>
 <p>A rate limit is the number of API calls an app or user can make within a given time period. If this limit is exceeded — or if CPU or time limits are exceeded — the app may be throttled. Throttled requests fail.</p>]]></description></item><item><title>Application Rate Limit</title><link>https://www.k8s.it/posts/application-rate-limiting/</link><pubDate>Sat, 11 Feb 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/application-rate-limiting/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.png" referrerpolicy="no-referrer">
+                <img src="/images/application-rate-limiting/Screenshot-2023-02-11-at-13.18.48.jpg" referrerpolicy="no-referrer">
             </div><p>I needed to implement rate limiting within an application for reasons I&rsquo;ll get into in a follow-up post. When you start thinking about this, you basically have two paths:</p>
 <ol>
 <li>Logic embedded directly in the application code</li>
@@ -169,16 +169,16 @@
 <p>Both work. Both have trade-offs. Let me go through each one.</p>
 <h2 id="the-code-way">The Code Way</h2>
 <p>This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce <em>false</em> metrics if you&rsquo;re not tracking it carefully.</p>]]></description></item><item><title>YA VPN Service in Kubernetes</title><link>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</link><pubDate>Mon, 18 Jul 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/ya-vpn-service-in-kubernetes/wirecardmobile.png" referrerpolicy="no-referrer">
+                <img src="/images/ya-vpn-service-in-kubernetes/wirecardmobile.jpg" referrerpolicy="no-referrer">
             </div><h2 id="why">Why</h2>
 <p>I had my beloved IPsec setup based on strongswan running in Kubernetes for a while — you can read about that <a href="/posts/kubernetes-strongswan/" rel="">here</a>. It worked fine. I wasn&rsquo;t looking to change it. Then a colleague pointed out WireGuard&rsquo;s overhead numbers and I got curious enough to evaluate it myself.</p>
 <p>WireGuard is a modern VPN protocol that lives in the Linux kernel. It&rsquo;s designed to be simple, fast, and have a minimal attack surface compared to IPsec or OpenVPN. The numbers people throw around are impressive, but I wanted to see them in practice.</p>]]></description></item><item><title>Lazy People Do It Better</title><link>https://www.k8s.it/posts/lazy-people-do-it-better/</link><pubDate>Sun, 20 Feb 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/lazy-people-do-it-better/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.png" referrerpolicy="no-referrer">
+                <img src="/images/lazy-people-do-it-better/Screenshot-2022-02-21-at-16.32.46.jpg" referrerpolicy="no-referrer">
             </div><p></p>
 <p>There&rsquo;s a reactive way to manage infrastructure and there&rsquo;s a proactive way. The reactive way is: traffic increases, you notice the service is suffering, you add resources. The proactive way is: you understand your system well enough that it handles demand changes automatically, without you needing to be in the loop.</p>
 <p>I prefer the lazy way.</p>
 <p></p>]]></description></item><item><title>Kubernetes nstats</title><link>https://www.k8s.it/posts/kubernetes-nstats/</link><pubDate>Mon, 22 Feb 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-nstats/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.png" referrerpolicy="no-referrer">
+                <img src="/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.jpg" referrerpolicy="no-referrer">
             </div><p></p>
 <p>Here we go&hellip; another weird sidecar container.</p>
 <h2 id="motivations">Motivations</h2>
@@ -187,7 +187,7 @@
 <p></p>
 <p>It&rsquo;s about understanding <em>where</em> bandwidth is actually going.</p>
 <p>You&rsquo;re probably used to seeing something like this for your VMs:</p>]]></description></item><item><title>Homelab, When Small is Big</title><link>https://www.k8s.it/posts/homelab-when-small-is-big/</link><pubDate>Fri, 19 Feb 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/homelab-when-small-is-big/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.png" referrerpolicy="no-referrer">
+                <img src="/images/homelab-when-small-is-big/Screenshot-2021-02-19-at-18.06.38.jpg" referrerpolicy="no-referrer">
             </div><p></p>
 <p>When I first got into IT, devices ran continuously. My first lab was an impressive tower from 1999 with substantial disk and memory banks, a quality CPU cooled by a massive copper heatsink and a 12cm fan. During the night, those components produced noise comparable to a helicopter. Neighbors complained. I didn&rsquo;t sleep well.</p>
 <p>The lab evolved over the years. Not just for noise reasons, but prioritizing cost-effective hardware that could replicate a simplified production environment. The goals today are very different from 1999:</p>]]></description></item></channel></rss>

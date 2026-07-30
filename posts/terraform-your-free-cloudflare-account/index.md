@@ -15,7 +15,7 @@ Grab your API key from the Cloudflare portal:
 
 ![Cloudflare API key location](/images/terraform-your-free-cloudflare-account/cloudflare-api-key.png)
 
-![Cloudflare Global API key](/images/terraform-your-free-cloudflare-account/cloudflare-global-apikey.png)
+![Cloudflare Global API key](/images/terraform-your-free-cloudflare-account/cloudflare-global-apikey.jpg)
 
 Create `cloudflare-auth.tf`:
 

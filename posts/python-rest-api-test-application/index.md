@@ -1,7 +1,7 @@
 # Python REST API Test Application
 
 
-![Python REST API application](/images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.png)
+![Python REST API application](/images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.jpg)
 
 When you work in platform engineering focused on infrastructure, you sometimes need to create prototypes specifically built for platform testing purposes. I needed a backend that could simulate real API behavior without coupling to any actual business logic — something I could abuse freely.
 

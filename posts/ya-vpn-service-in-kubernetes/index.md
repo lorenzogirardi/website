@@ -198,7 +198,7 @@ Endpoint = <your-public-ip>:31820
 
 ## Test and Results
 
-![WireGuard mobile client connected](/images/ya-vpn-service-in-kubernetes/wirecardmobile.png)
+![WireGuard mobile client connected](/images/ya-vpn-service-in-kubernetes/wirecardmobile.jpg)
 
 ![WireGuard desktop client](/images/ya-vpn-service-in-kubernetes/wireguarddesktop.png)
 
@@ -235,7 +235,7 @@ Then add the exporter container alongside wireguard:
 
 And the result in Grafana:
 
-![WireGuard Grafana dashboard](/images/ya-vpn-service-in-kubernetes/grafana-wireguard.png)
+![WireGuard Grafana dashboard](/images/ya-vpn-service-in-kubernetes/grafana-wireguard.jpg)
 
 The full updated configuration with monitoring is in the monitoring branch of the repo. If you're running WireGuard in Kubernetes and you're not already watching transfer rates and handshake timestamps per peer, you're flying blind. Add the exporter — it's one container and a few annotations.
 

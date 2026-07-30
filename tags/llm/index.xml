@@ -1,5 +1,5 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Llm - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/llm/</link><description>Llm - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 19 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/llm/" rel="self" type="application/rss+xml"/><item><title>I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math</title><link>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</link><pubDate>Sun, 19 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.png" referrerpolicy="no-referrer">
+                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>Introduction</li>
@@ -16,7 +16,7 @@
 <li>Conclusion</li>
 </ul>
 <p>Strange&hellip; an AI assistant that talks less should cost less. Obvious, right? I wanted a number, not a vibe.</p>]]></description></item><item><title>Running a Local LLM on AMD Radeon 780M — gfx1103, ROCm, and the GPU That Wasn't Supposed to Work</title><link>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</link><pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/Screenshot%202026-06-07%20at%2013.10.19.png" referrerpolicy="no-referrer">
+                <img src="/images/Screenshot%202026-06-07%20at%2013.10.19.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Machine</li>
@@ -35,7 +35,7 @@
 </ul>
 <hr>
 <p>I wanted a local AI box. Not a cloud API with latency and per-token billing. Not a GPU workstation that sounds like a jet engine. A quiet mini-PC that runs a capable model at home, on my desk, forever, for free.</p>]]></description></item><item><title>Stargate LLM Gateway</title><link>https://www.k8s.it/posts/stargate-llm-gateway/</link><pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/stargate-llm-gateway/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/herostargate.png" referrerpolicy="no-referrer">
+                <img src="/images/herostargate.jpg" referrerpolicy="no-referrer">
             </div><h1 id="stargate-llm-gateway">Stargate LLM Gateway</h1>
 <p>
 </p>

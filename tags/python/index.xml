@@ -15,7 +15,7 @@
 <li>Reflections</li>
 </ul>
 <p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item><item><title>Python REST API Test Application</title><link>https://www.k8s.it/posts/python-rest-api-test-application/</link><pubDate>Fri, 30 Oct 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/python-rest-api-test-application/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.png" referrerpolicy="no-referrer">
+                <img src="/images/python-rest-api-test-application/Screenshot-2020-11-20-at-23.08.36.jpg" referrerpolicy="no-referrer">
             </div><p></p>
 <p>When you work in platform engineering focused on infrastructure, you sometimes need to create prototypes specifically built for platform testing purposes. I needed a backend that could simulate real API behavior without coupling to any actual business logic — something I could abuse freely.</p>
 <p>Two goals:</p>

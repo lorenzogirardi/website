@@ -6,6 +6,7 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
+- [What AI Actually Costs: 27 Sessions of Real Data](https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/): Everyone talks about AI ROI, nobody shows numbers. Here are 27 real coding sessions parsed from the billing logs: where the money goes, why context is the cost, and a framework to measure it.
 - [The Safe Zone: Where AI Actually Belongs in Business Processes](https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/): A framework for finding AI's real use cases in business processes, backed by a production case study: an Algolia usage exporter built in 4 hours.
 - [I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math](https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/): I mined 27 Claude Code session logs to measure what caveman-mode token compression actually saves in API dollars, and found the real cost was hiding somewhere caveman mode can't touch.
 - [Who Is Your AI Agent Acting For? RFC 8693 On-Behalf-Of Delegation](https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/): How I built a local POC where every LLM and MCP call carries both   the human's and the agent's identity, using Keycloak and RFC 8693 token   exchange. Per-user policy, audit and revocation for autonomous agents.

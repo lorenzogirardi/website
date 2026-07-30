@@ -1,7 +1,7 @@
 # Ambient Sensor for Mere Mortal
 
 
-![Grafana temperature dashboard](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.png)
+![Grafana temperature dashboard](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-21.39.16.jpg)
 
 In the home automation era, I wanted to understand how simple thermal sensors actually work — not just buy a commercial solution and plug it in, but build the whole thing from scratch. Here's what I put together.
 
@@ -163,9 +163,9 @@ ESPlorer provides a graphical interface for deploying and interacting with the N
 
 The system has been running since 2016. That's not a typo — this same setup, same code, same hardware.
 
-![Temperature and humidity over time](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.11.01.png)
+![Temperature and humidity over time](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.11.01.jpg)
 
-![Multi-room sensor comparison](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.06.50.png)
+![Multi-room sensor comparison](/images/ambient-sensor-for-mere-mortal/Screenshot-2021-01-24-at-22.06.50.jpg)
 
 I have sensors in multiple rooms including one outside. The external sensor needs replacement about once a year — the enclosure isn't properly waterproof and the electrical contacts oxidize progressively. That's the only maintenance required.
 

@@ -15,13 +15,13 @@ This one of the scenarios that made me crazy: WebSockets. Grafana, since version
 
 The original idea was to define a "role" for each layer:
 
-![Cloudflare Workers](/images/websocket-cloudflare-tunnel-apache-and-irritation/cworkers.png) Used as global security header injector — same security posture for every exposed application.
+![Cloudflare Workers](/images/websocket-cloudflare-tunnel-apache-and-irritation/cworkers.jpg) Used as global security header injector — same security posture for every exposed application.
 
-![Cloudflare WAF](/images/websocket-cloudflare-tunnel-apache-and-irritation/cfwaf.png) Used to obfuscate the origin and add a protection layer, even on the free plan.
+![Cloudflare WAF](/images/websocket-cloudflare-tunnel-apache-and-irritation/cfwaf.jpg) Used to obfuscate the origin and add a protection layer, even on the free plan.
 
-![Linux firewall](/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.46.00.png) Linux-based firewall for ACL and NAT rules.
+![Linux firewall](/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.46.00.jpg) Linux-based firewall for ACL and NAT rules.
 
-![Kubernetes](/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.54.58.png) Kubernetes for all workloads that can run as immutable images.
+![Kubernetes](/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2023-08-12-at-11.54.58.jpg) Kubernetes for all workloads that can run as immutable images.
 
 The Cloudflare Worker handling security headers:
 

@@ -16,7 +16,7 @@
 <li>Reflections</li>
 </ul>
 <p>Here we are. Everyone is wiring AI agents to real systems — Kubernetes clusters, CI pipelines, internal APIs — and almost nobody is asking the boring question first: <strong>when the agent calls a tool, who is it?</strong></p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/vibeenv1.0.png" referrerpolicy="no-referrer">
+                <img src="/images/vibeenv1.0.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Shift Is Already Happening</li>
@@ -50,11 +50,11 @@
 </ul>
 <hr>
 <p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item><item><title>Websocket, Cloudflare Tunnel, Apache httpd and a Bit of Security</title><link>https://www.k8s.it/posts/websocket-cloudflare-tunnel-apache-and-irritation/</link><pubDate>Thu, 03 Aug 2023 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/websocket-cloudflare-tunnel-apache-and-irritation/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.png" referrerpolicy="no-referrer">
+                <img src="/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.jpg" referrerpolicy="no-referrer">
             </div><h2 id="the-infrastructure-overview">The Infrastructure Overview</h2>
 <p>Exposing home lab services to the internet can be both necessary and risky. Traditional methods — port forwarding, VPNs, reverse proxies with open inbound ports — come with their own set of challenges. This is where Cloudflare Tunnel (formerly Argo Tunnel) comes in as an elegant solution.</p>
 <p>In this article, I&rsquo;ll walk you through how I&rsquo;ve implemented a secure infrastructure using Cloudflare Tunnel with WebSocket support, running on a Kubernetes cluster with Apache HTTPD as a reverse proxy. This setup allows me to securely expose internal services without opening ports on my residential firewall.</p>]]></description></item><item><title>Maximum Yield with Minimum Expense</title><link>https://www.k8s.it/posts/maximum-yield-with-minimum-expense/</link><pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/maximum-yield-with-minimum-expense/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.png" referrerpolicy="no-referrer">
+                <img src="/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.jpg" referrerpolicy="no-referrer">
             </div><p></p>
 <p>Great marketing quote in the title — but honestly, the underlying principle is always true: <em>keep it simple, keep it safe.</em></p>
 <p>I want to structure this around four topics:</p>
@@ -66,7 +66,7 @@
 </ul>
 <p>Each could be its own post. This one will cut across all of them because they&rsquo;re connected.</p>
 <p><em>This is not a post about how to create a blog. This post inspects some technology that can simplify your life or your work with small but important concepts.</em></p>]]></description></item><item><title>Kubernetes Guacamole — Bastion Host Without MySQL</title><link>https://www.k8s.it/posts/kubernetes-guacamole/</link><pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-guacamole/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/kubernetes-guacamole/guacamole-linux.png" referrerpolicy="no-referrer">
+                <img src="/images/kubernetes-guacamole/guacamole-linux.jpg" referrerpolicy="no-referrer">
             </div><h2 id="another-guacamole-in-kubernetes">Another Guacamole in Kubernetes</h2>
 <p>A bastion host is &ldquo;the only host computer that a company allows to be addressed directly from the public network.&rdquo; It&rsquo;s the security barrier between the internet and your internal infrastructure — the single controlled point for SSH and RDP access.</p>
 <p>Apache Guacamole turns a bastion host into a browser-accessible portal: no VPN client, no SSH client, just a browser.</p>

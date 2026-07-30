@@ -37,9 +37,9 @@ Two LDAP elements required:
 1. **Technical bind user** (`ldapbind`) — low-privilege account for querying the directory
 2. **VPN group** (`vpn`) — group membership determines VPN access eligibility
 
-![LDAP bind user](/images/kubernetes-strongswan/strongswan_bind_user.png)
+![LDAP bind user](/images/kubernetes-strongswan/strongswan_bind_user.jpg)
 
-![VPN group configuration](/images/kubernetes-strongswan/strongswan_user_vpn_group.png)
+![VPN group configuration](/images/kubernetes-strongswan/strongswan_user_vpn_group.jpg)
 
 ## Docker Image
 
@@ -203,7 +203,7 @@ spec:
 
 Firewall rules must permit UDP 30500 and 30450 to the Kubernetes node.
 
-![Firewall NAT configuration](/images/kubernetes-strongswan/strongswan_firewall_nat.png)
+![Firewall NAT configuration](/images/kubernetes-strongswan/strongswan_firewall_nat.jpg)
 
 ## Deployment
 
@@ -221,7 +221,7 @@ strongswan-77bfbb9f9f-57hmz   1/1     Running   0          22h
 
 Standard IPsec clients work: Cisco IPsec client, native iOS/macOS VPN, Android IPsec clients.
 
-![Android VPN client setup](/images/kubernetes-strongswan/strongswan_android_client.png)
+![Android VPN client setup](/images/kubernetes-strongswan/strongswan_android_client.jpg)
 
 Configuration: gateway = Kubernetes node IP, authentication = PSK + username/password.
 
@@ -239,7 +239,7 @@ Successful LDAP authentication in Strongswan logs:
 12[IKE] IKE_SA roadw[1] established between 10.1.1.84...10.1.1.1
 ```
 
-![Connection status](/images/kubernetes-strongswan/strongswan_stroke_statusall.png)
+![Connection status](/images/kubernetes-strongswan/strongswan_stroke_statusall.jpg)
 
 ## Conclusion
 
