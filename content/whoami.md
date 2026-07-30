@@ -7,6 +7,13 @@ summary: "About me"
 
 ## Lorenzo Girardi — #semi-serious
 
+![Lorenzo Girardi](/images/whoami/lorenzo.jpg)
+
+**Contact:** lorenzo.girardi@gmail.com (PGP) · lorenzo@ethzero.it · l@k8s.it
+**Web:** [k8s.it](https://www.k8s.it) · GitHub · Grafana
+**Nationality:** Italian · **Driving license:** yes
+**Resume:** [Download CV (PDF)](/files/CV_Lorenzo_Girardi_ENG_2026.pdf)
+
 Platform & Development Engineering Manager. Tech enthusiast since before it was a LinkedIn buzzword.
 
 In the late '90s I haunted IRC exploit channels — not to cause damage, but because I quickly realized how much I didn't know. Early 2000s were spent on packetstormsecurity learning the hard way. Humility: acquired.
