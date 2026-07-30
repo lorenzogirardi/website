@@ -3,7 +3,7 @@
 
 ## Lorenzo Girardi — #semi-serious
 
-![Lorenzo Girardi](/images/whoami/lorenzo.jpg)
+<p align="center"><img src="/images/whoami/lorenzo.jpg" alt="Lorenzo Girardi"></p>
 
 **Contact:** lorenzo.girardi@gmail.com (PGP) · lorenzo@ethzero.it · l@k8s.it
 **Web:** [k8s.it](https://www.k8s.it) · [GitHub](https://github.com/lorenzogirardi) · [Grafana](https://services.k8s.it/grafana/d/kxQQuHRZks/proxmox?orgId=2&from=now-24h&to=now&timezone=browser&var-server=madara&var-storage=local-lvm&var-interfaces=vmbr0&var-interfaces=bond0&refresh=1m)
