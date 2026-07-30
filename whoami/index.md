@@ -6,7 +6,7 @@
 ![Lorenzo Girardi](/images/whoami/lorenzo.jpg)
 
 **Contact:** lorenzo.girardi@gmail.com (PGP) · lorenzo@ethzero.it · l@k8s.it
-**Web:** [k8s.it](https://www.k8s.it) · GitHub · Grafana
+**Web:** [k8s.it](https://www.k8s.it) · [GitHub](https://github.com/lorenzogirardi) · [Grafana](https://services.k8s.it/grafana/d/kxQQuHRZks/proxmox?orgId=2&from=now-24h&to=now&timezone=browser&var-server=madara&var-storage=local-lvm&var-interfaces=vmbr0&var-interfaces=bond0&refresh=1m)
 **Nationality:** Italian · **Driving license:** yes
 **Resume:** [Download CV (PDF)](/files/CV_Lorenzo_Girardi_ENG_2026.pdf)
 
