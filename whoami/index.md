@@ -3,7 +3,7 @@
 
 ## Lorenzo Girardi — #semi-serious
 
-<p align="center"><img src="/images/whoami/lorenzo.jpg" alt="Lorenzo Girardi"></p>
+<p align="center"><img src="/images/whoami/lorenzo.jpg" alt="Lorenzo Girardi" width="50%"></p>
 
 **Contact:** lorenzo.girardi@gmail.com (PGP) · lorenzo@ethzero.it · l@k8s.it
 **Web:** [k8s.it](https://www.k8s.it) · [GitHub](https://github.com/lorenzogirardi) · [Grafana](https://services.k8s.it/grafana/d/kxQQuHRZks/proxmox?orgId=2&from=now-24h&to=now&timezone=browser&var-server=madara&var-storage=local-lvm&var-interfaces=vmbr0&var-interfaces=bond0&refresh=1m)
@@ -23,7 +23,9 @@ Career milestones:
 - **lastminute.com / BravoNEXT (2012–2023)** — startup to something more. Sysadmin → Team Leader → Team Manager → Platform Architect.
 - **Gucci (2023–present)** — build everything from scratch. No internal resources, only an idea.
 
-I led a team of 12+ people for ~3 years. Summary: *everyone remained alive, no one was mistreated.*
+Landed at BravoNEXT (bravofly at the time) in 2011, a company mid-jump from startup to something bigger. First job: the Windows infrastructure running the .NET applications, quite different from the "usual" I was used to. Kept leaning on my Linux side too, never stopped poking at open source.
+
+A few years in, I had enough scope and enough impact on decisions to earn the confidence for team leadership. Turned out watching a team ship results made me happier than shipping alone, so I took the managerial jump: 12+ people, for about three years. Summary: *everyone remained alive, no one was mistreated.*
 
 Personal mantras:
 
