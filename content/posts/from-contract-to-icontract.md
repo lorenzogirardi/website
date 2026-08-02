@@ -26,6 +26,7 @@ images:
   * Example 4: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy
   * Example 5: "No Root" Becomes a securityContext Block
   * How to Make Skills Actually Respected: The Gate
+  * From a Working App to a Platform Citizen
   * Does the AI Actually Comply?
   * Security Considerations
   * Download the Skills
@@ -298,6 +299,37 @@ Two design choices make this gate actually stick instead of becoming one more do
 **CRITICAL blocks, WARNING doesn't.** Not everything in a contract deserves the same weight, and treating every clause as equally blocking is how gates get bypassed out of frustration. A missing resource limit gets flagged and deploy proceeds. A plain secret in Git blocks, full stop, no override, because that's the one violation in the entire matrix explicitly called out as dangerous enough to warrant it.
 
 There's also an auto-fix mode: for CRITICAL failures, apply the fix directly and report what changed, no permission prompt required, because a `runAsNonRoot: true` line is not a decision that benefits from a confirmation dialog. WARNING fixes get applied too, just mentioned rather than gated.
+
+## From a Working App to a Platform Citizen
+
+Everything so far describes one request producing one compliant app. That's the easy version of the problem. An agent chaining `scaffold` into `app-contract` into `observability` into `review` can produce a pod that runs, passes every check, and is still, in every way that matters operationally, an island: nobody else's monitoring, ownership, or incident process knows it exists. Getting an app *generated* correctly and getting an app *absorbed* into a shared platform are two different problems, and only the first one is solved by chaining skills once.
+
+{{< mermaid >}}
+flowchart TD
+    subgraph GEN["One request, agent-orchestrated"]
+        U[Developer describes the app in one sentence] --> SC[scaffold: namespace, manifests, secret references]
+        SC --> AC[app-contract: health endpoints, /metrics, JSON logs, Dockerfile]
+        AC --> OB[observability: scrape annotation, NetworkPolicy, business metric]
+    end
+    OB --> GATE{review gate}
+    GATE -->|CRITICAL fail| AC
+    GATE -->|pass| APPLY[GitOps sync / kubectl apply]
+    subgraph PLAT["Becoming a platform citizen: the real challenge"]
+        APPLY --> RUN[Pod running, isolated by default-deny NetworkPolicy]
+        RUN --> W1[Secret store: ClusterSecretStore, Vault or AWS Secrets Manager]
+        RUN --> W2[Metrics backend: scraped, dashboarded, alertable]
+        RUN --> W3[Log pipeline: shipped, queryable, retained]
+        W1 --> OWN[Ownership record: team, on-call, SLA]
+        W2 --> OWN
+        W3 --> OWN
+        OWN --> NEXT[Every future change re-enters the gate]
+    end
+    NEXT -.->|contract revision or app change| SC
+{{< /mermaid >}}
+
+The left box is what the examples in this post automate: a handful of skills, one gate, minutes of wall-clock time. The right box is where the actual platform-engineering effort lives, and none of it happens because the manifest was generated correctly. A `ClusterSecretStore` has to exist before an `ExternalSecret` can resolve against it. A metrics backend has to be reachable and retained before a dashboard means anything. An ownership record has to exist somewhere queryable, or an alert with nobody attached to it is just noise, the same failure mode called out earlier for tools that quietly become load-bearing.
+
+The loop at the bottom is the part easy to leave out of a diagram and expensive to leave out of the system: `NEXT` feeds back into `scaffold`, not into a one-time setup step. The contract isn't a gate the app passes once at birth, it's a gate every future change to that app has to keep clearing, because the platform's own definition of "compliant" keeps moving (a new mandatory header, a revised probe timeout, a stricter secret-rotation window) whether or not the app owner is paying attention that week. An agent that only runs the left box on day one and never revisits the right box is exactly the failure mode this whole pipeline exists to prevent, just with better tooling around the day-one part.
 
 ## Does the AI Actually Comply?
 
