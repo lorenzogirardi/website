@@ -27,7 +27,7 @@ save it.
 
 ---
 
-## Step 1 — Detect stack and entry point
+## Step 1: Detect stack and entry point
 
 | Signal | Stack |
 |--------|-------|
@@ -41,7 +41,7 @@ generate a `frontend/Dockerfile` too (Step 4).
 
 ---
 
-## Step 2 — Health endpoints on the management port
+## Step 2: Health endpoints on the management port
 
 The app MUST expose on the management port (never routed publicly):
 
@@ -49,8 +49,8 @@ The app MUST expose on the management port (never routed publicly):
 |----------|--------|---------------|---------------|
 | `/readiness` | GET | `{"status":"UP"}` | `{"status":"OUT_OF_SERVICE"}` |
 | `/liveness` | GET | `{"status":"UP"}` | `{"status":"DOWN"}` |
-| `/info` | GET | `{"app":"<slug>","version":"<sha>"}` | — |
-| `/shutdown` | GET | `null` | — |
+| `/info` | GET | `{"app":"<slug>","version":"<sha>"}` | - |
+| `/shutdown` | GET | `null` | - |
 
 ### Python / FastAPI
 
@@ -130,7 +130,7 @@ func startMgmtServer() {
 
 ---
 
-## Step 3 — /metrics endpoint (Prometheus format)
+## Step 3: /metrics endpoint (Prometheus format)
 
 ### Python / FastAPI
 ```bash
@@ -170,7 +170,7 @@ After adding `/metrics`, set the pod scrape annotations in the deployment manife
 
 ---
 
-## Step 4 — JSON structured logging
+## Step 4: JSON structured logging
 
 All logs MUST go to **stdout** in **JSON** format. Required fields: `time` (ISO8601),
 `level`, `msg`.
@@ -213,9 +213,9 @@ Remove any file-based logging: `FileHandler`/`RotatingFileHandler` in Python, Wi
 
 ---
 
-## Step 5 — Dockerfile (approved base images, no alpine)
+## Step 5: Dockerfile (approved base images, no alpine)
 
-`FROM <mirror-prefix>/<base-image>:<tag>` — approved, Debian-based, mirrored internally.
+`FROM <mirror-prefix>/<base-image>:<tag>`, approved, Debian-based, mirrored internally.
 **Never `-alpine`**: musl libc causes compatibility issues with native dependencies.
 
 ### Node.js

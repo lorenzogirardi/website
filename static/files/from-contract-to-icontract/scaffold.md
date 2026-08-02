@@ -11,7 +11,7 @@ minimum number of questions.
 
 ---
 
-## Step 1 — Gather minimum inputs (ask in ONE message)
+## Step 1: Gather minimum inputs (ask in ONE message)
 
 ```
 To deploy your app I need 6 things:
@@ -28,7 +28,7 @@ Do NOT ask about ports, Docker, Kubernetes, images, or networking. Those are der
 
 ---
 
-## Step 2 — Derive configuration
+## Step 2: Derive configuration
 
 From the answers plus the cluster variables file:
 
@@ -46,7 +46,7 @@ no per-app edits.
 
 ---
 
-## Step 3 — Namespace and network policy
+## Step 3: Namespace and network policy
 
 ```yaml
 # 00-namespace.yaml
@@ -66,7 +66,7 @@ then `allow-ingress-controller`, `allow-metrics-scrape-app`, and one
 
 ---
 
-## Step 4 — Secrets: reference, never a literal value
+## Step 4: Secrets: reference, never a literal value
 
 > **NEVER generate a plain `Secret` kind or a literal credential value in any
 > manifest.** Plain secrets in Git are a CRITICAL violation (`review` check E1).
@@ -76,7 +76,7 @@ Vault or AWS Secrets Manager) via the External Secrets Operator, provisioned onc
 per cluster as a `ClusterSecretStore`. The skill only ever writes a reference:
 
 ```yaml
-# 02-external-secret.yaml — Vault backend
+# 02-external-secret.yaml: Vault backend
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
@@ -120,7 +120,7 @@ the running Secret updates automatically within the refresh interval, no new com
 
 ---
 
-## Step 5 — Storage (for every stateful component)
+## Step 5: Storage (for every stateful component)
 
 ```yaml
 # 04-storage.yaml
@@ -142,7 +142,7 @@ the app MUST have an `initContainer` that waits for the DB before starting.
 
 ---
 
-## Step 6 — App deployment
+## Step 6: App deployment
 
 ```yaml
 # 08-app.yaml
@@ -206,7 +206,7 @@ that the value came from Vault rather than a plain `Secret`.
 
 ---
 
-## Step 7 — Output to user
+## Step 7: Output to user
 
 ```
 ✅ Your app "[APP_NAME]" is ready to deploy.

@@ -23,7 +23,7 @@ images:
   * Example 1: A Health-Check Clause Becomes Code
   * Example 2: A Naming Convention Becomes a Derivation Rule
   * Example 3: "Never Commit a Plain Secret" Becomes Vault or AWS Secrets Manager
-  * Example 4: An SBOM Requirement Becomes a CI Step
+  * Example 4: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy
   * Example 5: "No Root" Becomes a securityContext Block
   * How to Make Skills Actually Respected: The Gate
   * Does the AI Actually Comply?
@@ -90,8 +90,8 @@ flowchart TD
 |----------|--------|---------------|---------------|
 | `/readiness` | GET | `{"status":"UP"}` | `{"status":"OUT_OF_SERVICE"}` |
 | `/liveness` | GET | `{"status":"UP"}` | `{"status":"DOWN"}` |
-| `/info` | GET | `{"app":"<slug>","version":"<sha>"}` | — |
-| `/shutdown` | GET | `null` | — |
+| `/info` | GET | `{"app":"<slug>","version":"<sha>"}` | - |
+| `/shutdown` | GET | `null` | - |
 
 And the Python implementation the skill generates when it detects `fastapi` in the repo:
 
@@ -184,42 +184,67 @@ spec:
 
 The developer never touches Vault's or AWS's console, and never runs a manual sealing step. The platform team provisions the `ClusterSecretStore` once (a Vault AppRole, or an IAM role via IRSA for AWS Secrets Manager), writes the actual credential into the backend directly, and every app from then on only ever references a path. Rotation is the part a manual encrypt-once flow doesn't give you for free: bump `refreshInterval`, rotate the value in Vault or AWS Secrets Manager, and the synced Kubernetes `Secret` updates on its own, no re-encryption, no new commit, no PR.
 
-## Example 4: An SBOM Requirement Becomes a CI Step
+## Example 4: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy
 
-**The contract says**, paraphrased from the security paper's RACI matrix:
+**The contract says**, paraphrased from the monitoring papers:
 
-> Every container image MUST be scanned for known vulnerabilities before being pushed to the registry. Images carrying CRITICAL-severity CVEs MUST NOT be deployed. A Software Bill of Materials MUST be generated and retained for every build.
+> Applications MUST expose metrics across three tiers: system (automatic, infrastructure-level), application (request rate, latency, error rate), and business (domain-specific counters the app owner defines). Metrics MUST be collected without requiring manual dashboard configuration per app.
 
-A RACI matrix assigns that jointly to the platform and product teams, in the abstract language RACI matrices tend to use, which in practice means nobody owns it at 2am before a release.
+That's a philosophy paper, not code, and it's the clause most likely to be read once and never operationalized, "three tiers" doesn't tell a developer what file to edit.
 
-**The skill writes** the enforcement into the pipeline itself, so ownership stops being a question:
+**The skill writes** three separate things for three separate tiers. System-tier is free: cAdvisor already scrapes every container's CPU, memory, and network, nothing to generate. Application-tier is the pod annotation plus the matching NetworkPolicy that lets the scraper actually reach it:
 
 ```yaml
-# .github/workflows/ci.yml (excerpt)
-- name: Build image
-  run: docker build -t $IMAGE_TAG .
-
-- name: Scan with Trivy
-  uses: aquasecurity/trivy-action@0.24.0
-  with:
-    image-ref: ${{ env.IMAGE_TAG }}
-    severity: CRITICAL,HIGH
-    exit-code: '1'          # fail the build, don't just report
-
-- name: Generate SBOM
-  uses: anchore/sbom-action@v0
-  with:
-    image: ${{ env.IMAGE_TAG }}
-    format: spdx-json
-    output-file: sbom.spdx.json
-    upload-artifact: true   # retained alongside the build, per contract
-
-- name: Push image
-  if: success()            # only reached if the scan step didn't already fail the job
-  run: docker push $IMAGE_TAG
+# 08-app.yaml: pod template metadata
+metadata:
+  labels:
+    app: <APP_SLUG>-app
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8081"
+    prometheus.io/path: "/metrics"
 ```
 
-`exit-code: '1'` is what turns the clause from documentation into enforcement: a build with a CRITICAL CVE never reaches a state where it *could* be pushed, because the job fails before the push step runs.
+```yaml
+# 01-network-policies.yaml: without this, the annotation above is scraped by nothing
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-metrics-scrape-app
+  namespace: <NAMESPACE>
+spec:
+  podSelector:
+    matchLabels:
+      app: <APP_SLUG>-app
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <OBSERVABILITY_NAMESPACE>
+      ports:
+        - port: 8081
+```
+
+Business-tier is the one row the skill can't derive on its own, because it's a product decision, not a platform one. So the skill asks instead of generating a placeholder:
+
+> "What are the three most important numbers that tell you if your app is working well?"
+
+Whatever comes back becomes a counter or gauge, in the same file the request-rate metric already lives in:
+
+```typescript
+import { Counter } from 'prom-client'
+
+const ordersProcessed = new Counter({
+  name: 'orders_processed_total',
+  help: 'Orders successfully processed',
+  labelNames: ['status'],
+})
+// ordersProcessed.inc({ status: 'completed' })
+```
+
+Three tiers, three different generation strategies: nothing to write, a fixed pair of manifests, and one question the model asks instead of guessing.
 
 ## Example 5: "No Root" Becomes a securityContext Block
 
@@ -246,6 +271,8 @@ spec:
 ```
 
 Two MUSTs, four lines, generated identically on every app the scaffold skill touches. The gate skill's `A3`/`A4` checks read back exactly these two blocks, so a manifest that skipped this step (hand-written, copied from an old repo, edited after generation) fails the same way regardless of how it was produced.
+
+Five examples, one clause each. That's deliberately a small, hand-picked slice, not the ceiling. The six source PDFs alone had dozens more MUSTs left uncovered here (probe timeouts, ingress TLS, resource sizing, PVC strategy), and nothing about the pipeline caps it at "one platform contract." The same eight steps, parse, cluster, expand, constrain, generate, gate, link, inject, run identically over a security policy, a data-governance standard, an incident-response runbook, or any other written contract a given role is bound by. Point the same pipeline at a different source document and a different audience, and it produces a different set of skills automatically: an SRE gets skills gated against the on-call runbook, a data engineer gets skills gated against retention and PII policy, a frontend team gets skills gated against the accessibility and performance budget contract. The examples above are what one narrow slice of one platform contract looks like once it's been run through the pipeline by hand. An agentic version of the same pipeline, one that reads a role's stack of governing documents and regenerates its own skill set as those documents change, extends to as many roles and domains as there are contracts worth enforcing.
 
 ## How to Make Skills Actually Respected: The Gate
 
@@ -294,18 +321,19 @@ So: does the AI evade the contract sometimes? Yes. Does it still construct an ar
 
 ## Download the Skills
 
-The three skills behind the examples above, sanitized of any org-specific values
-(swap the `<cluster.*>` placeholders for your own before using them):
+The four skills behind the examples above, sanitized of any org-specific values
+(swap the `<cluster.*>` placeholders for your own before using them). These cover
+one slice of one contract, treat them as a starting shape to run the same
+pipeline against your own documents, not as the complete set:
 
 - [`app-contract.md`](/files/from-contract-to-icontract/app-contract.md): health endpoints, `/metrics`, JSON logging, Dockerfile (Example 1)
 - [`scaffold.md`](/files/from-contract-to-icontract/scaffold.md): namespace derivation, ExternalSecret self-service, app deployment (Examples 2, 3, 5)
+- [`observability.md`](/files/from-contract-to-icontract/observability.md): three-tier metrics, scrape NetworkPolicy, business-metric prompt (Example 4)
 - [`review.md`](/files/from-contract-to-icontract/review.md): the gate skill, pass/fail matrix, auto-fix mode
 
-Drop them into `.claude/skills/` (or your agent's equivalent skill directory),
+Drop them into `.claude/skills/` (or your agent's equivalent skill directory) and
 fill in the `<cluster.*>` placeholders at the top of `scaffold.md` for your own
-registry, namespace prefix, and secret backend, and point the SBOM/Trivy step from
-Example 4 at your own CI config, it's a workflow snippet rather than a standalone
-skill file.
+registry, namespace prefix, secret backend, and observability namespace.
 
 ## Conclusion
 

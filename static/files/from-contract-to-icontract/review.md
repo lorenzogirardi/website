@@ -24,7 +24,7 @@ review k8s/08-app.yaml # reviews a single file
 
 ## Checklist (trimmed)
 
-### A — Image
+### A: Image
 
 | # | Check | Pass condition | Fail message |
 |---|-------|-----------------|---------------|
@@ -33,7 +33,7 @@ review k8s/08-app.yaml # reviews a single file
 | A4 | Drop capabilities | `capabilities.drop: [ALL]` in container securityContext | "Add `capabilities: { drop: [ALL] }`" |
 | A5 | No public-registry images | Every image resolves to the internal registry | "Docker Hub is prohibited. Replace with `<mirror-prefix>/<image>:<tag>`" |
 
-### B — Health & Ports
+### B: Health & Ports
 
 | # | Check | Pass condition | Fail message |
 |---|-------|-----------------|---------------|
@@ -43,14 +43,14 @@ review k8s/08-app.yaml # reviews a single file
 | B4 | Readiness probe correct | `port: 8082`, `path: /readiness` | "Readiness probe missing or wrong port/path" |
 | B6 | Management port not public | Ingress does NOT route to 8082 | "Remove the management port from the Ingress" |
 
-### E — Secrets
+### E: Secrets
 
 | # | Check | Pass condition | Fail message |
 |---|-------|-----------------|---------------|
 | E1 | No plain `Secret` in Git | Only `ExternalSecret` references present, no literal value in any manifest | "Found a plain Secret or a literal credential. Replace with an `ExternalSecret` referencing Vault or AWS Secrets Manager" |
 | E5 | Secrets injected via `secretKeyRef` | Deployment env uses `secretKeyRef`, never `value:` | "Credentials hardcoded in the Deployment spec" |
 
-### G — Metrics & Logging (CRITICAL)
+### G: Metrics & Logging (CRITICAL)
 
 | # | Check | Pass condition | Fail message |
 |---|-------|-----------------|---------------|
@@ -76,11 +76,11 @@ Severity: **CRITICAL** (A1-A6, B1-B6, E1-E7, G1-G4, G6) blocks deploy.
 ⚠️  Found [N] issues in "[APP_NAME]". Fix these before deploying:
 
 CRITICAL (must fix):
-  [A3] App runs as root — add `runAsNonRoot: true` to pod securityContext
-  [E1] Plain Secret found in k8s/02-secret.yaml — replace with ExternalSecret
+  [A3] App runs as root: add `runAsNonRoot: true` to pod securityContext
+  [E1] Plain Secret found in k8s/02-secret.yaml: replace with ExternalSecret
 
 WARNING (strongly recommended):
-  [G1] Metrics not configured — app won't appear in monitoring dashboards
+  [G1] Metrics not configured: app won't appear in monitoring dashboards
 
 Run review again after fixing.
 ```
