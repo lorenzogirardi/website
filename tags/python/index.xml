@@ -1,4 +1,25 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Python - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/python/</link><description>Python - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 02 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/python/" rel="self" type="application/rss+xml"/><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Python - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/python/</link><description>Python - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 08 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/python/" rel="self" type="application/rss+xml"/><item><title>AI Security Review Finds the Bug Your CI Gates Missed</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/ai-security-review-finds-the-bug-ci-gates-missed/01-pipeline-jobs-and-docker-summary.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Pipeline</li>
+<li>The ai-analysis Job, Commented</li>
+<li>Downloading Results, Bundling the Source</li>
+<li>The Empty Report</li>
+<li>Downloading Artifacts, Watching the Run</li>
+<li>The AI Scripts</li>
+<li>The Report That Caught the Bug</li>
+<li>The Full Results, as an Example</li>
+<li>The Numbers</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>My debug/test API, <code>pytbak</code>, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Every gate maps to a category of failure I have seen before. And yet, I kept being bothered by one specific class of bug, the one that no scanner materializes out of thin air, because it lives in my logic and not in a CVE database.</p>]]></description></item><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>

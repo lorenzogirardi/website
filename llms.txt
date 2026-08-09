@@ -6,6 +6,8 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
+- [AI Security Review Finds the Bug Your CI Gates Missed](https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/): Learn how to add a free AI security review to a CI pipeline that runs after the deterministic gates and eats their results as context.
+- [From Contract to iContract: Turning a Platform PDF Into a Skill, and the Gate That Makes It Stick](https://www.k8s.it/posts/from-contract-to-icontract/): How I compiled six platform contract PDFs into AI skills that generate compliant Kubernetes manifests and gate deploys, cutting platform-team alignment time by roughly two thirds.
 - [What AI Actually Costs: 27 Sessions of Real Data](https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/): Everyone talks about AI ROI, nobody shows numbers. Here are 27 real coding sessions parsed from the billing logs: where the money goes, why context is the cost, and a framework to measure it.
 - [The Safe Zone: Where AI Actually Belongs in Business Processes](https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/): A framework for finding AI's real use cases in business processes, backed by a production case study: an Algolia usage exporter built in 4 hours.
 - [I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math](https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/): I mined 27 Claude Code session logs to measure what caveman-mode token compression actually saves in API dollars, and found the real cost was hiding somewhere caveman mode can't touch.

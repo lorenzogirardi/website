@@ -1,4 +1,71 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 08 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>AI Security Review Finds the Bug Your CI Gates Missed</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/ai-security-review-finds-the-bug-ci-gates-missed/01-pipeline-jobs-and-docker-summary.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Pipeline</li>
+<li>The ai-analysis Job, Commented</li>
+<li>Downloading Results, Bundling the Source</li>
+<li>The Empty Report</li>
+<li>Downloading Artifacts, Watching the Run</li>
+<li>The AI Scripts</li>
+<li>The Report That Caught the Bug</li>
+<li>The Full Results, as an Example</li>
+<li>The Numbers</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>My debug/test API, <code>pytbak</code>, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Every gate maps to a category of failure I have seen before. And yet, I kept being bothered by one specific class of bug, the one that no scanner materializes out of thin air, because it lives in my logic and not in a CVE database.</p>]]></description></item><item><title>From Contract to iContract: Turning a Platform PDF Into a Skill, and the Gate That Makes It Stick</title><link>https://www.k8s.it/posts/from-contract-to-icontract/</link><pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/from-contract-to-icontract/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/from-contract-to-icontract/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem: A PDF Is Not an Interface</li>
+<li>The Architecture: From Contract to Skill</li>
+<li>Part One: What the App Must Be
+<ul>
+<li>Example 1: A Health-Check Clause Becomes Four Endpoints</li>
+<li>Example 2: &ldquo;No Root&rdquo; Becomes a securityContext Block</li>
+<li>Example 3: &ldquo;No Persistent Data in a Container&rdquo; Becomes Three Manifests</li>
+<li>Example 4: A Four-Layer Image Hierarchy Becomes a Dockerfile and a Tag Strategy</li>
+</ul>
+</li>
+<li>Part Two: What the App Must Say
+<ul>
+<li>Example 5: &ldquo;Logs MUST Be JSON on stdout&rdquo; Becomes a Logger and a Field Contract</li>
+<li>Example 6: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy</li>
+<li>Example 7: &ldquo;MUST Send Traces to a Collector&rdquo; Becomes an SDK Init and an Egress Policy</li>
+<li>Example 8: &ldquo;Alert on Trends, Not Numbers&rdquo; Becomes a Recording Rule and an HPA</li>
+</ul>
+</li>
+<li>Part Three: Where the App Lives
+<ul>
+<li>Example 9: A Naming Convention Becomes a Derivation Rule</li>
+<li>Example 10: &ldquo;Never Commit a Plain Secret&rdquo; Becomes Vault or AWS Secrets Manager</li>
+<li>Example 11: &ldquo;The Management Port MUST NOT Be Public&rdquo; Becomes Three Absences</li>
+</ul>
+</li>
+<li>Part Four: How the App Ships
+<ul>
+<li>Example 12: &ldquo;No Human Tampering With the Artifact&rdquo; Becomes a CI Workflow With Teeth</li>
+<li>Example 13: Terraform Guardrails Become a Module Call You Cannot Widen</li>
+<li>Example 14: &ldquo;MUST Be in the Service Catalog First&rdquo; Becomes Labels and a Generated Entry</li>
+</ul>
+</li>
+<li>The Real Speedup: Building Something the Contract Never Anticipated</li>
+<li>How to Make Skills Actually Respected: The Gate</li>
+<li>From a Working App to a Platform Citizen</li>
+<li>Does the AI Actually Comply?</li>
+<li>Security Considerations</li>
+<li>Download the Skills</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -186,216 +253,4 @@
 <li><strong>Infrastructure metrics</strong>: CPU, RAM, SSD utilization, build times (Premium plan only)</li>
 <li><strong>Health signals</strong>: scrape success status, timestamps</li>
 </ul>
-<p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item><item><title>Stargate LLM Gateway</title><link>https://www.k8s.it/posts/stargate-llm-gateway/</link><pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/stargate-llm-gateway/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/herostargate.jpg" referrerpolicy="no-referrer">
-            </div><h1 id="stargate-llm-gateway">Stargate LLM Gateway</h1>
-<p>
-</p>
-<p>OpenAI-compatible LLM Gateway for AWS Bedrock with user management, usage tracking, and cost monitoring. Powered by LiteLLM.</p>
-<h2 id="table-of-contents">Table of Contents</h2>
-<ul>
-<li><a href="#overview" rel="">Overview</a></li>
-<li><a href="#architecture" rel="">Architecture</a></li>
-<li><a href="#quick-start" rel="">Quick Start</a></li>
-<li><a href="#user-management" rel="">User Management</a></li>
-<li><a href="#security" rel="">Security</a></li>
-<li><a href="#monitoring--observability" rel="">Monitoring &amp; Observability</a></li>
-<li><a href="#documentation-index" rel="">Documentation Index</a></li>
-<li><a href="#api-reference" rel="">API Reference</a></li>
-</ul>
-<hr>
-<h2 id="overview">Overview</h2>
-<div class="mermaid" id="id-15">flowchart LR
-    subgraph Clients
-        cc[Claude Code]
-        api[API Clients]
-    end
-
-    subgraph Gateway[&#34;LiteLLM Gateway&#34;]
-        auth[API Key Auth]
-        budget[Budget Manager]
-        router[Model Router]
-        metrics[Prometheus Metrics]
-    end
-
-    subgraph Storage
-        pg[(PostgreSQL)]
-    end
-
-    subgraph Bedrock[&#34;AWS Bedrock&#34;]
-        haiku[Claude Haiku 4.5]
-        sonnet[Claude Sonnet 4.5]
-        opus[Claude Opus 4.5]
-    end
-
-    cc --&gt; auth
-    api --&gt; auth
-    auth --&gt; budget
-    budget --&gt; router
-    router --&gt; haiku &amp; sonnet &amp; opus
-    budget &lt;--&gt; pg
-    router --&gt; metrics
-
-    style haiku fill:#90EE90
-    style sonnet fill:#FFD700
-    style opus fill:#FF6B6B</div><h3 id="features">Features</h3>
-<table>
-	<thead>
-			<tr>
-					<th>Feature</th>
-					<th>Status</th>
-					<th>Description</th>
-			</tr>
-	</thead>
-	<tbody>
-			<tr>
-					<td>OpenAI-compatible API</td>
-					<td>✅</td>
-					<td>Drop-in replacement for Claude Code</td>
-			</tr>
-			<tr>
-					<td>User Management</td>
-					<td>✅</td>
-					<td>Create users with budgets and model restrictions</td>
-			</tr>
-			<tr>
-					<td>API Key Generation</td>
-					<td>✅</td>
-					<td>Per-user API keys with limits</td>
-			</tr>
-			<tr>
-					<td>Usage Tracking</td>
-					<td>✅</td>
-					<td>Token and cost tracking per user</td>
-			</tr>
-			<tr>
-					<td>Prometheus Metrics</td>
-					<td>✅</td>
-					<td>Full observability stack</td>
-			</tr>
-			<tr>
-					<td>Langfuse Tracing</td>
-					<td>✅</td>
-					<td>LLM call logging and analysis</td>
-			</tr>
-			<tr>
-					<td>Streaming Support</td>
-					<td>✅</td>
-					<td>SSE for real-time responses</td>
-			</tr>
-			<tr>
-					<td>Admin Endpoint Security</td>
-					<td>✅</td>
-					<td>Blocked from public access</td>
-			</tr>
-	</tbody>
-</table>
-<hr>
-<h2 id="architecture">Architecture</h2>
-<h3 id="request-flow">Request Flow</h3>
-<div class="mermaid" id="id-16">sequenceDiagram
-    participant Client as Claude Code
-    participant CF as CloudFront
-    participant LiteLLM as LiteLLM Proxy
-    participant PG as PostgreSQL
-    participant Bedrock as AWS Bedrock
-    participant VM as Victoria Metrics
-
-    Client-&gt;&gt;CF: POST /v1/chat/completions
-    CF-&gt;&gt;LiteLLM: Forward request
-
-    LiteLLM-&gt;&gt;LiteLLM: Validate API Key
-    LiteLLM-&gt;&gt;PG: Check User Budget
-
-    alt Budget OK
-        LiteLLM-&gt;&gt;Bedrock: InvokeModel (SigV4)
-        Bedrock--&gt;&gt;LiteLLM: Response &#43; tokens
-        LiteLLM-&gt;&gt;PG: Update spend
-        LiteLLM-&gt;&gt;LiteLLM: Record metrics
-        LiteLLM--&gt;&gt;Client: 200 OK
-    else Budget Exceeded
-        LiteLLM--&gt;&gt;Client: 429 Budget Exceeded
-    end
-
-    VM-&gt;&gt;LiteLLM: Scrape /metrics/</div><h3 id="deployment-architecture">Deployment Architecture</h3>
-<div class="mermaid" id="id-17">flowchart TB
-    subgraph Internet
-        clients[Claude Code / API Clients]
-    end
-
-    subgraph AWS[&#34;AWS Cloud (us-west-1)&#34;]
-        cf[CloudFront&lt;br/&gt;Admin endpoints blocked]
-
-        subgraph VPC[&#34;VPC 10.10.0.0/16&#34;]
-            subgraph Public[&#34;Public Subnets&#34;]
-                alb[Application Load Balancer]
-                nat[NAT Instance]
-            end
-
-            subgraph Private[&#34;Private Subnets&#34;]
-                subgraph ECS[&#34;ECS Fargate Cluster&#34;]
-                    litellm[LiteLLM Proxy&lt;br/&gt;1 vCPU, 2GB]
-                    langfuse[Langfuse&lt;br/&gt;0.5 vCPU, 1GB]
-                    grafana[Grafana&lt;br/&gt;0.25 vCPU, 0.5GB]
-                    victoria[Victoria Metrics&lt;br/&gt;0.25 vCPU, 0.5GB]
-                end
-
-                rds[(RDS PostgreSQL&lt;br/&gt;db.t4g.micro)]
-            end
-        end
-
-        bedrock[AWS Bedrock]
-        secrets[Secrets Manager]
-    end
-
-    clients --&gt; cf
-    cf --&gt; alb
-    alb --&gt; litellm
-    alb --&gt; grafana
-    alb --&gt; langfuse
-    litellm --&gt; bedrock
-    litellm &lt;--&gt; rds
-    litellm --&gt; langfuse
-    langfuse &lt;--&gt; rds
-    victoria --&gt; litellm
-    grafana --&gt; victoria
-    litellm -.-&gt; secrets
-
-    style cf fill:#ffcccc,stroke:#ff0000
-    style rds fill:#336791,color:#fff
-    style langfuse fill:#e6f3ff</div><h3 id="security-model">Security Model</h3>
-<div class="mermaid" id="id-18">flowchart TB
-    subgraph Public[&#34;Public Access (CloudFront)&#34;]
-        chat[&#34;/v1/chat/completions ✅&#34;]
-        models[&#34;/v1/models ✅&#34;]
-        health[&#34;/health/* ✅&#34;]
-        metrics[&#34;/metrics/ ✅&#34;]
-    end
-
-    subgraph Blocked[&#34;Blocked from CloudFront (403)&#34;]
-        user[&#34;/user/* ❌&#34;]
-        key[&#34;/key/* ❌&#34;]
-        model[&#34;/model/* ❌&#34;]
-        spend[&#34;/spend/* ❌&#34;]
-    end
-
-    subgraph Internal[&#34;Internal Access Only (ALB)&#34;]
-        user_alb[&#34;/user/* ✅&#34;]
-        key_alb[&#34;/key/* ✅&#34;]
-        model_alb[&#34;/model/* ✅&#34;]
-        spend_alb[&#34;/spend/* ✅&#34;]
-    end
-
-    cf[CloudFront] --&gt; Public
-    cf -.-&gt;|403 Forbidden| Blocked
-    alb[ALB Direct] --&gt; Internal
-
-    style Blocked fill:#ffcccc
-    style Internal fill:#ccffcc</div><hr>
-<h2 id="quick-start">Quick Start</h2>
-<h3 id="for-claude-code-users">For Claude Code Users</h3>
-<p>Add these environment variables to your shell:</p>]]></description></item><item><title>Redefining E-commerce for the Age of Conversational AI</title><link>https://www.k8s.it/posts/redefining-ux-for-the-age-of-conversational-ai/</link><pubDate>Sun, 31 Aug 2025 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/redefining-ux-for-the-age-of-conversational-ai/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/redefining-ux-for-the-age-of-conversational-ai/chat-driven-user-experience.jpg" referrerpolicy="no-referrer">
-            </div><h2 id="introduction">Introduction</h2>
-<p>This article began as a classic exploration into JSON-LD and its impact on structured data for e-commerce. However, as research and experimentation progressed, a fundamental realization emerged: what&rsquo;s actually changing is the entire user experience paradigm. The way end-users interact with digital products is shifting beyond traditional web and app models — toward dynamic, conversational discovery driven by AI.</p>
-<p>For years, the typical customer journey followed one of several well-established routes:</p>]]></description></item></channel></rss>
+<p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item></channel></rss>
