@@ -126,3 +126,8 @@ enableEmoji = true
     identifier = "whoami"
     name = "Whoami"
     url = "/whoami/"
+  [[menu.main]]
+    weight = 4
+    identifier = "infra-flow"
+    name = "Infra Flow"
+    url = "/infra-flow/"
