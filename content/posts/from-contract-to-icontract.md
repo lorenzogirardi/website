@@ -1,8 +1,11 @@
 ---
-title: "From Contract to iContract: Turning a Platform PDF Into a Skill, and the Gate That Makes It Stick"
+title: "From Contract to iContract: Turning a Platform PDF Into a Skill, and the
+  Gate That Makes It Stick"
 date: 2026-08-02
-draft: false
-description: "How I compiled six platform contract PDFs into AI skills that generate compliant Kubernetes manifests and gate deploys, cutting platform-team alignment time by roughly two thirds."
+draft: true
+description: How I compiled six platform contract PDFs into AI skills that
+  generate compliant Kubernetes manifests and gate deploys, cutting
+  platform-team alignment time by roughly two thirds.
 tags:
   - ai
   - kubernetes
@@ -12,40 +15,38 @@ tags:
   - monitoring
   - dynamic infrastructure
 featuredImage: /images/from-contract-to-icontract/featured.jpg
-images:
-  - "/images/from-contract-to-icontract/featured.jpg"
 ---
 ### Table of Contents
 
-  * Introduction
-  * The Problem: A PDF Is Not an Interface
-  * The Architecture: From Contract to Skill
-  * Part One: What the App Must Be
-    * Example 1: A Health-Check Clause Becomes Four Endpoints
-    * Example 2: "No Root" Becomes a securityContext Block
-    * Example 3: "No Persistent Data in a Container" Becomes Three Manifests
-    * Example 4: A Four-Layer Image Hierarchy Becomes a Dockerfile and a Tag Strategy
-  * Part Two: What the App Must Say
-    * Example 5: "Logs MUST Be JSON on stdout" Becomes a Logger and a Field Contract
-    * Example 6: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy
-    * Example 7: "MUST Send Traces to a Collector" Becomes an SDK Init and an Egress Policy
-    * Example 8: "Alert on Trends, Not Numbers" Becomes a Recording Rule and an HPA
-  * Part Three: Where the App Lives
-    * Example 9: A Naming Convention Becomes a Derivation Rule
-    * Example 10: "Never Commit a Plain Secret" Becomes Vault or AWS Secrets Manager
-    * Example 11: "The Management Port MUST NOT Be Public" Becomes Three Absences
-  * Part Four: How the App Ships
-    * Example 12: "No Human Tampering With the Artifact" Becomes a CI Workflow With Teeth
-    * Example 13: Terraform Guardrails Become a Module Call You Cannot Widen
-    * Example 14: "MUST Be in the Service Catalog First" Becomes Labels and a Generated Entry
-  * The Real Speedup: Building Something the Contract Never Anticipated
-  * How to Make Skills Actually Respected: The Gate
-  * From a Working App to a Platform Citizen
-  * Does the AI Actually Comply?
-  * Security Considerations
-  * Download the Skills
-  * Conclusion
-  * Reflections
+- Introduction
+- The Problem: A PDF Is Not an Interface
+- The Architecture: From Contract to Skill
+- Part One: What the App Must Be
+  - Example 1: A Health-Check Clause Becomes Four Endpoints
+  - Example 2: "No Root" Becomes a securityContext Block
+  - Example 3: "No Persistent Data in a Container" Becomes Three Manifests
+  - Example 4: A Four-Layer Image Hierarchy Becomes a Dockerfile and a Tag Strategy
+- Part Two: What the App Must Say
+  - Example 5: "Logs MUST Be JSON on stdout" Becomes a Logger and a Field Contract
+  - Example 6: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy
+  - Example 7: "MUST Send Traces to a Collector" Becomes an SDK Init and an Egress Policy
+  - Example 8: "Alert on Trends, Not Numbers" Becomes a Recording Rule and an HPA
+- Part Three: Where the App Lives
+  - Example 9: A Naming Convention Becomes a Derivation Rule
+  - Example 10: "Never Commit a Plain Secret" Becomes Vault or AWS Secrets Manager
+  - Example 11: "The Management Port MUST NOT Be Public" Becomes Three Absences
+- Part Four: How the App Ships
+  - Example 12: "No Human Tampering With the Artifact" Becomes a CI Workflow With Teeth
+  - Example 13: Terraform Guardrails Become a Module Call You Cannot Widen
+  - Example 14: "MUST Be in the Service Catalog First" Becomes Labels and a Generated Entry
+- The Real Speedup: Building Something the Contract Never Anticipated
+- How to Make Skills Actually Respected: The Gate
+- From a Working App to a Platform Citizen
+- Does the AI Actually Comply?
+- Security Considerations
+- Download the Skills
+- Conclusion
+- Reflections
 
 
 
@@ -125,12 +126,14 @@ What follows is fourteen clauses, in four groups, each one shown as the contract
 
 **The skill writes.** That one paragraph becomes a table plus four implementations:
 
+
 | Endpoint | Method | Response 200 | Response 503 |
-|----------|--------|---------------|---------------|
+| ------------ | ------ | ----------------------------------------- | ----------------------------- |
 | `/readiness` | GET | `{"status":"UP"}` | `{"status":"OUT_OF_SERVICE"}` |
 | `/liveness` | GET | `{"status":"UP"}` | `{"status":"DOWN"}` |
 | `/info` | GET | `{"git":{"commit":{...}},"app":"<slug>"}` | - |
 | `/shutdown` | GET | `null` | - |
+
 
 And the Python implementation the skill generates when it detects `fastapi` in the repo:
 
@@ -379,11 +382,13 @@ logger.Info("User created", zap.String("user_id", userID))
 
 And then the part the contract implies but never states, which is the field contract. "JSON" is not a schema. A log aggregator filtering on `level` needs the key to be called `level`, and the gate has to be able to fail a line that calls it `severity`:
 
+
 | Field | Type | Example |
-|-------|------|---------|
+| ------- | -------------- | ------------------------------- |
 | `time` | ISO8601 string | `"2026-01-01T10:00:00.000Z"` |
 | `level` | string | `"info"` / `"error"` / `"warn"` |
 | `msg` | string | `"Request received"` |
+
 
 Optional but recommended: `trace_id`, `span_id`, `app`, `env`. The first two are what make Example 7 useful.
 
@@ -948,8 +953,9 @@ The end state is a workload category nobody wrote a section for, compliant by co
 
 Put the two paths side by side:
 
-| | Paper contract | iContract skills |
-|---|---|---|
+
+|  | Paper contract | iContract skills |
+| -------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | How knowledge is indexed | By source document | By what the developer is trying to do |
 | First-ever implementation of a workload type | Most expensive case: no prior art, clauses must be interpreted | Same cost as any other case: invariants don't care about workload type |
 | Unknown unknowns | You must know a rule exists to look it up | Rules apply whether or not anyone thought to ask |
@@ -958,6 +964,7 @@ Put the two paths side by side:
 | Definition of "done" | A reviewer's judgment, varying by reviewer | An enumerated checklist with stable IDs |
 | Failure mode | Silent non-compliance, discovered in production or never | Loud CRITICAL, before `kubectl apply` |
 | Where a clause conflicts with reality | Stays ambiguous for years | Surfaces the first time someone tries to encode it |
+
 
 The last row is the alpine story from Example 4, and it generalizes. Prose tolerates "such as" and "where appropriate" indefinitely; a skill file has to pick a value, and the picking is where latent contradictions surface.
 
@@ -977,8 +984,9 @@ The taxonomy on the left is organized by domain (image, health and ports, networ
 
 A trimmed slice of the check matrix:
 
+
 | # | Check | Pass condition | Severity |
-|---|-------|-----------------|----------|
+| --- | ---------------------------------------- | ------------------------------------------------------------------ | -------- |
 | A1 | No `:latest` tag in production | No image reference ends in `:latest` | CRITICAL |
 | A5 | No public-registry images | Every image reference resolves to the internal registry | CRITICAL |
 | B3 | Liveness probe on the management port | Correct port and path | CRITICAL |
@@ -990,6 +998,7 @@ A trimmed slice of the check matrix:
 | G6 | No personal data in logs | Sample log lines match no PII pattern | CRITICAL |
 | F1 | CPU and memory requests set | Every container declares `resources.requests` | WARNING |
 | H1 | Ingress hostname matches cluster pattern | Regex match against the derived pattern | WARNING |
+
 
 Two design choices make this gate actually stick instead of becoming one more document nobody reads:
 
@@ -1069,12 +1078,12 @@ The skills behind the examples above, sanitized of any org-specific values
 one slice of one contract, treat them as a starting shape to run the same
 pipeline against your own documents, not as the complete set:
 
-- [`app-contract.md`](/files/from-contract-to-icontract/app-contract.md): health endpoints, `/metrics`, JSON logging, Dockerfile (Examples 1, 2, 4, 5)
-- [`scaffold.md`](/files/from-contract-to-icontract/scaffold.md): namespace derivation, ExternalSecret self-service, app deployment (Examples 9, 10, 11, 14)
-- [`observability.md`](/files/from-contract-to-icontract/observability.md): three-tier metrics, scrape NetworkPolicy, OTEL tracing, business-metric prompt (Examples 6, 7, 8)
-- [`db-provision.md`](/files/from-contract-to-icontract/db-provision.md): PVC sizing, Recreate strategy, initContainer wait pattern, exporter sidecar (Example 3)
-- [`gitops.md`](/files/from-contract-to-icontract/gitops.md): CI build/scan/push with a blocking scan, CD from the scanned SHA (Example 12)
-- [`review.md`](/files/from-contract-to-icontract/review.md): the gate skill, pass/fail matrix, auto-fix mode
+- `[app-contract.md](/files/from-contract-to-icontract/app-contract.md)`: health endpoints, `/metrics`, JSON logging, Dockerfile (Examples 1, 2, 4, 5)
+- `[scaffold.md](/files/from-contract-to-icontract/scaffold.md)`: namespace derivation, ExternalSecret self-service, app deployment (Examples 9, 10, 11, 14)
+- `[observability.md](/files/from-contract-to-icontract/observability.md)`: three-tier metrics, scrape NetworkPolicy, OTEL tracing, business-metric prompt (Examples 6, 7, 8)
+- `[db-provision.md](/files/from-contract-to-icontract/db-provision.md)`: PVC sizing, Recreate strategy, initContainer wait pattern, exporter sidecar (Example 3)
+- `[gitops.md](/files/from-contract-to-icontract/gitops.md)`: CI build/scan/push with a blocking scan, CD from the scanned SHA (Example 12)
+- `[review.md](/files/from-contract-to-icontract/review.md)`: the gate skill, pass/fail matrix, auto-fix mode
 
 Drop them into `.claude/skills/` (or your agent's equivalent skill directory) and
 fill in the `<cluster.*>` placeholders at the top of `scaffold.md` for your own
