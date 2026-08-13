@@ -1,4 +1,18 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/kubernetes/</link><description>Kubernetes - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 02 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>From Contract to iContract: Turning a Platform PDF Into a Skill, and the Gate That Makes It Stick</title><link>https://www.k8s.it/posts/from-contract-to-icontract/</link><pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/from-contract-to-icontract/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/kubernetes/</link><description>Kubernetes - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 13 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Card to Artifact: Where a Pipeline Should (and Shouldn't) Use AI</title><link>https://www.k8s.it/posts/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/</link><pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/01-full-pipeline-sequence.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Not everything needs to say &ldquo;AI&rdquo; on the box</li>
+<li>The mechanism, one diagram</li>
+<li>Where AI actually sits</li>
+<li>Everything else: nine components, zero AI</li>
+<li>Why the split is drawn exactly here</li>
+<li>Deep dive: swapping the LLM provider mid-flight</li>
+<li>The loop I deliberately didn&rsquo;t build</li>
+<li>The near future, and why it isn&rsquo;t today</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are, again, staring at a Trello card and wondering how much of what happens next actually needs a model in the loop.</p>]]></description></item><item><title>From Contract to iContract: Turning a Platform PDF Into a Skill, and the Gate That Makes It Stick</title><link>https://www.k8s.it/posts/from-contract-to-icontract/</link><pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/from-contract-to-icontract/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/from-contract-to-icontract/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -223,13 +237,4 @@
             </div><p></p>
 <p>There&rsquo;s a reactive way to manage infrastructure and there&rsquo;s a proactive way. The reactive way is: traffic increases, you notice the service is suffering, you add resources. The proactive way is: you understand your system well enough that it handles demand changes automatically, without you needing to be in the loop.</p>
 <p>I prefer the lazy way.</p>
-<p></p>]]></description></item><item><title>Kubernetes nstats</title><link>https://www.k8s.it/posts/kubernetes-nstats/</link><pubDate>Mon, 22 Feb 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-nstats/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/kubernetes-nstats/Screenshot-2021-02-22-at-18.16.33.jpg" referrerpolicy="no-referrer">
-            </div><p></p>
-<p>Here we go&hellip; another weird sidecar container.</p>
-<h2 id="motivations">Motivations</h2>
-<p>I&rsquo;ve always been interested in the observability area. There are many aspects that improve performances and fix bugs. One of the most interesting is network usage.</p>
-<p>This is not about network issues:</p>
-<p></p>
-<p>It&rsquo;s about understanding <em>where</em> bandwidth is actually going.</p>
-<p>You&rsquo;re probably used to seeing something like this for your VMs:</p>]]></description></item></channel></rss>
+<p></p>]]></description></item></channel></rss>
