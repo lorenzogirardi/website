@@ -1,18 +1,4 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 13 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>Card to Artifact: Where a Pipeline Should (and Shouldn't) Use AI</title><link>https://www.k8s.it/posts/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/</link><pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/01-full-pipeline-sequence.png" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>Not everything needs to say &ldquo;AI&rdquo; on the box</li>
-<li>The mechanism, one diagram</li>
-<li>Where AI actually sits</li>
-<li>Everything else: nine components, zero AI</li>
-<li>Why the split is drawn exactly here</li>
-<li>Deep dive: swapping the LLM provider mid-flight</li>
-<li>The loop I deliberately didn&rsquo;t build</li>
-<li>The near future, and why it isn&rsquo;t today</li>
-<li>Reflections</li>
-</ul>
-<p>Here we are, again, staring at a Trello card and wondering how much of what happens next actually needs a model in the loop.</p>]]></description></item><item><title>AI Security Review Finds the Bug Your CI Gates Missed</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 08 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>AI Security Review Finds the Bug Your CI Gates Missed</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/ai-security-review-finds-the-bug-ci-gates-missed/01-pipeline-jobs-and-docker-summary.png" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -256,4 +242,15 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item></channel></rss>
+<p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item><item><title>Algolia prometheus exporter</title><link>https://www.k8s.it/posts/algolia-prometheus-exporter/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/algolia-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.jpg" referrerpolicy="no-referrer">
+            </div><h1 id="algolia-usage-exporter--a-case-study-in-ai-assisted-tooling">Algolia Usage Exporter — A Case Study in AI-Assisted Tooling</h1>
+<h2 id="what-is-this">What is this?</h2>
+<p>A lightweight Prometheus exporter that collects usage and infrastructure metrics from the Algolia search API and exposes them at <code>/metrics</code> for Prometheus / Datadog scraping.</p>
+<p>It runs as a standalone HTTP server (single binary via Docker/Podman), requires minimal configuration (just two API keys), and exports metrics like:</p>
+<ul>
+<li><strong>Usage statistics</strong>: search operations, records, processing time, QPS, write operations</li>
+<li><strong>Infrastructure metrics</strong>: CPU, RAM, SSD utilization, build times (Premium plan only)</li>
+<li><strong>Health signals</strong>: scrape success status, timestamps</li>
+</ul>
+<p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item></channel></rss>

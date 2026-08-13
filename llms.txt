@@ -6,7 +6,6 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
-- [Card to Artifact: Where a Pipeline Should (and Shouldn't) Use AI](https://www.k8s.it/posts/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/): A deep dive into an agentic SDLC pipeline that turns a Trello card into a reviewed PR, and why AI only touches 2 of its 11 components.
 - [AI Security Review Finds the Bug Your CI Gates Missed](https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/): Learn how to add a free AI security review to a CI pipeline that runs after the deterministic gates and eats their results as context.
 - [From Contract to iContract: Turning a Platform PDF Into a Skill, and the Gate That Makes It Stick](https://www.k8s.it/posts/from-contract-to-icontract/): How I compiled six platform contract PDFs into AI skills that generate compliant Kubernetes manifests and gate deploys, cutting platform-team alignment time by roughly two thirds.
 - [What AI Actually Costs: 27 Sessions of Real Data](https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/): Everyone talks about AI ROI, nobody shows numbers. Here are 27 real coding sessions parsed from the billing logs: where the money goes, why context is the cost, and a framework to measure it.
