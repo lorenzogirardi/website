@@ -195,6 +195,10 @@ Zero lines of application code touched. The next coding-agent call went straight
 
 The more interesting part is what happened *while* verifying the swap. A GitHub Actions variable, `OPENCODE_MODEL`, had been declared but never actually wired into the step's environment block, so the pipeline was silently ignoring the model selection. That's not a model catching its own misconfiguration: it's a deterministic check (does the environment the process actually sees match the environment I intended to set) surfacing a real gap, the same way a strict human reviewer would have caught it by reading the YAML closely. Fixed on the spot in one commit, confirmed on the next run.
 
+The run itself, not a reconstruction: the actual GitHub Actions log for this card, planner through reviewer, `mypy` failing at exit code 2 and the run still finishing green because that failure routed to human review instead of blocking the workflow.
+
+![GitHub Actions log for trello-card #32: planner, coding turn against deepseek-v4-pro, test_pyramid, security, lint, code_quality failing, docker, reviewer, ending in REQUIRES_HUMAN_APPROVAL](/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/05-tricorn-github-actions-log.jpg)
+
 The card itself asked for a Tricorn (Mandelbar) fractal endpoint, Mandelbrot's complex-conjugate twin. The coding agent, running on `deepseek/deepseek-v4-pro` through OpenRouter this time instead of OpenCode Zen, read the three existing fractal endpoints already in the sample service and produced one file change, +54 lines, converged on the first turn, 127.6 seconds. The entire mathematical difference from Mandelbrot is a sign flip:
 
 ```python
@@ -228,6 +232,28 @@ Same `mypy` finding that gated the Newton run and the Burning Ship run before it
 > The system that decided whether the Tricorn fractal endpoint was good enough to ship didn't know or care that the code underneath it had come from a different company's model than the run before it.
 
 Final outcome for the record: verdict `REQUIRES_HUMAN_APPROVAL`, [PR #18](https://github.com/lorenzogirardi/agentic-sdlc/pull/18) opened at +113/-0, provider selected entirely through configuration. Three honest caveats from that run, worth stating plainly rather than glossing over: `code_quality` has now failed identically, same `mypy` exit 2, on all three demo runs without the actual error text ever being captured; `security` and `docker` are unverified rather than passing on all three runs, because the scanning binaries aren't installed on the GitHub Actions runner; and this particular run predates the Trello card-update step, so the result was posted back to the card by hand rather than automatically.
+
+Every one of these branches is a real run, not a cherry-picked one: `agentic/31637516768` behind PR #18 (this run), plus the ones before and after it, each opened by the same workflow, none merged without a human looking first.
+
+![GitHub branches list: main protected with 5/5 checks, agentic/31638459242, agentic/31638297289, and agentic/31637516768 each behind their own open PR (#20, #19, #18)](/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/07-tricorn-branches-prs.jpg)
+
+### Proof it's a running artifact, not just an approved diff
+
+A pull request passing review is only half the claim. The other half is that the image GHCR ends up with actually runs and actually serves the endpoint the card asked for. The build step in the same Actions run confirms the image got built and pushed:
+
+![GitHub Actions build summary: Docker Build summary for ghcr.io/lorenzogirardi/agentic-sdlc-fractal, tagged with commit SHA and latest, completed in 6s](/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/09-sample-app-docker-build-summary.jpg)
+
+Pulling that exact image and running it locally, the existing endpoints answer first, proving the coding agent's "extend, don't replace" instruction actually held on real output:
+
+![Terminal: docker run of the ghcr.io fractal image, uvicorn serving /health and /fractal with iterations/zoom/coordinate query params, all 200 OK](/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/10-sample-app-docker-run-log.jpg)
+
+And the new `/tricorn` route the coding agent added responds the same way, right next to the pre-existing ones in the same log:
+
+![Terminal: docker log showing repeated GET /fractal calls followed by three GET /tricorn calls, all 200 OK, plus a curl to /tricorn returning valid JSON with type, parameters, and dimensions](/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/06-tricorn-docker-log.jpg)
+
+The sample service itself is a small interactive fractal explorer, this is the actual UI the container serves, not a mockup of it:
+
+![Julia Set Explorer web UI: a rendered blue-and-orange fractal canvas with Reset/Zoom In/Zoom Out controls, iteration and zoom sliders, and a green Health: ok status line](/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/08-sample-app-fractal-explorer.jpg)
 
 Here's a recording of that interaction end to end, card to PR, with the provider swap happening live in the middle:
 
