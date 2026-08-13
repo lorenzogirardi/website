@@ -1,8 +1,9 @@
 ---
-title: "AI Security Review Finds the Bug Your CI Gates Missed"
+title: AI Security Review Finds the Bug Your CI Gates Missed
 date: 2026-08-08
-draft: false
-description: "Learn how to add a free AI security review to a CI pipeline that runs after the deterministic gates and eats their results as context."
+draft: true
+description: Learn how to add a free AI security review to a CI pipeline that
+  runs after the deterministic gates and eats their results as context.
 tags:
   - ai
   - security
@@ -11,24 +12,23 @@ tags:
   - python
 featuredImage: /images/ai-security-review-finds-the-bug-ci-gates-missed/01-pipeline-jobs-and-docker-summary.png
 ---
-
 ### Table of Contents
 
-  * The Problem
-  * Naaa... the alternatives
-  * The Pipeline
-  * The ai-analysis Job, Commented
-  * Downloading Results, Bundling the Source
-  * The Empty Report
-  * Downloading Artifacts, Watching the Run
-  * The AI Scripts
-  * The Report That Caught the Bug
-  * The Full Results, as an Example
-  * The Numbers
-  * Security Considerations
-  * Monitoring and Observability
-  * Conclusion
-  * Reflections
+- The Problem
+- Naaa... the alternatives
+- The Pipeline
+- The ai-analysis Job, Commented
+- Downloading Results, Bundling the Source
+- The Empty Report
+- Downloading Artifacts, Watching the Run
+- The AI Scripts
+- The Report That Caught the Bug
+- The Full Results, as an Example
+- The Numbers
+- Security Considerations
+- Monitoring and Observability
+- Conclusion
+- Reflections
 
 Here we are.
 
@@ -486,13 +486,15 @@ Since the free model is $0, the price is reported against the commercial counter
 
 Here's the proof. The report the AI produced, and it swallowed the injected bug whole, citing the exact line. The summary table at the top, as it appeared in the report:
 
+
 | Stage | Result |
-|---|---|
+| ---------------------- | ----------------------------------------------------------- |
 | flake8 | clean, 0 lint errors |
 | pytest | 77 passed, 25 skipped, 0 failed |
 | Container scan (Trivy) | 4 CRITICAL (Debian base OS packages) |
 | IaC scan (Checkov) | 8 findings (6 unique rules) in the Helm chart |
 | K8s probe | Pod Ready, but HTTP probe returned `405 Method Not Allowed` |
+
 
 And on the same page, the finding I was waiting for:
 
@@ -608,3 +610,4 @@ Related reading:
 
 - [Python REST API Test Application](/posts/python-rest-api-test-application/)
 - [Monitoring Contentful Usage with a Prometheus Exporter](/posts/monitoring-contentful-usage-with-a-prometheus-exporter/)
+

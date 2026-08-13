@@ -1,8 +1,9 @@
 ---
 title: "Card to Artifact: Where a Pipeline Should (and Shouldn't) Use AI"
 date: 2026-08-13
-draft: false
-description: "A deep dive into an agentic SDLC pipeline that turns a Trello card into a reviewed PR, and why AI only touches 2 of its 11 components."
+draft: true
+description: A deep dive into an agentic SDLC pipeline that turns a Trello card
+  into a reviewed PR, and why AI only touches 2 of its 11 components.
 tags:
   - ai
   - automation
@@ -13,18 +14,17 @@ tags:
   - python
 featuredImage: /images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/01-full-pipeline-sequence.png
 ---
-
 ### Table of Contents
 
-  * Not everything needs to say "AI" on the box
-  * The mechanism, one diagram
-  * Where AI actually sits
-  * Everything else: nine components, zero AI
-  * Why the split is drawn exactly here
-  * Deep dive: swapping the LLM provider mid-flight
-  * The loop I deliberately didn't build
-  * The near future, and why it isn't today
-  * Reflections
+- Not everything needs to say "AI" on the box
+- The mechanism, one diagram
+- Where AI actually sits
+- Everything else: nine components, zero AI
+- Why the split is drawn exactly here
+- Deep dive: swapping the LLM provider mid-flight
+- The loop I deliberately didn't build
+- The near future, and why it isn't today
+- Reflections
 
 Here we are, again, staring at a Trello card and wondering how much of what happens next actually needs a model in the loop.
 
@@ -68,10 +68,12 @@ Inside that graph, exactly two components can ever call an LLM:
 Laid out flat, the split is this simple:
 
 **Uses AI** - only where a natural-language request has to become something concrete:
+
 - `PlannerAgent` - DAG generation, only when the request is ambiguous
 - `CodingAgent` - the only source of new code
 
 **Never uses AI** - everything that inspects, verifies, gates, or ships the result:
+
 - `repo_inspector` - static file/extension matching
 - `test_pyramid` - runs `pytest`
 - `security` - runs `gitleaks` + `semgrep`
@@ -138,8 +140,9 @@ The part that decides whether any of this ships is not AI, on purpose. Nine comp
 
 The full inventory, component by component, with the actual source file behind each row:
 
+
 | Component | Kind | What it actually runs | Source |
-|---|---|---|---|
+| ---------------- | ---------------- | ----------------------------------------------------------------------- | ---------------------------------- |
 | PlannerAgent | AI (conditional) | LLM only if agent names are unresolved; else deterministic alias lookup | `agents/planner.py` |
 | CodingAgent | AI | Always calls the configured LLM provider | `agents/coding.py` |
 | OpenCodeAdapter | AI infra | Provider-agnostic OpenAI-compatible client | `integrations/opencode_adapter.py` |
@@ -152,6 +155,7 @@ The full inventory, component by component, with the actual source file behind e
 | PolicyEngine | deterministic | YAML rule evaluation (severity, approval) | `orchestrator/policy_engine.py` |
 | LangGraph engine | deterministic | Graph construction + execution, any node type | `orchestrator/langgraph_engine.py` |
 | ReviewerAgent | deterministic | Rule-based verdict aggregation | `agents/reviewer.py` |
+
 
 Twelve rows, three tagged AI: `PlannerAgent` and `CodingAgent` are the two that ever decide to call a model, `OpenCodeAdapter` is just the HTTP plumbing both of them share to get there. None of the three decide what ships. The `ReviewerAgent` row is worth reading in full, because it's the entire decision function that gates every artifact this pipeline produces:
 
@@ -215,8 +219,9 @@ That single-line correctness detail, `-2.0` instead of `2.0`, is exactly the kin
 
 The pipeline then ran the same nine-step verification DAG on the resulting code as every other run:
 
+
 | Agent | Result | Duration | Note |
-|---|---|---|---|
+| ---------------- | --------------------- | -------- | ------------------------------------------------------------------------ |
 | `planner` | pass | 0.26ms | Deterministic fallback, no LLM call |
 | `coding` | pass | 127.6s | `deepseek/deepseek-v4-pro` via OpenRouter, 5655 tokens, converged turn 1 |
 | `repo_inspector` | pass | 0.9ms | - |
@@ -226,6 +231,7 @@ The pipeline then ran the same nine-step verification DAG on the resulting code 
 | `code_quality` | **fail** | 150ms | `mypy --ignore-missing-imports .`, exit 2 |
 | `docker` | pass (**unverified**) | 0.8ms | hadolint not installed on this runner |
 | `reviewer` | ran | 0.09ms | `REQUIRES_HUMAN_APPROVAL` |
+
 
 Same `mypy` finding that gated the Newton run and the Burning Ship run before it, and the human-approval gate held exactly as designed, unaffected by which company's model had written the code:
 
@@ -257,12 +263,9 @@ The sample service itself is a small interactive fractal explorer, this is the a
 
 Here's a recording of that interaction end to end, card to PR, with the provider swap happening live in the middle:
 
-<video controls preload="metadata" style="width:100%;max-width:100%;border-radius:6px;" poster="/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/04-verification-dag-run.png">
-  <source src="https://res.cloudinary.com/ethzero/video/upload/v1786626555/ai/agentic-workflow/agentcode-cut.mp4" type="video/mp4">
-  Your browser doesn't support embedded video. <a href="https://res.cloudinary.com/ethzero/video/upload/v1786626555/ai/agentic-workflow/agentcode-cut.mp4">Watch the recording directly</a>.
-</video>
+Your browser doesn't support embedded video. [Watch the recording directly](https://res.cloudinary.com/ethzero/video/upload/v1786626555/ai/agentic-workflow/agentcode-cut.mp4).
 
-Full write-up of that run, including the code diff and the honest caveats, is in the repo: [`docs/demo/tricorn-run-provider-switch.md`](https://github.com/lorenzogirardi/agentic-sdlc/blob/main/docs/demo/tricorn-run-provider-switch.md).
+Full write-up of that run, including the code diff and the honest caveats, is in the repo: `[docs/demo/tricorn-run-provider-switch.md](https://github.com/lorenzogirardi/agentic-sdlc/blob/main/docs/demo/tricorn-run-provider-switch.md)`.
 
 ## The loop I deliberately didn't build
 
