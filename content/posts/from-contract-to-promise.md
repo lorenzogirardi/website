@@ -1,7 +1,7 @@
 ---
 title: "From Contract to Promise: Turning a Platform PDF Into a Skill, and the
   Gate That Makes It Stick"
-date: 2026-08-02
+date: 2026-08-17
 draft: true
 description: How I compiled six platform contract PDFs into AI skills that
   generate compliant Kubernetes manifests and gate deploys, cutting
