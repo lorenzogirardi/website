@@ -1,5 +1,5 @@
 ---
-title: "From Contract to iContract: Turning a Platform PDF Into a Skill, and the
+title: "From Contract to Promise: Turning a Platform PDF Into a Skill, and the
   Gate That Makes It Stick"
 date: 2026-08-02
 draft: true
@@ -14,7 +14,7 @@ tags:
   - containers
   - monitoring
   - dynamic infrastructure
-featuredImage: /images/from-contract-to-icontract/featured.jpg
+featuredImage: /images/from-contract-to-promise/featured.jpg
 ---
 ### Table of Contents
 
@@ -54,7 +54,7 @@ Well. Every platform team eventually writes the same document: a PDF (or a Confl
 
 I had six of these documents sitting across a platform contract and five guideline papers: containerization and health probes, GitOps and Terraform module conventions, DNS and namespace naming, a three-tier monitoring philosophy, a four-layer Docker image hierarchy, and a security/SBOM policy with a RACI matrix nobody outside the platform team could recite. Between them, a genuinely well-designed set of rules. In practice, the thing developers actually consulted was whoever answered fastest in the support channel.
 
-So I ran an experiment: turn every MUST, SHOULD, and MAY in those six PDFs into an **iContract**, a set of AI skills that generate compliant code on request and gate deploys when the code doesn't comply. Not a summary of the contract. Not a chatbot that can quote the contract back to you. An artifact the model produces that structurally mirrors what the contract demands, in the language the contract was actually written for: Dockerfiles, Kubernetes manifests, health endpoints, log formatters, Terraform module calls.
+So I ran an experiment: turn every MUST, SHOULD, and MAY in those six PDFs into a **Promise**: a set of AI skills that generate code always oriented toward the contract, never randomly off it but never exactly on it either, plus a gate that measures the gap and blocks the deploy when it's too wide. Not a summary of the contract. Not a chatbot that can quote the contract back to you. An artifact the model produces that structurally mirrors what the contract demands, in the language the contract was actually written for: Dockerfiles, Kubernetes manifests, health endpoints, log formatters, Terraform module calls.
 
 This post walks through the transformation pipeline, fourteen concrete before/after examples pulled straight from the source contracts (each shown as the rule as written next to the code the skill actually generates from it), why this approach pays off most for the implementation nobody in the organization has done before, how the enforcement side actually blocks bad deploys instead of just describing good ones, and an honest look at where AI compliance breaks down even when the pipeline works exactly as designed.
 
@@ -64,7 +64,7 @@ A platform contract has two audiences, and it serves neither one well. For a hum
 
 The result is a predictable failure mode. A developer builds an app, it works locally, they copy a Kubernetes manifest from a colleague who copied it from someone else two years ago, and it goes to the platform team for review. Every violation the review catches, missing liveness probe, a plain `Secret` committed to Git, a `:latest` tag, is a violation the contract already described. The contract wasn't wrong. It was inert.
 
-![Why PDF contracts fail: the execution gap between read, recall, translate, validate and audit](/images/from-contract-to-icontract/why-pdf-contracts-fail.jpg)
+![Why PDF contracts fail: the execution gap between read, recall, translate, validate and audit](/images/from-contract-to-promise/why-pdf-contracts-fail.jpg)
 
 The gap has five distinct stages and only the first one is about reading. A developer has to read the PDF, remember port 8082 weeks later, translate an abstract requirement into their own framework, validate it with no automated check available, and then survive an audit months after the tech debt already shipped. Six separate documents with no single source of truth, and no trigger that tells anyone which one applies right now.
 
@@ -98,19 +98,19 @@ flowchart TD
 
 **Separate generate from gate.** This is the structural decision that makes enforcement possible at all, and a later section is built entirely around it.
 
-![The doc-to-skill pipeline: parse, cluster, expand, constrain, separate, cross-link, inject platform variables](/images/from-contract-to-icontract/doc-to-skill-pipeline.jpg)
+![The doc-to-skill pipeline: parse, cluster, expand, constrain, separate, cross-link, inject platform variables](/images/from-contract-to-promise/doc-to-skill-pipeline.jpg)
 
 The same seven steps written out with the reasoning attached to each one. Step four is the one I'd defend hardest: "NEVER generate patches" as an invariant prevents partial compliance that looks correct in a diff and isn't deployable as a file.
 
 The output of the pipeline is a Markdown file with a fixed anatomy, and the anatomy matters as much as the content:
 
-![Anatomy of an iContract skill: trigger, purpose, invariants, decision tree, executable templates](/images/from-contract-to-icontract/anatomy-of-a-skill.jpg)
+![Anatomy of a Promise skill: trigger, purpose, invariants, decision tree, executable templates](/images/from-contract-to-promise/anatomy-of-a-skill.jpg)
 
 Trigger first (so the agent knows when to load it), purpose second, invariants third and always before any code, then the stack decision table, then the executable templates. Reorder those five blocks and the same file produces measurably worse output.
 
 Every source document ends up mapped to one or more skills, with an explicit enforcement mode per document:
 
-![Contract to skill coverage matrix: each source PDF mapped to target skills and enforcement mode](/images/from-contract-to-icontract/coverage-matrix.jpg)
+![Contract to skill coverage matrix: each source PDF mapped to target skills and enforcement mode](/images/from-contract-to-promise/coverage-matrix.jpg)
 
 Three modes fall out of the mapping: *generate and gate* (the skill writes it and the gate checks it), *generate only* (enforcement happens through scaffolding, nothing to audit afterwards), and *gate only*, which is the interesting one. The SBOM and supply-chain document produces nothing a developer asks for, it only produces reasons to say no.
 
@@ -193,7 +193,7 @@ server {
 
 That sidecar is an escape hatch with an honest tradeoff, and it matters more than it looks: it's what makes the contract applicable to workload types the contract's authors never had in mind. More on that later.
 
-![Platform contract PDF clause mapped to the app-contract skill section, with the missing details listed](/images/from-contract-to-icontract/platform-contract-to-skill.jpg)
+![Platform contract PDF clause mapped to the app-contract skill section, with the missing details listed](/images/from-contract-to-promise/platform-contract-to-skill.jpg)
 
 Put the clause and the skill side by side and the gap is easy to name. The PDF says a readiness endpoint MUST be provided, and then never says which port, what the response schema is, how the Kubernetes probe should be configured, or what changes between Python and Go. Every one of those is a decision the developer has to make anyway. The contract simply declines to make it for them.
 
@@ -408,7 +408,7 @@ There's one more check in this family that isn't in the platform contract at all
 
 That's a philosophy paper, not code, and it's the clause most likely to be read once and never operationalized. "Three tiers" doesn't tell a developer what file to edit.
 
-![Monitoring paper concepts mapped to the observability skill: what to measure is described, how to measure is absent](/images/from-contract-to-icontract/monitoring-to-observability.jpg)
+![Monitoring paper concepts mapped to the observability skill: what to measure is described, how to measure is absent](/images/from-contract-to-promise/monitoring-to-observability.jpg)
 
 The source paper is genuinely good writing (it argues for customer-position metrics with an automatic gate as the worked example, and the argument holds up), and it is entirely silent on the translation cost: which Prometheus client library, how auto-scrape annotations work, which NetworkPolicy lets the scrape through, what LogQL to type, what the OTEL endpoint format is. WHAT to measure is described. HOW is absent, and HOW is the part that takes the afternoon.
 
@@ -954,7 +954,7 @@ The end state is a workload category nobody wrote a section for, compliant by co
 Put the two paths side by side:
 
 
-|  | Paper contract | iContract skills |
+|  | Paper contract | Promise skills |
 | -------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | How knowledge is indexed | By source document | By what the developer is trying to do |
 | First-ever implementation of a workload type | Most expensive case: no prior art, clauses must be interpreted | Same cost as any other case: invariants don't care about workload type |
@@ -978,7 +978,7 @@ Generation is the easy half. Anyone can get a model to produce a plausible-looki
 
 The generate skill is proactive: "add health endpoints," and it writes the files. The gate skill is reactive: "is this ready to deploy," and it reads existing manifests against the same rules, without generating anything, before `kubectl apply` ever runs. It reports only failures; passes are silent, so the output stays readable even when almost everything is already correct.
 
-![The review gate: check taxonomy A through H, failures-only output format, CRITICAL severities from contract MUST language](/images/from-contract-to-icontract/review-gate.jpg)
+![The review gate: check taxonomy A through H, failures-only output format, CRITICAL severities from contract MUST language](/images/from-contract-to-promise/review-gate.jpg)
 
 The taxonomy on the left is organized by domain (image, health and ports, network, storage, secrets, resources, observability, ingress) and every group cites the source document it came from, which is what makes a failure arguable rather than arbitrary. The output on the right is the whole user experience: failures only, plain language, each one carrying the check ID and the fix.
 
@@ -1010,7 +1010,7 @@ There's also an auto-fix mode: for CRITICAL failures, apply the fix directly and
 
 ## From a Working App to a Platform Citizen
 
-![The iContract skill ecosystem: triggers routing to scaffold, app-contract, gitops and observability, all converging on the review gate](/images/from-contract-to-icontract/skill-ecosystem.jpg)
+![The Promise skill ecosystem: triggers routing to scaffold, app-contract, gitops and observability, all converging on the review gate](/images/from-contract-to-promise/skill-ecosystem.jpg)
 
 Skills compose, and the composition is driven by triggers rather than by a developer picking a document. "Scaffold an agent", "add health checks", "set up CI/CD", "I can't see my app in Grafana": four different phrasings, four different skills, one gate that every path converges on before anything reaches the cluster.
 
@@ -1049,7 +1049,11 @@ Here's the honest part, and it's worth being precise about what "compliance" mea
 
 A model does not comply with a contract the way a type-checker complies with a schema. Given the same skill and the same repository twice, it can plausibly emit a slightly different Dockerfile both times: one with a comment the other doesn't have, one that orders `RUN` layers differently, occasionally one that forgets a flag the constraint section explicitly called out. That's not a bug in the pipeline, it's the nature of a non-deterministic generator, and pretending otherwise would be dishonest.
 
-![Not perfect, good enough to matter: platform team effort with and without the skill layer](/images/from-contract-to-icontract/good-enough-to-matter.jpg)
+![Not perfect, good enough to matter: platform team effort with and without the skill layer](/images/from-contract-to-promise/good-enough-to-matter.jpg)
+
+That's what makes "Promise" the honest name for it, not "contract." A promise doesn't guarantee the exact outcome, but it does guarantee direction: it always closes some of the gap, never zero, never a coin flip that occasionally lands on full non-compliance. The mechanism behind that guarantee is the same split Claude Code itself uses for tool calls: a `PreToolUse`-shaped step and a `PostToolUse`-shaped step. The invariants in Section 3 of every skill (stated before any template, never after) are the `PreToolUse` half, they shape the direction before a single line of code exists. The gate in `review.md` is the `PostToolUse` half, it checks what actually landed once the artifact is real. Neither half is optional. Skip the invariant and the model has nothing pulling it toward the contract in the first place; skip the gate and you're trusting the pull was strong enough, which it usually is, but "usually" isn't a word that belongs on a shared cluster.
+
+How wide the residual gap ends up isn't fixed, it moves with three things: how precisely the invariant is written (a MUST-NOT phrased as a suggestion pulls weaker than the same rule phrased as a hard precondition), which model is generating (a more capable model needs less remediation, but the direction doesn't flip, it only shrinks the distance faster), and how much of that `PreToolUse`/`PostToolUse` loop is actually wired into the deploy path versus left as a manual step nobody remembers to run. None of those three ever drives the gap to exactly zero on the first pass. What they reliably do is shrink it to the point where closing the rest by hand, pushing a "mostly compliant" artifact the last stretch to fully deterministic compliance, costs a five-minute review instead of a two-week one. That's the promise being kept: not perfection, but a gap small and legible enough that a human can close it cheaply whenever the situation calls for full determinism.
 
 What the pipeline actually buys isn't determinism. It's *distance reduction*. Before any of this existed, a developer starting from zero produced an artifact that needed, on average, most of a platform reviewer's attention to bring into compliance: wrong base image, missing probes, secrets in the wrong place, no metrics annotations. After the skill, the model's first output already satisfies the large majority of the same checklist, correctly, because the constraints were stated as invariants before a single line of code was written. The remaining gap is what the gate skill exists to catch, and it catches it automatically instead of in a human review cycle measured in days.
 
@@ -1059,7 +1063,7 @@ So: does the AI evade the contract sometimes? Yes. Does it still construct an ar
 
 ## Security Considerations
 
-![iContract design principles: one skill per contract domain, triggers replace navigation, generate and gate separated, polyglot or dead, invariants first](/images/from-contract-to-icontract/design-principles.jpg)
+![Promise design principles: one skill per contract domain, triggers replace navigation, generate and gate separated, polyglot or dead, invariants first](/images/from-contract-to-promise/design-principles.jpg)
 
 The design rules that came out of the exercise, and the second one is the one I'd keep if I could only keep one: **triggers replace navigation**. The set of trigger phrases is the index, and it's a richer index than any table of contents, because it's written in the words a developer actually uses when they have the problem rather than in the words a policy author used when they wrote the answer.
 
@@ -1078,12 +1082,12 @@ The skills behind the examples above, sanitized of any org-specific values
 one slice of one contract, treat them as a starting shape to run the same
 pipeline against your own documents, not as the complete set:
 
-- `[app-contract.md](/files/from-contract-to-icontract/app-contract.md)`: health endpoints, `/metrics`, JSON logging, Dockerfile (Examples 1, 2, 4, 5)
-- `[scaffold.md](/files/from-contract-to-icontract/scaffold.md)`: namespace derivation, ExternalSecret self-service, app deployment (Examples 9, 10, 11, 14)
-- `[observability.md](/files/from-contract-to-icontract/observability.md)`: three-tier metrics, scrape NetworkPolicy, OTEL tracing, business-metric prompt (Examples 6, 7, 8)
-- `[db-provision.md](/files/from-contract-to-icontract/db-provision.md)`: PVC sizing, Recreate strategy, initContainer wait pattern, exporter sidecar (Example 3)
-- `[gitops.md](/files/from-contract-to-icontract/gitops.md)`: CI build/scan/push with a blocking scan, CD from the scanned SHA (Example 12)
-- `[review.md](/files/from-contract-to-icontract/review.md)`: the gate skill, pass/fail matrix, auto-fix mode
+- `[app-contract.md](/files/from-contract-to-promise/app-contract.md)`: health endpoints, `/metrics`, JSON logging, Dockerfile (Examples 1, 2, 4, 5)
+- `[scaffold.md](/files/from-contract-to-promise/scaffold.md)`: namespace derivation, ExternalSecret self-service, app deployment (Examples 9, 10, 11, 14)
+- `[observability.md](/files/from-contract-to-promise/observability.md)`: three-tier metrics, scrape NetworkPolicy, OTEL tracing, business-metric prompt (Examples 6, 7, 8)
+- `[db-provision.md](/files/from-contract-to-promise/db-provision.md)`: PVC sizing, Recreate strategy, initContainer wait pattern, exporter sidecar (Example 3)
+- `[gitops.md](/files/from-contract-to-promise/gitops.md)`: CI build/scan/push with a blocking scan, CD from the scanned SHA (Example 12)
+- `[review.md](/files/from-contract-to-promise/review.md)`: the gate skill, pass/fail matrix, auto-fix mode
 
 Drop them into `.claude/skills/` (or your agent's equivalent skill directory) and
 fill in the `<cluster.*>` placeholders at the top of `scaffold.md` for your own
@@ -1094,6 +1098,8 @@ registry, namespace prefix, secret backend, and observability namespace.
 A platform contract's real job was never to exist as a PDF, it was to change what gets built. Splitting the pipeline into parse, cluster, expand, constrain, generate, gate, link, inject turned six documents nobody fully internalized into a set of skills that write compliant code on request and refuse to let non-compliant code through the gate. The generate side does the boring 60-70%, correctly and immediately. The gate side catches what the generate side gets wrong, every time, without waiting for a human review slot to open up. Neither half works without the other: generation without a gate is just a faster way to produce plausible-looking violations, and a gate without generation is the same manual compliance burden it always was, just with better error messages.
 
 The payoff concentrates exactly where a written standard is weakest. For the fifth Spring Boot service this quarter, a good contract and a good skill set land in roughly the same place, because someone already solved it and the answer is a `git clone` away. For the first of anything, the paper contract charges the developer for discovery, interpretation and review latency before a single line of the actual problem gets solved, and the skill set charges them for one question about business metrics.
+
+Call it a Promise rather than a contract for the same reason you'd call it that in any other context: it doesn't guarantee the exact outcome, it guarantees that the effort is always spent moving toward the outcome, never away from it, and it leaves a gap small enough for a human to close by hand when the situation demands nothing less than deterministic compliance.
 
 ## Reflections
 
