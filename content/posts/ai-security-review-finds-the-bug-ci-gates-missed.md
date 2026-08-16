@@ -10,7 +10,7 @@ tags:
   - github actions
   - automation
   - python
-featuredImage: /images/ai-security-review-finds-the-bug-ci-gates-missed/01-pipeline-jobs-and-docker-summary.png
+featuredImage: /images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg
 ---
 ### Table of Contents
 
