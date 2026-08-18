@@ -333,12 +333,13 @@ flowchart LR
 
 ## Backup Topology
 
-Proxmox vzdump weekly Sunday 03:00, all VMs/LXC on every Proxmox hypervisor. Casa hypervisors (madara, pain) to BRAiN NFS. Milano (amaterasu) to local `/var/lib/vz/dump`.
+Two independent flows. Infra-side: Proxmox vzdump weekly Sunday 03:00, all VMs/LXC on every Proxmox hypervisor - Casa hypervisors (madara, pain) to BRAiN NFS, Milano (amaterasu) to local `/var/lib/vz/dump`. Data-side: an offsite archive of the workstation's own filesystem, pushed via restic to a block volume on the cloud instance - unrelated to vzdump, its own schedule and retention.
 
 {{< mermaid >}}
 flowchart LR
     classDef ok fill:#4CAF50,stroke:#1B5E20,color:#fff
     classDef store fill:#607D8B,stroke:#263238,color:#fff
+    classDef client fill:#ECEFF1,stroke:#37474F,color:#000
 
     MADARA[madara .21, Proxmox 9.1.5, minato deva asura izanagi]:::ok
     PAIN[pain .9, Proxmox 9.1.5, itachi kabuto thebridge underthebridge]:::ok
@@ -350,11 +351,18 @@ flowchart LR
     MADARA -->|vzdump zstd suspend, retain 4 - VMID, Sun 03:00| BRAIN
     PAIN -->|vzdump zstd suspend, retain 4 - VMID, Sun 03:00| BRAIN
     AMATERASU -->|vzdump local, retain 2 - VMID, Sun 03:00| LOCAL
+
+    LAPTOP[workstation, macOS, Backrest UI]:::client
+    ARCHIVE[cloud instance, dedicated block volume, SFTP chroot target]:::store
+
+    LAPTOP -->|restic via Backrest, SFTP, AES-256 client-side, weekly| ARCHIVE
 {{< /mermaid >}}
 
 **Cron** `/etc/cron.d/proxmox-backup` needs `SHELL=/bin/bash`. Script `/root/proxmox-backup.sh`. Log `/var/log/proxmox-backup.log`.
 
-**Note** - deva runs as an LXC on madara, so it's covered by vzdump like every other VM/LXC; the only open gap is that InfluxDB isn't backed up with an app-consistent snapshot (`influxd backup`) on top of the filesystem-level vzdump. Non-Proxmox hosts (BRAiN itself, matusa, mendrisio, the cloud instance) sit outside this flow entirely since there's no hypervisor to vzdump, see `backup/strategy.md` for their per-host recommendations.
+**restic/Backrest** - [Backrest](https://github.com/garethgeorge/backrest) (a local web UI + scheduler wrapping [restic](https://restic.net/)) runs on the workstation itself, not on the cloud side; the cloud instance is only a chrooted SFTP target with its own locked-down user. Client-side encrypted, deduplicated, incremental. Transits directly rather than the VPN overlay, since the workstation isn't a peer on that instance's WireGuard interface - a known gap, on the list to close.
+
+**Note** - deva runs as an LXC on madara, so it's covered by vzdump like every other VM/LXC; the only open gap is that InfluxDB isn't backed up with an app-consistent snapshot (`influxd backup`) on top of the filesystem-level vzdump. Non-Proxmox hosts (BRAiN itself, matusa, mendrisio, the cloud instance) sit outside the vzdump flow entirely since there's no hypervisor to vzdump - and BRAiN, being the vzdump *destination*, has no backup of its own either: single point of failure for all Casa backups. See `backup/strategy.md` for the full per-host gap list and recommendations.
 
 ## Ingress, Identity & East-West Service Mesh
 
