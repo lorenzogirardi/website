@@ -1,4 +1,50 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Monitoring - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/monitoring/</link><description>Monitoring - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/monitoring/" rel="self" type="application/rss+xml"/><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Monitoring - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/monitoring/</link><description>Monitoring - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 17 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/monitoring/" rel="self" type="application/rss+xml"/><item><title>From Contract to Promise: Turning a Platform Contract Into a Skill</title><link>https://www.k8s.it/posts/from-contract-to-promise/</link><pubDate>Mon, 17 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/from-contract-to-promise/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/from-contract-to-promise/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem: A PDF Is Not an Interface</li>
+<li>The Architecture: From Contract to Skill</li>
+<li>Part One: What the App Must Be
+<ul>
+<li>Example 1: A Health-Check Clause Becomes Four Endpoints</li>
+<li>Example 2: &ldquo;No Root&rdquo; Becomes a securityContext Block</li>
+<li>Example 3: &ldquo;No Persistent Data in a Container&rdquo; Becomes Three Manifests</li>
+<li>Example 4: A Four-Layer Image Hierarchy Becomes a Dockerfile and a Tag Strategy</li>
+</ul>
+</li>
+<li>Part Two: What the App Must Say
+<ul>
+<li>Example 5: &ldquo;Logs MUST Be JSON on stdout&rdquo; Becomes a Logger and a Field Contract</li>
+<li>Example 6: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy</li>
+<li>Example 7: &ldquo;MUST Send Traces to a Collector&rdquo; Becomes an SDK Init and an Egress Policy</li>
+<li>Example 8: &ldquo;Alert on Trends, Not Numbers&rdquo; Becomes a Recording Rule and an HPA</li>
+</ul>
+</li>
+<li>Part Three: Where the App Lives
+<ul>
+<li>Example 9: A Naming Convention Becomes a Derivation Rule</li>
+<li>Example 10: &ldquo;Never Commit a Plain Secret&rdquo; Becomes Vault or AWS Secrets Manager</li>
+<li>Example 11: &ldquo;The Management Port MUST NOT Be Public&rdquo; Becomes Three Absences</li>
+</ul>
+</li>
+<li>Part Four: How the App Ships
+<ul>
+<li>Example 12: &ldquo;No Human Tampering With the Artifact&rdquo; Becomes a CI Workflow With Teeth</li>
+<li>Example 13: Terraform Guardrails Become a Module Call You Cannot Widen</li>
+<li>Example 14: &ldquo;MUST Be in the Service Catalog First&rdquo; Becomes Labels and a Generated Entry</li>
+</ul>
+</li>
+<li>The Real Speedup: Building Something the Contract Never Anticipated</li>
+<li>How to Make Skills Actually Respected: The Gate</li>
+<li>From a Working App to a Platform Citizen</li>
+<li>Does the AI Actually Comply?</li>
+<li>Security Considerations</li>
+<li>Download the Skills</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -181,11 +227,4 @@
 <p>It&rsquo;s time to talk about the API gateway.</p>
 <p>In a modern infrastructure — especially in a microservices environment — you probably know what I&rsquo;m referring to. But it&rsquo;s worth being explicit about it:</p>
 <blockquote>
-<p>&ldquo;An API gateway takes all API calls from clients, then routes them to the appropriate microservice with request routing, composition, and protocol translation. Typically it handles a request by invoking multiple microservices and aggregating the results, to determine the best path.&rdquo;</p>]]></description></item><item><title>Docker-latency — The Network Blaming Tool</title><link>https://www.k8s.it/posts/docker-latency/</link><pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/docker-latency/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/docker-latency/grafana_home.jpg" referrerpolicy="no-referrer">
-            </div><h2 id="aka-the-network-blaming-tool">aka the network blaming tool</h2>
-<p>Every network admin hears it. &ldquo;The VPN is slow.&rdquo; &ldquo;I can&rsquo;t connect to $something.&rdquo; &ldquo;It worked yesterday.&rdquo;</p>
-<p>The problem: these complaints are vague. Is it the provider? A T2/T3 routing issue? The user&rsquo;s local network? Without data, you&rsquo;re guessing.</p>
-<p>This tool collects data.</p>
-<h2 id="how-to-understand-if-your-network-is-really-slow">How to Understand if Your Network is Really Slow</h2>
-<p>Deploy a pre-configured Grafana stack that monitors internet connection statistics. Select the endpoints that matter — VPN gateways, datacenter public IPs, main DNS servers — and get a continuous picture of latency and packet loss.</p>]]></description></item></channel></rss>
+<p>&ldquo;An API gateway takes all API calls from clients, then routes them to the appropriate microservice with request routing, composition, and protocol translation. Typically it handles a request by invoking multiple microservices and aggregating the results, to determine the best path.&rdquo;</p>]]></description></item></channel></rss>
