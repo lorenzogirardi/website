@@ -1,6 +1,6 @@
 # Lorenzo's Blog — Full Content
 
-> Personal blog by Lorenzo Girardi. Full Markdown text of every post, concatenated for LLM ingestion. Generated 2026-08-23.
+> Personal blog by Lorenzo Girardi. Full Markdown text of every post, concatenated for LLM ingestion. Generated 2026-08-24.
 
 
 ================================================================================
