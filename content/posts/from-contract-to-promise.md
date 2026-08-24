@@ -1,7 +1,7 @@
 ---
 title: "From Contract to Promise: Turning a Platform Contract Into a Skill"
 date: 2026-08-17
-draft: true
+draft: false
 description: How I compiled six platform contract PDFs into AI skills that
   generate compliant Kubernetes manifests and gate deploys, cutting
   platform-team alignment time by roughly two thirds.
