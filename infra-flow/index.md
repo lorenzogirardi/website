@@ -18,6 +18,7 @@ flowchart TB
     classDef mon fill:#FFC107,stroke:#FF6F00,color:#000
     classDef stor fill:#607D8B,stroke:#263238,color:#fff
     classDef host fill:#ECEFF1,stroke:#37474F,color:#000
+    classDef inactive fill:#9E9E9E,stroke:#424242,color:#fff,stroke-dasharray: 5 5
 
     subgraph EXT[Internet - SaaS]
         USER[Users - Admins]:::ext
@@ -38,6 +39,7 @@ flowchart TB
         DEVA[deva .28, Grafana 12.3 - InfluxDB - Loki]:::mon
         BRAIN[BRAiN Synology, NFS -volume1, 19TB RAID5]:::stor
         MJOLNIR[mjolnir Tinkerboard, Graphite stack]:::host
+        MF286D[mf286d, Emergency network, LTE failover WAN, standby]:::inactive
     end
 
     subgraph MILANO[Milano - 192.168.60.0-24]
@@ -99,6 +101,8 @@ flowchart TB
 
     ASURA -.->|DNS upstream| IZANAGI
     ASURA -.->|DNS upstream| ITACHI
+
+    ROUTER1 -.->|planned mwan3 failover, not live| MF286D
 {{< /mermaid >}}
 
 **Legend**
@@ -109,7 +113,10 @@ flowchart TB
 - `mon` (yellow) - monitoring / metrics
 - `stor` (grey) - storage / NAS
 - `ext` (orange) - internet / SaaS
+- `inactive` (grey dashed) - standby / planned, not live
 - thick `==` = IPsec tunnel, `-->` = data flow, `-.->` = optional / async
+
+**mf286d** - ZTE MF286D LTE router (OpenWrt), planned secondary/failover WAN for Casa via Vodafone SIM. `mwan3` installed and ready but only one node can be powered at a time today: mf286d ships with LAN `192.168.1.1`, same as `router1`, so it's run standalone for now. Also blocked on the modem's PDP session (`wwan` up but data disconnected). Once reassigned to `192.168.1.2/24` with DHCP disabled, it can join Casa as a real dual-WAN failover path.
 
 ## VPN Overlay - StrongSwan IKEv1 Hub-and-Spoke
 
