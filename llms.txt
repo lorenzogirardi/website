@@ -6,6 +6,7 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
+- [Scraping Through Cloudflare: How to Hide Behind Trusted IPs](https://www.k8s.it/posts/protecting-a-scraping-service-with-cloudflare-waf/): How I use Cloudflare Workers to proxy scraping traffic through Cloudflare's own IPs, and why seeing Cloudflare in your logs doesn't always mean what you think.
 - [From Contract to Promise: Turning a Platform Contract Into a Skill](https://www.k8s.it/posts/from-contract-to-promise/): How I compiled six platform contract PDFs into AI skills that generate compliant Kubernetes manifests and gate deploys, cutting platform-team alignment time by roughly two thirds.
 - [What AI Actually Costs: 27 Sessions of Real Data](https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/): Everyone talks about AI ROI, nobody shows numbers. Here are 27 real coding sessions parsed from the billing logs: where the money goes, why context is the cost, and a framework to measure it.
 - [The Safe Zone: Where AI Actually Belongs in Business Processes](https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/): A framework for finding AI's real use cases in business processes, backed by a production case study: an Algolia usage exporter built in 4 hours.
