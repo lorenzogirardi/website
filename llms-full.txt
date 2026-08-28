@@ -181,7 +181,7 @@ npx wrangler deploy
 After deploy, the target site sees:
 
 ```bash
-$ curl -s "https://fake-worker-e6317057.lorenzo2632.workers.dev/?url=https://httpbin.org/get"
+$ curl -s "https://proxy-edge-9c41f2b8.acme-labs.workers.dev/?url=https://httpbin.org/get"
 {
   "args": {},
   "headers": {
@@ -193,7 +193,7 @@ $ curl -s "https://fake-worker-e6317057.lorenzo2632.workers.dev/?url=https://htt
     "Cf-Ew-Via": "15",
     "Cf-Ray": "a3259ee90b5aee5c-MXP",
     "Cf-Visitor": "{\"scheme\":\"https\"}",
-    "Cf-Worker": "lorenzo2632.workers.dev",
+    "Cf-Worker": "acme-labs.workers.dev",
     "Host": "httpbin.org",
     "Sec-Ch-Ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
     "Sec-Ch-Ua-Mobile": "?0",

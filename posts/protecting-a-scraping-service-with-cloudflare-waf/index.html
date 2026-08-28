@@ -100,7 +100,7 @@ B -->|response| A</div><script type=module>import mermaid from "https://cdn.jsde
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>npx wrangler login
 </span></span><span class=line><span class=cl>npx wrangler deploy</span></span></code></pre></div></div><p>After deploy, the target site sees:</p><div class="code-block code-line-numbers" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
-<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ curl -s <span class=s2>&#34;https://fake-worker-e6317057.lorenzo2632.workers.dev/?url=https://httpbin.org/get&#34;</span>
+<span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ curl -s <span class=s2>&#34;https://proxy-edge-9c41f2b8.acme-labs.workers.dev/?url=https://httpbin.org/get&#34;</span>
 </span></span><span class=line><span class=cl><span class=o>{</span>
 </span></span><span class=line><span class=cl>  <span class=s2>&#34;args&#34;</span>: <span class=o>{}</span>,
 </span></span><span class=line><span class=cl>  <span class=s2>&#34;headers&#34;</span>: <span class=o>{</span>
@@ -112,7 +112,7 @@ B -->|response| A</div><script type=module>import mermaid from "https://cdn.jsde
 </span></span><span class=line><span class=cl>    <span class=s2>&#34;Cf-Ew-Via&#34;</span>: <span class=s2>&#34;15&#34;</span>,
 </span></span><span class=line><span class=cl>    <span class=s2>&#34;Cf-Ray&#34;</span>: <span class=s2>&#34;a3259ee90b5aee5c-MXP&#34;</span>,
 </span></span><span class=line><span class=cl>    <span class=s2>&#34;Cf-Visitor&#34;</span>: <span class=s2>&#34;{\&#34;scheme\&#34;:\&#34;https\&#34;}&#34;</span>,
-</span></span><span class=line><span class=cl>    <span class=s2>&#34;Cf-Worker&#34;</span>: <span class=s2>&#34;lorenzo2632.workers.dev&#34;</span>,
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;Cf-Worker&#34;</span>: <span class=s2>&#34;acme-labs.workers.dev&#34;</span>,
 </span></span><span class=line><span class=cl>    <span class=s2>&#34;Host&#34;</span>: <span class=s2>&#34;httpbin.org&#34;</span>,
 </span></span><span class=line><span class=cl>    <span class=s2>&#34;Sec-Ch-Ua&#34;</span>: <span class=s2>&#34;\&#34;Not_A Brand\&#34;;v=\&#34;8\&#34;, \&#34;Chromium\&#34;;v=\&#34;120\&#34;, \&#34;Google Chrome\&#34;;v=\&#34;120\&#34;&#34;</span>,
 </span></span><span class=line><span class=cl>    <span class=s2>&#34;Sec-Ch-Ua-Mobile&#34;</span>: <span class=s2>&#34;?0&#34;</span>,
