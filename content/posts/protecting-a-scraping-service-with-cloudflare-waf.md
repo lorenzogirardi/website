@@ -135,12 +135,22 @@ export default {
       );
     }
 
-    // Create fresh headers without IP-leaking ones
+    // Create fresh headers without IP-leaking ones, with realistic browser fingerprint
     const proxyHeaders = new Headers();
     proxyHeaders.set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-    proxyHeaders.set('Accept', request.headers.get('Accept') || '*/*');
-    proxyHeaders.set('Accept-Language', request.headers.get('Accept-Language') || 'en-US,en;q=0.9');
+    proxyHeaders.set('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7');
+    proxyHeaders.set('Accept-Language', 'en-US,en;q=0.9');
     proxyHeaders.set('Accept-Encoding', 'gzip, deflate, br');
+    proxyHeaders.set('sec-ch-ua', '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"');
+    proxyHeaders.set('sec-ch-ua-mobile', '?0');
+    proxyHeaders.set('sec-ch-ua-platform', '"Windows"');
+    proxyHeaders.set('Sec-Fetch-Dest', 'document');
+    proxyHeaders.set('Sec-Fetch-Mode', 'navigate');
+    proxyHeaders.set('Sec-Fetch-Site', 'none');
+    proxyHeaders.set('Sec-Fetch-User', '?1');
+    proxyHeaders.set('Upgrade-Insecure-Requests', '1');
+    proxyHeaders.set('Connection', 'keep-alive');
+    proxyHeaders.set('Cache-Control', 'max-age=0');
     proxyHeaders.set('X-Real-IP', '172.70.216.118');
     proxyHeaders.set('X-Forwarded-For', '172.70.216.118');
 
@@ -171,17 +181,38 @@ npx wrangler deploy
 
 After deploy, the target site sees:
 
-```json
+```bash
+$ curl -s "https://fake-worker-e6317057.lorenzo2632.workers.dev/?url=https://httpbin.org/get"
 {
+  "args": {},
   "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding": "gzip, br",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cache-Control": "max-age=0",
+    "Cdn-Loop": "cloudflare; loops=1",
+    "Cf-Ew-Via": "15",
+    "Cf-Ray": "a3259ee90b5aee5c-MXP",
+    "Cf-Visitor": "{\"scheme\":\"https\"}",
+    "Cf-Worker": "lorenzo2632.workers.dev",
+    "Host": "httpbin.org",
+    "Sec-Ch-Ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": "\"Windows\"",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Cf-Worker": "lorenzo2321.workers.dev"
+    "X-Amzn-Trace-Id": "Root=1-6a91dd53-53e2edee0c0628ed4f7d0650"
   },
-  "origin": "172.70.216.118,172.70.216.118, 172.69.68.124"
+  "origin": "172.70.216.118,172.70.216.118, 172.69.68.124",
+  "url": "https://httpbin.org/get"
 }
 ```
 
-No real IP. No datacenter ASN. Just Cloudflare, looking legitimate.
+No real IP. No datacenter ASN. Just Cloudflare, looking legitimate. The `Cf-Worker` header is still there because Cloudflare injects it on every subrequest, and it cannot be disabled. But your real IP? Gone. Your datacenter ASN? Gone. The only thing the target sees is a clean Chrome-on-Windows request coming from Cloudflare's network.
 
 ## Security Considerations
 
@@ -212,7 +243,7 @@ The only real defense against Cloudflare-proxied scraping:
 
 ### 4. Header Sanitization
 
-The worker strips all identifying headers. No `Cf-Connecting-Ip`, no `X-Forwarded-For` with real IP, no datacenter User-Agent. The target sees a clean request from a Cloudflare IP.
+The worker strips all identifying headers. No `Cf-Connecting-Ip`, no `X-Forwarded-For` with real IP, no datacenter User-Agent. The target sees a clean request from a Cloudflare IP. The only Cloudflare-injected header that remains is `Cf-Worker`, which Cloudflare adds on every subrequest and cannot be disabled, but it only reveals that the request went through a Worker, not who owns it.
 
 ### 5. Protocol Enforcement
 
