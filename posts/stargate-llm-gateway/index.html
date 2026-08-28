@@ -134,7 +134,7 @@ style Internal fill:#ccffcc</div><hr><h2 id=quick-start>Quick Start</h2><h3 id=f
 </span></span></span><span class=line><span class=cl><span class=s1>    &#34;model&#34;: &#34;claude-haiku-4-5&#34;,
 </span></span></span><span class=line><span class=cl><span class=s1>    &#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: &#34;Hello!&#34;}],
 </span></span></span><span class=line><span class=cl><span class=s1>    &#34;max_tokens&#34;: 50
-</span></span></span><span class=line><span class=cl><span class=s1>  }&#39;</span></span></span></code></pre></div></div><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png title="Claude Code Test"></p><h3 id=view-dashboards>View Dashboards</h3><table><thead><tr><th>Dashboard</th><th>URL</th></tr></thead><tbody><tr><td><strong>Grafana</strong> (Metrics)</td><td><a href=https://d18l8nt8fin3hz.cloudfront.net/grafana target=_blank rel="noopener noreffer">https://d18l8nt8fin3hz.cloudfront.net/grafana</a></td></tr><tr><td><strong>Langfuse</strong> (Traces)</td><td><a href=https://d18l8nt8fin3hz.cloudfront.net/langfuse/ target=_blank rel="noopener noreffer">https://d18l8nt8fin3hz.cloudfront.net/langfuse/</a></td></tr></tbody></table><hr><h2 id=user-management>User Management</h2><h3 id=using-the-management-script>Using the Management Script</h3><div class="code-block code-line-numbers" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+</span></span></span><span class=line><span class=cl><span class=s1>  }&#39;</span></span></span></code></pre></div></div><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-claude-code-test.png title="Claude Code Test"></p><h3 id=view-dashboards>View Dashboards</h3><table><thead><tr><th>Dashboard</th><th>URL</th></tr></thead><tbody><tr><td><strong>Grafana</strong> (Metrics)</td><td><a href=https://d18l8nt8fin3hz.cloudfront.net/grafana target=_blank rel="noopener noreffer">https://d18l8nt8fin3hz.cloudfront.net/grafana</a></td></tr><tr><td><strong>Langfuse</strong> (Traces)</td><td><a href=https://d18l8nt8fin3hz.cloudfront.net/langfuse/ target=_blank rel="noopener noreffer">https://d18l8nt8fin3hz.cloudfront.net/langfuse/</a></td></tr></tbody></table><hr><h2 id=user-management>User Management</h2><h3 id=using-the-management-script>Using the Management Script</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-bash"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>cd</span> scripts/
 </span></span><span class=line><span class=cl>
@@ -200,7 +200,7 @@ llm_dash --> store
 llm_dash -.->|correlate| traces
 infra_dash --> store
 style Tracing fill:#e6f3ff
-style Metrics fill:#f5f5f5</div><h3 id=dashboards>Dashboards</h3><table><thead><tr><th>Dashboard</th><th>Purpose</th><th>URL</th><th>Status</th></tr></thead><tbody><tr><td><strong>Grafana</strong> - LLM Usage</td><td>Token tracking, costs, latency</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Grafana</strong> - Infrastructure</td><td>ECS, ALB, CloudFront, Langfuse, Victoria Metrics</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Traces</td><td>Request/response logging</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Generations</td><td>LLM call analysis</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr></tbody></table><h4 id=grafana---infrastructure-metrics>Grafana - Infrastructure Metrics</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png title="Infrastructure Metrics"></p><h4 id=grafana---token-usage--costs>Grafana - Token Usage & Costs</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png title="Token Metrics"></p><h4 id=grafana---architecture-flow>Grafana - Architecture Flow</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png title="Architecture Metrics"></p><h4 id=grafana---postgresql-metrics>Grafana - PostgreSQL Metrics</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png title="SQL Metrics"></p><h4 id=langfuse---llm-traces>Langfuse - LLM Traces</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png title="Langfuse Metrics"></p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png title="Langfuse Trace"></p><h3 id=metrics--traces-integration>Metrics & Traces Integration</h3><p>Grafana dashboards correlate Prometheus metrics with Langfuse traces:</p><table><thead><tr><th>Data Source</th><th>Metrics</th><th>Use Case</th></tr></thead><tbody><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_proxy_total_requests_metric</code></td><td>Request counts per user</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_total_tokens_metric</code></td><td>Token usage tracking</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_spend_metric</code></td><td>Cost monitoring</td></tr><tr><td><strong>Langfuse</strong></td><td>Traces</td><td>Full request/response logging</td></tr><tr><td><strong>Langfuse</strong></td><td>Generations</td><td>LLM call details and metadata</td></tr></tbody></table><h3 id=key-metrics>Key Metrics</h3><div class="code-block code-line-numbers" style="counter-reset:code-block 0"><div class="code-header language-promql"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+style Metrics fill:#f5f5f5</div><h3 id=dashboards>Dashboards</h3><table><thead><tr><th>Dashboard</th><th>Purpose</th><th>URL</th><th>Status</th></tr></thead><tbody><tr><td><strong>Grafana</strong> - LLM Usage</td><td>Token tracking, costs, latency</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Grafana</strong> - Infrastructure</td><td>ECS, ALB, CloudFront, Langfuse, Victoria Metrics</td><td><code>/grafana</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Traces</td><td>Request/response logging</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr><tr><td><strong>Langfuse</strong> - Generations</td><td>LLM call analysis</td><td><code>/langfuse/</code></td><td>✅ Working</td></tr></tbody></table><h4 id=grafana---infrastructure-metrics>Grafana - Infrastructure Metrics</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-infrastructure-metrics.png title="Infrastructure Metrics"></p><h4 id=grafana---token-usage--costs>Grafana - Token Usage & Costs</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-token-metrics.png title="Token Metrics"></p><h4 id=grafana---architecture-flow>Grafana - Architecture Flow</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-architecture-metrics.png title="Architecture Metrics"></p><h4 id=grafana---postgresql-metrics>Grafana - PostgreSQL Metrics</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-grafana-sql-metrics.png title="SQL Metrics"></p><h4 id=langfuse---llm-traces>Langfuse - LLM Traces</h4><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-metrics.png title="Langfuse Metrics"></p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-langfuse-trace.png title="Langfuse Trace"></p><h3 id=metrics--traces-integration>Metrics & Traces Integration</h3><p>Grafana dashboards correlate Prometheus metrics with Langfuse traces:</p><table><thead><tr><th>Data Source</th><th>Metrics</th><th>Use Case</th></tr></thead><tbody><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_proxy_total_requests_metric</code></td><td>Request counts per user</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_total_tokens_metric</code></td><td>Token usage tracking</td></tr><tr><td><strong>Victoria Metrics</strong></td><td><code>litellm_spend_metric</code></td><td>Cost monitoring</td></tr><tr><td><strong>Langfuse</strong></td><td>Traces</td><td>Full request/response logging</td></tr><tr><td><strong>Langfuse</strong></td><td>Generations</td><td>LLM call details and metadata</td></tr></tbody></table><h3 id=key-metrics>Key Metrics</h3><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-promql"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-promql data-lang=promql><span class=line><span class=cl><span class=c1># Total requests</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=k>sum</span><span class=o>(</span><span class=nv>litellm_proxy_total_requests_metric_total</span><span class=o>)</span><span class=w>
@@ -249,4 +249,202 @@ scan1 --> tf_plan
 scan2 --> trivy --> checkov --> validate --> changes
 changes -->|Yes| build --> deploy
 changes -->|No| skip[Skip]</div><table><thead><tr><th>Workflow</th><th>Description</th><th>Trigger</th></tr></thead><tbody><tr><td><code>ci.yml</code></td><td>Security scan, Terraform validate, build, deploy</td><td>Push to main</td></tr><tr><td><code>terraform-plan.yml</code></td><td>Terraform plan with PR comment</td><td>Pull requests</td></tr></tbody></table><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-pipeline.png title="GitHub Pipeline"></p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png data-srcset="https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png 1.5x, https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png 2x" data-sizes=auto alt=https://res.cloudinary.com/ethzero/image/upload/v1769078071/ai/stargate-llm/stargate-github-actions.png title="GitHub Actions"></p><h3 id=operational-workflows-manual>Operational Workflows (Manual)</h3><table><thead><tr><th>Workflow</th><th>Description</th><th>Inputs</th></tr></thead><tbody><tr><td><code>ecs-restart.yml</code></td><td>Restart ECS services</td><td>service (or all)</td></tr><tr><td><code>ecs-logs.yml</code></td><td>Download container logs</td><td>service, duration, filter</td></tr><tr><td><code>ecs-status.yml</code></td><td>View cluster status</td><td>-</td></tr><tr><td><code>ecs-scale.yml</code></td><td>Scale services (0-3 tasks)</td><td>service, count</td></tr><tr><td><code>ecs-exec.yml</code></td><td>Execute debug commands</td><td>service, command</td></tr><tr><td><code>rds-status.yml</code></td><td>Database metrics</td><td>-</td></tr></tbody></table><blockquote><p><strong>Note</strong>: Operational workflows require <code>poc</code> environment approval for security.</p></blockquote><h3 id=estimated-costs>Estimated Costs</h3><table><thead><tr><th>Component</th><th>Monthly Cost</th></tr></thead><tbody><tr><td>ECS Fargate (LiteLLM + Langfuse + Grafana + Victoria)</td><td>~$55</td></tr><tr><td>RDS PostgreSQL (db.t4g.micro)</td><td>~$12</td></tr><tr><td>NAT Instance (t3.nano)</td><td>~$3</td></tr><tr><td>CloudFront</td><td>~$1-5</td></tr><tr><td><strong>Total Fixed</strong></td><td><strong>~$70-75</strong></td></tr><tr><td>Bedrock Usage</td><td>Pay per use</td></tr></tbody></table><hr><h2 id=license>License</h2><p>MIT License - See <a href=LICENSE rel>LICENSE</a> for details.</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2026-05-24</span></div><div id=page-views class=post-info-mod></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/posts/stargate-llm-gateway/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on X" data-sharer=x data-url=https://www.k8s.it/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway" data-hashtags=ai,gateway,llm><i class="fab fa-x-twitter" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Threads" data-sharer=threads data-url=https://www.k8s.it/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-threads" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://www.k8s.it/posts/stargate-llm-gateway/ data-hashtag=ai><i class="fab fa-facebook-square" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://www.k8s.it/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i class="fab fa-hacker-news" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://www.k8s.it/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@16.9.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://www.k8s.it/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway" data-image=/images/herostargate.jpg><i class="fab fa-weibo" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Diaspora" data-sharer=diaspora data-url=https://www.k8s.it/posts/stargate-llm-gateway/ data-title="Stargate LLM Gateway" data-description><i class="fab fa-diaspora" aria-hidden=true></i></a><a href="https://t.me/share/url?url=https%3a%2f%2fwww.k8s.it%2fposts%2fstargate-llm-gateway%2f&amp;text=Stargate%20LLM%20Gateway" target=_blank title="Share on Telegram"><i class="fab fa-telegram" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags" aria-hidden=true></i>&nbsp;<a href=/tags/ai/>Ai</a>,&nbsp;<a href=/tags/gateway/>Gateway</a>,&nbsp;<a href=/tags/llm/>Llm</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/posts/redefining-ux-for-the-age-of-conversational-ai/ class=prev rel=prev title="Redefining E-commerce for the Age of Conversational AI"><i class="fas fa-angle-left" aria-hidden=true></i>Redefining E-commerce for the Age of Conversational AI</a>
-<a href=/posts/algolia-prometheus-exporter/ class=next rel=next title="Algolia prometheus exporter ">Algolia prometheus exporter <i class="fas fa-angle-right" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>Powered by <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.165.0">Hugo</a> | Theme - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright" aria-hidden=true></i><span itemprop=copyrightYear>2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/lorenzogirardi target=_blank>Lorenzo Girardi</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up" aria-hidden=true></i></a></div><div id=fixed-buttons-hidden><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment" aria-hidden=true></i></a></div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js></script><script src=https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js></script><script>window.config={comment:{},cookieconsent:{content:{dismiss:"Got it!",link:"Learn more",message:"This site uses cookies (Google Analytics) to understand traffic."},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:30,type:"lunr"}}</script><script src=/js/theme.js></script><script>var dnt,doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-5Q67F19PK4")}</script><script src="https://www.googletagmanager.com/gtag/js?id=G-5Q67F19PK4" async></script></body></html>
+<a href=/posts/algolia-prometheus-exporter/ class=next rel=next title="Algolia prometheus exporter ">Algolia prometheus exporter <i class="fas fa-angle-right" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>Powered by <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.165.0">Hugo</a> | Theme - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright" aria-hidden=true></i><span itemprop=copyrightYear>2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/lorenzogirardi target=_blank>Lorenzo Girardi</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up" aria-hidden=true></i></a></div><div id=fixed-buttons-hidden><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment" aria-hidden=true></i></a></div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js></script><script src=https://cdn.jsdelivr.net/npm/mermaid@11.5.0/dist/mermaid.min.js></script><script src=https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js></script><script>window.config={comment:{},cookieconsent:{content:{dismiss:"Got it!",link:"Learn more",message:"This site uses cookies (Google Analytics) to understand traffic."},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},data:{"id-1":`flowchart LR
+    subgraph Clients
+        cc[Claude Code]
+        api[API Clients]
+    end
+
+    subgraph Gateway["LiteLLM Gateway"]
+        auth[API Key Auth]
+        budget[Budget Manager]
+        router[Model Router]
+        metrics[Prometheus Metrics]
+    end
+
+    subgraph Storage
+        pg[(PostgreSQL)]
+    end
+
+    subgraph Bedrock["AWS Bedrock"]
+        haiku[Claude Haiku 4.5]
+        sonnet[Claude Sonnet 4.5]
+        opus[Claude Opus 4.5]
+    end
+
+    cc --> auth
+    api --> auth
+    auth --> budget
+    budget --> router
+    router --> haiku & sonnet & opus
+    budget <--> pg
+    router --> metrics
+
+    style haiku fill:#90EE90
+    style sonnet fill:#FFD700
+    style opus fill:#FF6B6B`,"id-2":`sequenceDiagram
+    participant Client as Claude Code
+    participant CF as CloudFront
+    participant LiteLLM as LiteLLM Proxy
+    participant PG as PostgreSQL
+    participant Bedrock as AWS Bedrock
+    participant VM as Victoria Metrics
+
+    Client->>CF: POST /v1/chat/completions
+    CF->>LiteLLM: Forward request
+
+    LiteLLM->>LiteLLM: Validate API Key
+    LiteLLM->>PG: Check User Budget
+
+    alt Budget OK
+        LiteLLM->>Bedrock: InvokeModel (SigV4)
+        Bedrock-->>LiteLLM: Response + tokens
+        LiteLLM->>PG: Update spend
+        LiteLLM->>LiteLLM: Record metrics
+        LiteLLM-->>Client: 200 OK
+    else Budget Exceeded
+        LiteLLM-->>Client: 429 Budget Exceeded
+    end
+
+    VM->>LiteLLM: Scrape /metrics/`,"id-3":`flowchart TB
+    subgraph Internet
+        clients[Claude Code / API Clients]
+    end
+
+    subgraph AWS["AWS Cloud (us-west-1)"]
+        cf[CloudFront<br/>Admin endpoints blocked]
+
+        subgraph VPC["VPC 10.10.0.0/16"]
+            subgraph Public["Public Subnets"]
+                alb[Application Load Balancer]
+                nat[NAT Instance]
+            end
+
+            subgraph Private["Private Subnets"]
+                subgraph ECS["ECS Fargate Cluster"]
+                    litellm[LiteLLM Proxy<br/>1 vCPU, 2GB]
+                    langfuse[Langfuse<br/>0.5 vCPU, 1GB]
+                    grafana[Grafana<br/>0.25 vCPU, 0.5GB]
+                    victoria[Victoria Metrics<br/>0.25 vCPU, 0.5GB]
+                end
+
+                rds[(RDS PostgreSQL<br/>db.t4g.micro)]
+            end
+        end
+
+        bedrock[AWS Bedrock]
+        secrets[Secrets Manager]
+    end
+
+    clients --> cf
+    cf --> alb
+    alb --> litellm
+    alb --> grafana
+    alb --> langfuse
+    litellm --> bedrock
+    litellm <--> rds
+    litellm --> langfuse
+    langfuse <--> rds
+    victoria --> litellm
+    grafana --> victoria
+    litellm -.-> secrets
+
+    style cf fill:#ffcccc,stroke:#ff0000
+    style rds fill:#336791,color:#fff
+    style langfuse fill:#e6f3ff`,"id-4":`flowchart TB
+    subgraph Public["Public Access (CloudFront)"]
+        chat["/v1/chat/completions ✅"]
+        models["/v1/models ✅"]
+        health["/health/* ✅"]
+        metrics["/metrics/ ✅"]
+    end
+
+    subgraph Blocked["Blocked from CloudFront (403)"]
+        user["/user/* ❌"]
+        key["/key/* ❌"]
+        model["/model/* ❌"]
+        spend["/spend/* ❌"]
+    end
+
+    subgraph Internal["Internal Access Only (ALB)"]
+        user_alb["/user/* ✅"]
+        key_alb["/key/* ✅"]
+        model_alb["/model/* ✅"]
+        spend_alb["/spend/* ✅"]
+    end
+
+    cf[CloudFront] --> Public
+    cf -.->|403 Forbidden| Blocked
+    alb[ALB Direct] --> Internal
+
+    style Blocked fill:#ffcccc
+    style Internal fill:#ccffcc`,"id-5":`flowchart TB
+    subgraph Users
+        admin[Admin<br/>All models, unlimited]
+        dev[Developer<br/>Haiku + Sonnet, $50/mo]
+        intern[Intern<br/>Haiku only, $10/mo]
+    end
+
+    subgraph Models
+        haiku[Claude Haiku 4.5]
+        sonnet[Claude Sonnet 4.5]
+        opus[Claude Opus 4.5]
+    end
+
+    admin --> haiku & sonnet & opus
+    dev --> haiku & sonnet
+    intern --> haiku
+
+    style admin fill:#ff9999
+    style dev fill:#99ff99
+    style intern fill:#9999ff`,"id-6":`flowchart TB
+    subgraph LiteLLM["LiteLLM Proxy"]
+        api[API Handler]
+        prom[Prometheus Callback]
+        lf_cb[Langfuse Callback]
+    end
+
+    subgraph Metrics["Victoria Metrics"]
+        scrape[Scraper]
+        store[(TSDB)]
+    end
+
+    subgraph Tracing["Langfuse"]
+        traces[(Traces)]
+        generations[(Generations)]
+    end
+
+    subgraph Dashboards["Grafana"]
+        llm_dash[LLM Usage Dashboard]
+        infra_dash[Infrastructure Dashboard]
+    end
+
+    api --> prom & lf_cb
+    prom -->|/metrics/| scrape
+    lf_cb --> traces
+    scrape --> store
+    llm_dash --> store
+    llm_dash -.->|correlate| traces
+    infra_dash --> store
+
+    style Tracing fill:#e6f3ff
+    style Metrics fill:#f5f5f5`,"id-7":`flowchart LR
+    subgraph PR["Pull Request"]
+        scan1[Security Scan]
+        tf_plan[Terraform Plan]
+    end
+
+    subgraph Main["Push to Main"]
+        scan2[Security Scan]
+        trivy[Trivy Scan]
+        checkov[Checkov Scan]
+        validate[TF Validate]
+        changes{Grafana<br/>changed?}
+        build[Build Grafana]
+        deploy[Deploy POC]
+    end
+
+    scan1 --> tf_plan
+    scan2 --> trivy --> checkov --> validate --> changes
+    changes -->|Yes| build --> deploy
+    changes -->|No| skip[Skip]`},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:30,type:"lunr"}}</script><script src=/js/theme.js></script><script>var dnt,doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-5Q67F19PK4")}</script><script src="https://www.googletagmanager.com/gtag/js?id=G-5Q67F19PK4" async></script></body></html>
