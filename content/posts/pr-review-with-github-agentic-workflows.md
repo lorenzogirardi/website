@@ -18,15 +18,22 @@ featuredImage: /images/pr-review-with-github-agentic-workflows/featured.jpg
 
 - The thing I did not want to do
 - Enter gh-aw
+- Almost read-only: the other three workflows
 - How a run is wired
 - The workflow file, in full
 - PR #8: a hidden proxy endpoint
 - What the run looked like
 - The review it posted
+  - A second review, from the same prompt
 - Security considerations
+  - The trust boundary, drawn
+  - The prompt-injection threat model
+  - Turning it off
 - Cost and observability
 - Conclusion
 - Reflections
+  - How the docs handle their own uncertainty
+  - What is still missing
 
 
 
@@ -54,6 +61,16 @@ A `gh-aw` workflow is a Markdown file with YAML frontmatter. A build step runs `
 | `ai-issue-to-draft-pr` | manual only | `contents: read`, `pull-requests: read`, `issues: read` | `create-pull-request` safe-output, always a draft |
 
 Two things stand out. Only `ai-pr-review` runs automatically, so the blast radius of an unattended run is one comment. And none of the four requests `contents: write` or `pull-requests: write`. Where a write genuinely happens (the fix and issue workflows), it goes through a gated **safe output** that the platform applies, not through a broader token handed to the agent.
+
+## Almost read-only: the other three workflows
+
+`ai-pr-review` is the only workflow that never writes at all. The other three can change repository state, so it is worth being precise about how their writes are fenced, because "the agent physically cannot commit" is not quite true for all of them.
+
+- **`ai-ci-diagnose`** is still read-only: it takes a failing `run_id` and `pr_number`, explains the failure, and posts a comment. Nothing else.
+- **`ai-fix-pr`** takes an `instruction` and a `dry_run` input that **defaults to `true`**. In dry-run it posts a proposed diff as a comment. Only an explicit `dry_run=false` dispatch lets it commit to the PR branch, and that commit goes through the `update-pull-request` safe output.
+- **`ai-issue-to-draft-pr`** implements an issue on a fresh `ai/issue-<n>` branch and opens a pull request that is **always a draft**, via the `create-pull-request` safe output.
+
+All three carry the same hard exclusion in their prompt: never touch `.github/`, `kubernetes/`, `helm/`, `Dockerfile`, `pyproject.toml`, `tests/`, or `requirements.txt`, and never force-push or rewrite history. So even the workflows that can write are told to keep their hands off CI config, deployment manifests, and the test suite that verifies their own work. And all three are manual-dispatch only. Nothing in this set writes to the repository without a human typing the dispatch.
 
 ## How a run is wired
 
@@ -195,7 +212,9 @@ Four findings, each with a file:line, a failure mode, and a fix:
 3. **The upstream URL is built by f-string interpolation without URL-encoding**, so a `url` value containing `&`, `?`, or `#` injects extra query parameters into the Worker request.
 4. **The "hidden" endpoint has no auth dependency**, unlike the MCP route which uses a Basic-auth middleware. Schema hiding is not access control.
 
-Three of those are solid and one (the blocklist detail) is the kind of specific claim a human has to check against the actual code before acting. Which brings up the honest part.
+Three of those are solid. The blocklist one is the kind of specific claim a human has to check against the actual code before acting, and the checked-in docs do exactly that. `case-study-pr-8.md` carries a finding-by-finding human review: it rates three of the four materially correct and flags the blocklist finding as partially inaccurate, because `_BLOCKED_HOSTS` in `proxy.py` already covers `0.0.0.0` and `::1`. The genuinely missing coverage is the metadata IP and the RFC1918 ranges, which is a narrower claim than the review made. One finding stated with confidence, wrong in a detail, caught only by a person reading the source. That is the reason the human step exists.
+
+### A second review, from the same prompt
 
 `ai-pr-review` re-runs on every push to the PR, because `synchronize` is in the trigger list. A later push produced a **different review from the identical prompt**: five findings instead of four, the severities reshuffled (one High, three Medium, one Low), and two issues the first run never mentioned, a hardcoded personal Worker URL as the default and an unmitigated DNS-rebinding path.
 
@@ -207,12 +226,75 @@ The model is a stateless subprocess with no memory between runs, so each review 
 
 ## Security considerations
 
+### The trust boundary, drawn
+
+The whole design is an argument about which inputs are trusted and which are not. The workflow file, the prompt, and the policy blocks (`permissions`, `safe-outputs`, `network.allowed`) are trusted control. Everything that arrives from the event, the PR text, the diff, the source files, is untrusted content. The credentials sit in a third box that the agent never opens.
+
+{{< mermaid >}}
+flowchart TB
+    subgraph Trusted[Trusted control inputs]
+      WF[workflow md and prompt]
+      Pol[permissions, safe-outputs, network.allowed]
+    end
+    subgraph Untrusted[Untrusted event and repo content]
+      Txt[PR title, body, comments]
+      Diff[code diff]
+      Code[source files]
+    end
+    subgraph Secret[Secret boundary, never in the agent]
+      Key[OPENCODE_API_KEY, GitHub tokens]
+    end
+    subgraph Enclave[AWF enclave on the runner]
+      Agent[agent container]
+      Proxy[api-proxy]
+      Squid[Squid egress filter]
+    end
+    WF --> Agent
+    Pol --> Agent
+    Txt --> Agent
+    Diff --> Agent
+    Code --> Agent
+    Agent -->|completion request| Proxy
+    Key -.attached by the proxy.-> Proxy
+    Proxy --> Zen[OpenCode Zen, hy3-free]
+    Squid -.filters egress.-> Zen
+    Agent -->|proposed comment| Gate[safe_outputs gate]
+    Gate --> Out[PR comment]
+{{< /mermaid >}}
+
+One more boundary is not on the diagram but matters. All four workflows trigger on `pull_request`, not `pull_request_target`, so they run in the context of the PR head with the untrusted-content boundaries intact. `pull_request_target` would run with the base repository's secrets available to code from the PR branch, which is the classic way these setups leak a token. Using plain `pull_request` is the boring correct choice.
+
 1. **Least privilege is verified, not assumed.** Every workflow's `permissions:` block is read-only. No `contents: write` exists anywhere in the four files. The merge gate is branch protection plus me.
 2. **The provider key never enters the agent.** `OPENCODE_API_KEY` is held by the api-proxy sidecar. The agent container's environment does not contain it, so there is nothing for a compromised agent to leak.
 3. **Egress is filtered to an allowlist.** On this run, 25 of 25 outbound requests were allowed and all went to `opencode.ai`. Zero were blocked because the agent never tried to reach anywhere else, but if it had, Squid would have stopped it.
 4. **Repository content is declared untrusted in the prompt.** PR text, diffs, code, and comments are all marked as data, never instructions. This is a design control that depends on the model obeying it, not a technical guarantee.
 5. **Fork PRs fail safe.** GitHub withholds secrets from fork pull requests by default, so a fork PR runs the agent without `OPENCODE_API_KEY`, the model calls fail, and no review is posted. Nothing leaks because nothing runs.
 6. **Two gaps I have not closed.** `threat-detection` is disabled, so there is no independent second pass on the agent's output. And the workflow posts a new comment on every run with no idempotent marker, so repeated pushes stack duplicate reviews on the PR.
+
+### The prompt-injection threat model
+
+The docs enumerate every channel through which someone could try to make the agent follow instructions it should not. The mitigation is almost always the same line in the prompt, that repository and event content is data and never instructions, which is a design control, not a technical guarantee: it holds only as long as the model obeys it.
+
+| Source | The risk | Mitigation in place |
+|--------|----------|---------------------|
+| PR title, body, comments | embedded instructions to mislead or exfiltrate | prompt declares them untrusted data |
+| Issue body and comments | same | same declaration in each prompt |
+| Source files, tests, docs | hidden instructions in checked-in content | same declaration |
+| CI logs (`ai-ci-diagnose`) | injected instructions in build output | declared untrusted in that prompt |
+| Tool output | malicious responses from a fetched URL | egress limited to `network.allowed` |
+| Agent output | leaking a secret into the posted comment | prompt forbids it, `safe_outputs` gate reviews content, and the agent holds no secret to leak |
+
+The last row is the one that actually has teeth. The first five depend on the model behaving. The sixth is enforced by the architecture: there is no key in the container.
+
+### Turning it off
+
+The emergency procedure, in order of bluntness:
+
+1. Disable the workflow from the GitHub UI (**Settings, Actions, General, Disable workflows**), or empty the `.md` source and recompile.
+2. Rotate `OPENCODE_API_KEY` if you suspect exposure.
+3. For a softer stop, remove the `pull_request` trigger from `ai-pr-review.md` and recompile, leaving only manual dispatch.
+
+Worth knowing before you need it: because the workflow only ever reads and comments, a compromised run does not require a rebuild or a revert. You delete a comment and turn it off.
 
 ## Cost and observability
 
@@ -227,6 +309,10 @@ A read-only AI reviewer is the safe on-ramp for putting a model near a repositor
 ## Reflections
 
 The parts that still bother me are all in the gaps. `threat-detection` off means the agent's output goes straight to the PR with no second check. No comment de-duplication means the PR timeline fills with near-duplicate reviews on an active branch. Re-runs disagree on severity and finding count with nothing to reconcile them, so "what did the AI say" has no single answer. `hy3-free` is a free model on a BYOK endpoint, and review quality visibly varies between runs. And provider data retention is a question mark: the diff and code are sent to OpenCode Zen, and what happens to them after inference is their policy, not mine to verify.
+
+### How the docs handle their own uncertainty
+
+One thing in the `docs/agentic-workflows/` set is worth stealing regardless of whether you ever touch `gh-aw`. Every factual claim is tagged: *(Verified)* means it was read directly from a checked-in file or run metadata, *(Inferred)* is a deduction from how the tool behaves, *(Recommended)* is a control that does not exist yet, *(Unknown)* is an open question. So "the key is not in the agent container" is marked Inferred, backed by one environment dump, not asserted as fact. Provider data retention is marked Unknown, not hand-waved. Documenting an agentic system means writing down a lot of behavior you cannot fully observe, and the honest move is to say which parts those are rather than let the confident tone paper over them.
 
 ### What is still missing
 
