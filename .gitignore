@@ -5,3 +5,5 @@ resources/
 .claude/
 content/.DS_Store
 AI-CRAWLERS.md
+
+artifacts/
