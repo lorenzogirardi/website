@@ -214,6 +214,10 @@ $ curl -s "https://proxy-edge-9c41f2b8.acme-labs.workers.dev/?url=https://httpbi
 
 No real IP. No datacenter ASN. Just Cloudflare, looking legitimate. The `Cf-Worker` header is still there because Cloudflare injects it on every subrequest, and it cannot be disabled. But your real IP? Gone. Your datacenter ASN? Gone. The only thing the target sees is a clean Chrome-on-Windows request coming from Cloudflare's network.
 
+![Worker metrics: invocations and subrequests to the target site](/images/protecting-a-scraping-service-with-cloudflare-waf/worker-metrics-dashboard.jpg)
+
+The Worker dashboard tells the whole story from my side: every invocation fans out into one subrequest to `httpbin.org`, zero errors, sub-millisecond CPU time. The scraping load is invisible to the target and cheap to run.
+
 ## Security Considerations
 
 ### 1. The Trust Problem
@@ -230,6 +234,10 @@ IP reputation is not enough. You need behavioral analysis:
 - Request patterns (too regular = bot)
 - Session behavior (no cookies, no JS execution = scraper)
 - Rate patterns (consistent intervals = automated)
+
+![Worker request log: full cf object, headers and inbound curl User-Agent](/images/protecting-a-scraping-service-with-cloudflare-waf/worker-observability-events.jpg)
+
+This is what the Worker itself logs for every inbound request: the full `cf` object, the client ASN, and a `user-agent` of `curl/8.7.1` hitting the proxy. The target site never sees any of this. It only sees the clean request the Worker rebuilds. All the signal that would expose the scraper stops at Cloudflare's edge.
 
 Cloudflare's WAF helps, but it's designed for protection, not detection of its own users abusing the network.
 
