@@ -25,6 +25,7 @@ featuredImage: /images/pr-review-with-github-agentic-workflows/featured.jpg
 - What the run looked like
 - The review it posted
   - A second review, from the same prompt
+- Asking it to fix something, without letting it
 - Security considerations
   - The trust boundary, drawn
   - The prompt-injection threat model
@@ -224,6 +225,43 @@ Each push re-triggers the agent job, so each review is a fresh run.
 
 The model is a stateless subprocess with no memory between runs, so each review is a fresh draft, not an update to the previous one. As a rotating second opinion that is fine, arguably useful, since the second run caught things the first missed. As a verdict it is not stable, and nothing in the workflow reconciles the two. The human review step is not optional here, it is where the actual decision lives.
 
+## Asking it to fix something, without letting it
+
+Reviewing is the read-only case. The interesting question is what happens when you ask the agent to actually change something. `ai-fix-pr` is the workflow for that, and it is manual only: you dispatch it with a target PR, an instruction, and a `dry_run` toggle.
+
+I took findings 1 and 4 from the review and handed them back as an instruction, "Enable `ssrf_protection_enabled` by default and require auth on `/api/internal/web-proxy`", against PR #8, with `dry_run` left at its default of `true`.
+
+![The AI Fix PR workflow_dispatch form: dry_run set to true, the instruction to enable SSRF protection and require auth, target PR number 8](/images/pr-review-with-github-agentic-workflows/ai-fix-pr-dispatch.jpg)
+
+The dispatch form. `dry_run` defaults to `true`, so the safe path is the one you get by just pressing the button.
+
+The run took about six and a half minutes, most of it in the `agent` job (5m 53s, against a 30-minute ceiling for this workflow), and made 24 model calls over 50 HTTPS requests, 49 to `opencode.ai` and one to `github.com`. Its permissions were the same read-only pair as the review workflow. The one difference in its frontmatter is an extra `update-pull-request: null` safe-output, the gated write path. On this run it stayed unused: in dry-run the agent is only allowed to comment.
+
+![The AI Fix PR run summary: activation, agent, safe_outputs, conclusion all green; the safe-output result table shows one successful Add Comment targeting PR #8](/images/pr-review-with-github-agentic-workflows/ai-fix-pr-run-summary.jpg)
+
+One safe output, an `Add Comment` on PR #8. No `update-pull-request`, because `dry_run` was `true`.
+
+What it posted is a full change proposal: the files it would touch (`settings.py` flips the default `False` to `True`, `proxy.py` gains a `Depends(verify_credentials)` on the hidden route, two test files get updated), a rationale for adding app-level auth on top of the Worker's own, the complete diff, and a copy-paste block to apply it by hand.
+
+![The proposed-change comment: title, a dry-run disclaimer, a Files touched list, a Why auth section, and the start of the full proposed diff](/images/pr-review-with-github-agentic-workflows/ai-fix-pr-proposed-diff.jpg)
+
+The proposal comment. Everything needed to apply the change, and nothing applied.
+
+```bash
+git fetch origin feat/web-proxy-endpoint
+git checkout feat/web-proxy-endpoint
+# apply the edits to settings.py, proxy.py, and the two test files as shown above
+pytest tests/ -m "not integration" -q
+git add -A && git commit -m "Enable SSRF protection by default and require auth on /api/internal/web-proxy"
+git push origin feat/web-proxy-endpoint   # no force-push
+```
+
+Read the validation section of that comment carefully, because it is the honest part again:
+
+> The agent sandbox had no network access to install dependencies, so the suite could not be executed here. Verification is by code review.
+
+So the proposed diff was never run. The agent wrote it, reasoned about why it should pass, and stopped. A dry-run proposal is a draft that no test and no person has touched: the `pytest` line in the apply block is the first time those tests would actually execute. That is not a flaw in the workflow, it is the workflow working. To turn this into a real commit I would dispatch again with `dry_run: false`, and that single input is the only thing that unlocks the `update-pull-request` write. Until then, PR #8 has three agent runs against it (two reviews, one fix proposal) and not one line changed.
+
 ## Security considerations
 
 ### The trust boundary, drawn
@@ -262,7 +300,7 @@ flowchart TB
     Gate --> Out[PR comment]
 {{< /mermaid >}}
 
-One more boundary is not on the diagram but matters. All four workflows trigger on `pull_request`, not `pull_request_target`, so they run in the context of the PR head with the untrusted-content boundaries intact. `pull_request_target` would run with the base repository's secrets available to code from the PR branch, which is the classic way these setups leak a token. Using plain `pull_request` is the boring correct choice.
+One more boundary is not on the diagram but matters. The only automatically-triggered workflow, `ai-pr-review`, fires on `pull_request`, not `pull_request_target`, so it runs in the context of the PR head with the untrusted-content boundaries intact. `pull_request_target` would run with the base repository's secrets available to code from the PR branch, which is the classic way these setups leak a token. The other three workflows are `workflow_dispatch` only, so they never run automatically on untrusted content at all.
 
 1. **Least privilege is verified, not assumed.** Every workflow's `permissions:` block is read-only. No `contents: write` exists anywhere in the four files. The merge gate is branch protection plus me.
 2. **The provider key never enters the agent.** `OPENCODE_API_KEY` is held by the api-proxy sidecar. The agent container's environment does not contain it, so there is nothing for a compromised agent to leak.
@@ -298,13 +336,13 @@ Worth knowing before you need it: because the workflow only ever reads and comme
 
 ## Cost and observability
 
-The proxy's fallback meter logged roughly 38 AI credits for the run, but that is a synthetic figure: the real `hy3-free` price is unknown to the proxy, so the placeholder `{input: 3.0, output: 15.0}` rate is applied just to let the requests through. Actual provider cost is not captured anywhere in the repo. The `timeout-minutes: 20` ceiling and the `concurrency` group with `cancel-in-progress: true` are the real spend controls: a stuck run dies at 20 minutes, and a new push cancels the previous run instead of racing it.
+The proxy's fallback meter logged roughly 38 AI credits for the review run, and about 80 for the longer `ai-fix-pr` dry run, but those are synthetic figures: the real `hy3-free` price is unknown to the proxy, so the placeholder `{input: 3.0, output: 15.0}` rate is applied just to let the requests through. Actual provider cost is not captured anywhere in the repo. The per-workflow `timeout-minutes` ceilings (20 for review, 30 for fix) and, for the review workflow, a `concurrency` group with `cancel-in-progress: true` are the real spend controls: a stuck run dies at its ceiling, and a new push cancels the previous review instead of racing it.
 
-What you do get for audit is the full `agent` artifact bundle: `agent-stdio.log`, `awf-config.json`, the MCP RPC transcript, and a `token_usage.jsonl` with a line per model call. I pulled those for both review runs and zipped them locally, because GitHub Actions artifacts expire and this is the only record of what the agent actually did.
+What you do get for audit is the full `agent` artifact bundle: `agent-stdio.log`, `awf-config.json`, the MCP RPC transcript, and a `token_usage.jsonl` with a line per model call. I pulled those for all three runs and zipped them locally, because GitHub Actions artifacts expire and this is the only record of what the agent actually did.
 
 ## Conclusion
 
-A read-only AI reviewer is the safe on-ramp for putting a model near a repository. On PR #8 it read a new SSRF-adjacent endpoint, posted a prioritized list of real risks in three and a half minutes, and did it with a token that can only read and a key it never held. The findings were a draft. The merge decision stayed mine. That division of labor is the whole point.
+A read-only AI reviewer is the safe on-ramp for putting a model near a repository. On PR #8 it read a new SSRF-adjacent endpoint, posted a prioritized list of real risks in three and a half minutes, and did it with a token that can only read and a key it never held. Asked to fix two of those risks, it produced a complete diff and still changed nothing, because the dry-run default is the safe default. The findings were a draft, the fix was a draft, and every decision past that point stayed mine. That division of labor is the whole point.
 
 ## Reflections
 
@@ -316,7 +354,7 @@ One thing in the `docs/agentic-workflows/` set is worth stealing regardless of w
 
 ### What is still missing
 
-The deeper limit is structural. A read-only reviewer can only ever produce a comment, so every bit of value it creates still has to be picked up and acted on by a person. That is exactly what makes it safe, and exactly what caps how much work it can take off your plate. The [autofix loop](/posts/autopsy-of-an-agentic-loop/) trades that safety for the ability to actually close the loop, and pays for it with two classes of plumbing bug that only show up once a model is allowed to write. Pick your trade deliberately.
+The deeper limit is structural. A read-only reviewer can only ever produce a comment, so every bit of value it creates still has to be picked up and acted on by a person. The `ai-fix-pr` dry run does not really change that: it produced a diff its own sandbox could not compile or test, so applying it is still hands-on-keyboard work. That is exactly what makes both safe, and exactly what caps how much they take off your plate. The [autofix loop](/posts/autopsy-of-an-agentic-loop/) trades that safety for the ability to actually close the loop, and pays for it with two classes of plumbing bug that only show up once a model is allowed to write. Pick your trade deliberately.
 
 ---
 
