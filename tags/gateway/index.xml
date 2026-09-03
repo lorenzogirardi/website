@@ -17,7 +17,7 @@
 </ul>
 <hr>
 <h2 id="overview">Overview</h2>
-<div class="mermaid" id="id-15">flowchart LR
+<div class="mermaid" id="id-21">flowchart LR
     subgraph Clients
         cc[Claude Code]
         api[API Clients]
@@ -105,7 +105,7 @@
 <hr>
 <h2 id="architecture">Architecture</h2>
 <h3 id="request-flow">Request Flow</h3>
-<div class="mermaid" id="id-16">sequenceDiagram
+<div class="mermaid" id="id-22">sequenceDiagram
     participant Client as Claude Code
     participant CF as CloudFront
     participant LiteLLM as LiteLLM Proxy
@@ -130,7 +130,7 @@
     end
 
     VM-&gt;&gt;LiteLLM: Scrape /metrics/</div><h3 id="deployment-architecture">Deployment Architecture</h3>
-<div class="mermaid" id="id-17">flowchart TB
+<div class="mermaid" id="id-23">flowchart TB
     subgraph Internet
         clients[Claude Code / API Clients]
     end
@@ -176,7 +176,7 @@
     style cf fill:#ffcccc,stroke:#ff0000
     style rds fill:#336791,color:#fff
     style langfuse fill:#e6f3ff</div><h3 id="security-model">Security Model</h3>
-<div class="mermaid" id="id-18">flowchart TB
+<div class="mermaid" id="id-24">flowchart TB
     subgraph Public[&#34;Public Access (CloudFront)&#34;]
         chat[&#34;/v1/chat/completions ✅&#34;]
         models[&#34;/v1/models ✅&#34;]
