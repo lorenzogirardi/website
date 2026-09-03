@@ -29,8 +29,9 @@ featuredImage: /images/github-agentic-workflows-git-on-ai-steroids/featured.jpg
   - The rate-limiter that is not a bug
   - The blocklist claim that is wrong in a detail
   - The firewall that fails silently
-- Pairing it with cybersecurity skills
 - Asking it to fix something, without letting it
+- Pairing it with cybersecurity skills
+  - How the agent picks its skills
 - What the framework gets right
 - Security considerations
   - The trust boundary, drawn
@@ -263,6 +264,24 @@ One finding, stated with confidence, wrong in a detail, caught only by a person 
 
 Two consecutive runs on this PR hit different firewall blocks. One had `pypi.org` blocked and reported "the suite could not be executed here: pip has no network access." The next had `index.crates.io` blocked instead, `pypi.org` worked, and it ran 69 tests. The Squid allowlist enforces `network.allowed` by dropping everything else **with no error the agent can see**: a tool that needs an un-allowed host just gets nothing back. So even the deterministic part of the review, "did the tests pass", is not stable across runs unless every host the toolchain touches is in the allowlist. The blocked-domain warning in the posted comment is the only signal, and you only get it after the fact.
 
+## Asking it to fix something, without letting it
+
+Reviewing is the read-only case. `ai-fix-pr` is the workflow for actually changing something, and it is manual only: you dispatch it with a target PR, an instruction, and a `dry_run` toggle that **defaults to `true`**.
+
+I took findings 1 and 4 from an early review and handed them back as an instruction, "Enable `ssrf_protection_enabled` by default and require auth on `/api/internal/web-proxy`", against PR #8, with `dry_run` left at its default.
+
+![The AI Fix PR workflow_dispatch form: branch main, dry_run field set to true, the instruction to enable SSRF protection and require auth, target PR number 8](/images/github-agentic-workflows-git-on-ai-steroids/ai-fix-pr-dispatch.jpg)
+
+The dispatch form. `dry_run` defaults to `true`, so the safe path is the one you get by just pressing the button.
+
+The run made two dozen model calls and posted a full change proposal: the files it would touch, a rationale for adding app-level auth on top of the Worker's own, the complete diff, and a copy-paste block to apply it by hand.
+
+![The proposed-change comment: title, a dry-run disclaimer, a Files touched list naming settings.py, proxy.py and two test files, a Why auth section, and the start of the full proposed diff](/images/github-agentic-workflows-git-on-ai-steroids/ai-fix-pr-proposed-diff.jpg)
+
+The proposal comment. Everything needed to apply the change, and nothing applied.
+
+Its validation note, again, is the honest bit: the sandbox could not install dependencies on that run, so the suite was not executed and verification was "by code review". The proposed diff was never run. To turn it into a real commit I would dispatch again with `dry_run: false`, and that single input is the only thing that unlocks the `update-pull-request` safe output. The write is still gated, still excludes the protected paths (`.github/`, `kubernetes/`, `helm/`, `Dockerfile`, `pyproject.toml`, `tests/`, `requirements.txt`), and still cannot force-push. Until I flip that toggle, PR #8 has a stack of agent comments and not one changed line.
+
 ## Pairing it with cybersecurity skills
 
 `ai-pr-review` works from a short built-in prompt. `security-review` is the same engine pointed at a library of external method playbooks. Its frontmatter clones [`mukul975/Anthropic-Cybersecurity-Skills`](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) at a pinned tag into `/tmp/gh-aw/skills-lib`, and the prompt tells the agent to read the index, pick a set of skills, and apply each one's methodology to the codebase.
@@ -281,27 +300,37 @@ steps:
 
 The pin matters. `--branch v1.3.0` plus an input default means a run only sees new or changed skills when someone bumps the tag, and the resolved commit SHA is logged for audit. Nothing about "an AI security review" should silently change because an upstream repo pushed to `main`.
 
-A big library needs steering or the agent drifts. Early runs came back almost entirely infrastructure skills (Kubernetes, Helm, image scanning) and skipped the application logic. The fix is two prompt rules: pre-filter the index deterministically with a `grep` for the stack's vocabulary, then enforce a coverage mix, at least 70% application-layer skills, at most 30% infrastructure. Run `33766554943` selected 12 skills, 9 application and 3 infrastructure, and produced 14 findings in about 28 minutes. The HIGH and MEDIUM items were SSRF guard off, an SSRF time-of-check/time-of-use gap, the unused rate limiter, wildcard CORS, an unauthenticated CRUD surface, and unauthenticated error injection. All application-layer.
+### How the agent picks its skills
+
+A big library needs steering or the agent drifts. Early runs came back almost entirely infrastructure skills (Kubernetes, Helm, image scanning) and skipped the application logic. The `index.json` in this library holds about 818 skills, so the prompt makes selection an explicit pipeline:
+
+1. **Stack detection.** The agent reads the repo and writes down the languages, frameworks, entrypoints, and exposure surface. For this run: Python 3.14, FastAPI 0.141, Pydantic-settings, SQLAlchemy async, Redis, an MCP server mount, `slowapi`, subprocess calls to `ping`/`traceroute`, and a set of unauthenticated CRUD and management routes.
+2. **Phase 1, skill selection.** Considering that stack and every skill's `name + description`, pick the top `N` (`max_skills`, default 12). Exclude anything that needs a live target, a memory dump, or a running agent. Then apply the **mandatory coverage mix**: at least `ceil(0.7 x N)` application-layer skills, at most `floor(0.3 x N)` infrastructure. If the shortlist is thin on application skills, widen the search rather than backfill with infra.
+3. **Phase 2, application.** For each selected skill, in ranked order, read its `SKILL.md` and apply the methodology, citing `file:line` for every finding and tagging it with the skill that produced it.
+
+Run `33766554943` selected 12 skills, 9 application and 3 infrastructure, and the report is explicit about the split and what each skill actually found:
+
+| Skill | Layer | Findings | Mapped to |
+|-------|-------|----------|-----------|
+| `exploiting-server-side-request-forgery` | app | 3 | the debug/curl/network tools and the new proxy route |
+| `testing-for-sensitive-data-exposure` | app | 3 | `/api/mgmt/env`, `/api/mgmt/mappings`, raw exception strings |
+| `securing-helm-chart-deployments` | infra | 3 | committed diag Secret, `:latest` image tags, CPU-bound readiness probe |
+| `performing-api-rate-limiting-bypass` | app | 2 | the unwired `slowapi` limiter, the per-process brute-force tracker |
+| `testing-cors-misconfiguration` | app | 1 | `allow_origins=["*"]` over unauthenticated CRUD |
+| `testing-api-for-broken-object-level-authorization` | app | 1 | unauthenticated `/api/contexts` CRUD |
+| `testing-api-authentication-weaknesses` | app | 1 | unauthenticated error-injection middleware |
+| `auditing-mcp-servers-for-tool-poisoning` | app | 1 | MCP tools exposing `network_scan`, `cpu_spike`, `curl` |
+| `exploiting-broken-function-level-authorization` | app | 1 | `/threaddump` reachable over MCP |
+
+Three selected skills are in the report's **"not applied / caveats"** section, which is the part worth stealing:
+
+- `hardening-docker-containers-for-production` (infra), 0 findings: the Dockerfile runs as non-root, installs without cache, and uses arg-list subprocess calls. Posture is good; the only note is a mutable base image.
+- `securing-github-actions-workflows` (infra), 0 findings: the compiled `.lock.yml` workflows pin every action to a SHA, scope `contents: read`, and set top-level `permissions: {}`.
+- `scanning-kubernetes-manifests-with-kubesec` was swapped for `securing-helm-chart-deployments` because the `kubesec` binary is not in the static sandbox, and the same controls were reviewed by hand.
+
+That is the honest shape of an audit: here is what I looked for, here is what I found, here is what I looked for and did not find, and here is the check I could not run and what I did instead. The run produced 14 findings in about 28 minutes (3 HIGH, 6 MEDIUM, 3 LOW, 2 INFO), and the report closes with `App/infra split: 9 app / 3 infra (75% >= 70%). Contract satisfied.`
 
 Notice the overlap with the PR review: **the unused rate limiter shows up in both.** Two different prompts, two different runs, same real observation, and the same open question about whether an edge layer covers it. Pairing the model with a skill library sharpens the aim. It does not make the output authoritative, and it does not make it deterministic: a sibling run the same day hit a 14-minute provider stall and died at the 40-minute timeout before it could write its report. That is why this workflow's `timeout-minutes` is 55 and its report delivery is in an `if: always()` post-step: the agent writes the report to a file, and a deterministic step publishes it to the run summary and uploads it as an artifact, so a timeout right after the write still surfaces the work.
-
-## Asking it to fix something, without letting it
-
-Reviewing is the read-only case. `ai-fix-pr` is the workflow for actually changing something, and it is manual only: you dispatch it with a target PR, an instruction, and a `dry_run` toggle that **defaults to `true`**.
-
-I took findings 1 and 4 from an early review and handed them back as an instruction, "Enable `ssrf_protection_enabled` by default and require auth on `/api/internal/web-proxy`", against PR #8, with `dry_run` left at its default.
-
-![The AI Fix PR workflow_dispatch form: branch main, dry_run field set to true, the instruction to enable SSRF protection and require auth, target PR number 8](/images/github-agentic-workflows-git-on-ai-steroids/ai-fix-pr-dispatch.jpg)
-
-The dispatch form. `dry_run` defaults to `true`, so the safe path is the one you get by just pressing the button.
-
-The run made two dozen model calls and posted a full change proposal: the files it would touch, a rationale for adding app-level auth on top of the Worker's own, the complete diff, and a copy-paste block to apply it by hand.
-
-![The proposed-change comment: title, a dry-run disclaimer, a Files touched list naming settings.py, proxy.py and two test files, a Why auth section, and the start of the full proposed diff](/images/github-agentic-workflows-git-on-ai-steroids/ai-fix-pr-proposed-diff.jpg)
-
-The proposal comment. Everything needed to apply the change, and nothing applied.
-
-Its validation note, again, is the honest bit: the sandbox could not install dependencies on that run, so the suite was not executed and verification was "by code review". The proposed diff was never run. To turn it into a real commit I would dispatch again with `dry_run: false`, and that single input is the only thing that unlocks the `update-pull-request` safe output. The write is still gated, still excludes the protected paths (`.github/`, `kubernetes/`, `helm/`, `Dockerfile`, `pyproject.toml`, `tests/`, `requirements.txt`), and still cannot force-push. Until I flip that toggle, PR #8 has a stack of agent comments and not one changed line.
 
 ## What the framework gets right
 
