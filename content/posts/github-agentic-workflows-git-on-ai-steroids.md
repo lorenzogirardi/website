@@ -40,6 +40,8 @@ featuredImage: /images/github-agentic-workflows-git-on-ai-steroids/featured.jpg
 - Cost and observability
 - Conclusion
 - Reflections
+  - Why an LLM here, and not just more CI
+  - The gaps that still bother me
   - What is still missing
 
 
@@ -422,6 +424,24 @@ Five workflows, one engine, one posture: read the repository, run the determinis
 Every one of those outputs is a draft. The reviewer disagrees with itself run to run, states the occasional wrong detail with full confidence, and cannot see the layers of your stack that sit outside the diff. Read its findings as challenges to answer, not verdicts to act on, and the division of labor works: the machine asks the questions fast and cheap, and the decision stays with a person who can see the whole picture.
 
 ## Reflections
+
+### Why an LLM here, and not just more CI
+
+The honest answer is that for most of what these workflows do, a traditional deterministic job is better. `flake8`, `pytest`, `bandit`, `semgrep`, `trivy`, `kubesec`: fixed rule, same input same output, no per-run cost, no hallucination. If you can express a check as a rule, write it as a rule. The LLM should never replace that layer, and in these workflows it does not: the 69 tests and the lint run inside the enclave as ordinary commands, and the agent reads their result, it does not adjudicate it.
+
+What the model adds is width, not speed and not reliability.
+
+- **It covers the case nobody wrote a rule for.** `semgrep` finds the patterns someone already encoded. The PR #8 review connected three unrelated facts: an endpoint with no auth dependency, a k8s ingress that exposes `/api/*` publicly, and a name ("internal") that implies a boundary the deployment does not enforce. No single rule expresses that chain of reasoning across three files.
+- **It turns a vague intent into a concrete change.** `ai-fix-pr` takes "enable SSRF protection by default and require auth on the endpoint" in plain English and produces a diff across four files plus the tests. A classic pipeline has no `instruction` input.
+- **It picks the relevant checks out of a large set.** 818 skill playbooks, and the agent reads the actual stack (FastAPI, an MCP mount, `slowapi`, subprocess calls) and selects the twelve that fit, holding the coverage quota. A script would need a hand-maintained stack-to-skill mapping that rots.
+- **It prioritises and explains.** Not "pattern matched at line 45" but "High: this is an unauthenticated open SSRF proxy, here is why, here is the fix." That is triage time saved.
+- **It diagnoses novel failures.** `ai-ci-diagnose` reads a failed build log and names the probable cause. A regex over logs covers the failures you have already seen, not the new one.
+
+The price is everything in the rest of this section: non-determinism, confident wrong details, blindness to everything outside the diff, a per-run cost, thirteen minutes instead of thirteen seconds, and a third-party provider that sees the code. That is why every one of these outputs is a comment and not a blocking gate.
+
+So the rule I would give someone: if you have a rule, use a deterministic workflow. If the task needs judgement, cross-file correlation, natural language, or a second opinion on the things you did not think to check, use an LLM, read-only, with a person deciding. The two layers are complementary. The deterministic gates run first and produce the result the agent reads as context. The LLM is not faster and not more trustworthy than classic CI. It is wider.
+
+### The gaps that still bother me
 
 The gaps are all in the same place. `threat-detection` is off, so the agent's output goes straight to the PR with no independent second pass. There is no comment de-duplication, so an active branch collects a stack of near-duplicate reviews (PR #8 has six). Re-runs disagree on count and severity with nothing to reconcile them. DeepSeek V4 Flash is a cheap model and review quality visibly varies between runs. And provider data retention is a question mark: the diff and code are sent to OpenRouter and DeepSeek, and what happens to them after inference is their policy, not something I can verify.
 
