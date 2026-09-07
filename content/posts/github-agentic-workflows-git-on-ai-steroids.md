@@ -1,8 +1,11 @@
 ---
 title: "Git on AI Steroids: GitHub Agentic Workflows"
-date: 2026-09-03
-draft: true
-description: "Five gh-aw workflows on one repo: a read-only PR reviewer, a CI diagnoser, a gated fixer, an issue-to-draft-PR, and a monthly security review paired with cybersecurity skill playbooks. What they get right, and why a finding is a challenge, not a verdict."
+date: 2026-09-07
+draft: false
+description: "Five gh-aw workflows on one repo: a read-only PR reviewer, a CI
+  diagnoser, a gated fixer, an issue-to-draft-PR, and a monthly security review
+  paired with cybersecurity skill playbooks. What they get right, and why a
+  finding is a challenge, not a verdict."
 tags:
   - ai
   - automation
@@ -14,7 +17,6 @@ tags:
   - devsecops
 featuredImage: /images/github-agentic-workflows-git-on-ai-steroids/featured.jpg
 ---
-
 ### Table of Contents
 
 - The thing I did not want to do
@@ -54,7 +56,7 @@ The easy way to bolt AI onto a repository is to give an agent broad permissions 
 
 For everyday assistance I want the opposite posture. The agent should be physically unable to change anything: no commits, no labels, no merge, no branch writes. Its entire output surface should be a comment or an artifact. If the comment is wrong, the worst case is that I ignore it.
 
-That is the shape [GitHub Agentic Workflows](https://github.github.com/gh-aw/) (`gh-aw`) gives you. This post is what five of them look like running for real on [`fastapi-testapp`](https://github.com/lorenzogirardi/fastapi-testapp/), a small FastAPI service I keep around precisely to be a target.
+That is the shape [GitHub Agentic Workflows](https://github.github.com/gh-aw/) (`gh-aw`) gives you. This post is what five of them look like running for real on `[fastapi-testapp](https://github.com/lorenzogirardi/fastapi-testapp/)`, a small FastAPI service I keep around precisely to be a target.
 
 ## Enter gh-aw
 
@@ -66,13 +68,15 @@ The compiler (here `v0.88.2`) is strict about drift. Every lock file carries a `
 
 `fastapi-testapp` has five agentic workflows:
 
+
 | Workflow | Trigger | Permissions requested | Write path | Timeout |
-|----------|---------|-----------------------|------------|---------|
+| ---------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------- | ------- |
 | `ai-pr-review` | `pull_request` (opened, reopened, ready_for_review, synchronize), plus manual | `contents: read`, `pull-requests: read` | none, `add-comment` only | 20 min |
 | `ai-ci-diagnose` | manual only | `contents: read`, `actions: read`, `pull-requests: read` | none, `add-comment` | 20 min |
 | `ai-fix-pr` | manual only | `contents: read`, `pull-requests: read` | `update-pull-request`, only when `dry_run=false` | 30 min |
 | `ai-issue-to-draft-pr` | manual only | `contents: read`, `pull-requests: read`, `issues: read` | `create-pull-request`, always a draft | 40 min |
 | `security-review` | `cron: "0 6 1 * *"` (monthly), plus manual | `contents: read` | none, `upload-artifact` plus a step-summary write | 55 min |
+
 
 Two workflows run without a human pressing anything: `ai-pr-review` on every PR event, and `security-review` on the first of the month at 06:00 UTC. Both are read-only. The blast radius of an unattended run is one PR comment or one artifact plus a run-summary page.
 
@@ -185,10 +189,10 @@ Emit a single PR comment (safe-output `comment`) with a Markdown review:
 
 A few of those lines carry weight:
 
-- **`permissions:` is read-only.** Nothing in this workflow can write, and the prompt repeats the constraint for a model that might be tempted.
-- **`network.allowed` is three entries.** `github.com` and `openrouter.ai` are the model and tool paths. `python` is a shorthand bundle (PyPI, `files.pythonhosted.org`, conda mirrors) that lets the agent `pip install` the project and actually run `pytest` and `flake8` rather than just reason about them.
-- **`threat-detection: false`.** `gh-aw` ships an optional sub-agent that scans the agent's output for threats before it is posted. It is off here, because a model that reliably emits the expected `THREAT_DETECTION_RESULT` marker was not available on this endpoint. That is a real gap, noted below.
-- **`default-ai-credits-pricing`.** The api-proxy needs a price for the model. `{input: 0.05, output: 0.16}` per million tokens is the actual DeepSeek V4 Flash rate on OpenRouter, so the credit meter is close to real rather than a placeholder.
+- `**permissions:` is read-only.** Nothing in this workflow can write, and the prompt repeats the constraint for a model that might be tempted.
+- `**network.allowed` is three entries.** `github.com` and `openrouter.ai` are the model and tool paths. `python` is a shorthand bundle (PyPI, `files.pythonhosted.org`, conda mirrors) that lets the agent `pip install` the project and actually run `pytest` and `flake8` rather than just reason about them.
+- `**threat-detection: false`.** `gh-aw` ships an optional sub-agent that scans the agent's output for threats before it is posted. It is off here, because a model that reliably emits the expected `THREAT_DETECTION_RESULT` marker was not available on this endpoint. That is a real gap, noted below.
+- `**default-ai-credits-pricing`.** The api-proxy needs a price for the model. `{input: 0.05, output: 0.16}` per million tokens is the actual DeepSeek V4 Flash rate on OpenRouter, so the credit meter is close to real rather than a placeholder.
 
 ## PR #8: a hidden proxy endpoint
 
@@ -200,13 +204,15 @@ This is exactly the kind of change you want a second pair of eyes on: a new outb
 
 The `synchronize` event fired on a push to `feat/web-proxy-endpoint` and the compiled workflow ran five jobs in sequence:
 
+
 | Job | Duration | What it does |
-|-----|----------|--------------|
+| ---------------- | -------- | --------------------------------------------------------------------------------------- |
 | `pre_activation` | 8s | auth, guardrails, budget checks |
 | `activation` | 18s | build the prompt, check out the PR head |
 | `agent` | 11m 26s | Copilot CLI calls DeepSeek V4 Flash, gathers context, runs the tests, drafts the review |
 | `safe_outputs` | 25s | apply the `add-comment` safe output |
 | `conclusion` | 28s | finalize, write the run summary |
+
 
 Total wall time was 13 minutes 7 seconds.
 
@@ -224,11 +230,13 @@ The `safe_outputs` job posted a comment with a summary line of **"2 high-severit
 
 > The endpoint is mounted unconditionally in `create_app()` with no auth, no size cap, no rate limiting, and no feature flag. The existing k8s ingress (`kubernetes/03-ing-pytbak.yaml:14`, path `/api/`) and Helm default (`helm/pytbak/values.yaml`, ingress `path: /`) already expose `/api/*` publicly, so "internal" is not enforced by the deployment.
 
+
 | # | Severity | Location | Problem |
-|---|----------|----------|---------|
+| --- | -------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1 | High | `app/routers/proxy.py:61`, `app/main.py:184` | Unauthenticated public SSRF proxy: any anonymous caller can make the app fetch arbitrary URLs and relay the full response; response is fully buffered with no size cap; the `slowapi` limiter is stored in `app.state` and never applied to any route, so there is no throttling either. |
 | 2 | High | `app/routers/proxy.py:32-35` | The SSRF guard is a raw hostname string match with no DNS resolution and no `ipaddress` check, so a name resolving to `169.254.169.254` or a private IP passes, as do decimal and hex IP forms and any redirect target. `SSRF_PROTECTION_ENABLED` defaults to `false`. |
 | 3 | Medium | `app/routers/proxy.py:51` | The target URL is interpolated raw into the upstream query string (`f".../?url={url}"`), so a `url` containing `&`, `#`, or `?` mutates the upstream request. |
+
 
 The validation section is the honest part:
 
@@ -286,7 +294,7 @@ Its validation note, again, is the honest bit: the sandbox could not install dep
 
 ## Pairing it with cybersecurity skills
 
-`ai-pr-review` works from a short built-in prompt. `security-review` is the same engine pointed at a library of external method playbooks. Its frontmatter clones [`mukul975/Anthropic-Cybersecurity-Skills`](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) at a pinned tag into `/tmp/gh-aw/skills-lib`, and the prompt tells the agent to read the index, pick a set of skills, and apply each one's methodology to the codebase.
+`ai-pr-review` works from a short built-in prompt. `security-review` is the same engine pointed at a library of external method playbooks. Its frontmatter clones `[mukul975/Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills)` at a pinned tag into `/tmp/gh-aw/skills-lib`, and the prompt tells the agent to read the index, pick a set of skills, and apply each one's methodology to the codebase.
 
 ```yaml
 steps:
@@ -312,8 +320,9 @@ A big library needs steering or the agent drifts. Early runs came back almost en
 
 Run `33766554943` selected 12 skills, 9 application and 3 infrastructure, and the report is explicit about the split and what each skill actually found:
 
+
 | Skill | Layer | Findings | Mapped to |
-|-------|-------|----------|-----------|
+| --------------------------------------------------- | ----- | -------- | ---------------------------------------------------------------------- |
 | `exploiting-server-side-request-forgery` | app | 3 | the debug/curl/network tools and the new proxy route |
 | `testing-for-sensitive-data-exposure` | app | 3 | `/api/mgmt/env`, `/api/mgmt/mappings`, raw exception strings |
 | `securing-helm-chart-deployments` | infra | 3 | committed diag Secret, `:latest` image tags, CPU-bound readiness probe |
@@ -323,6 +332,7 @@ Run `33766554943` selected 12 skills, 9 application and 3 infrastructure, and th
 | `testing-api-authentication-weaknesses` | app | 1 | unauthenticated error-injection middleware |
 | `auditing-mcp-servers-for-tool-poisoning` | app | 1 | MCP tools exposing `network_scan`, `cpu_spike`, `curl` |
 | `exploiting-broken-function-level-authorization` | app | 1 | `/threaddump` reachable over MCP |
+
 
 Three selected skills are in the report's **"not applied / caveats"** section, which is the part worth stealing:
 
@@ -391,8 +401,9 @@ flowchart TB
 
 The docs enumerate every channel through which someone could try to make the agent follow instructions it should not. The mitigation is almost always the same line in the prompt, that repository and event content is data and never instructions, which is a design control, not a technical guarantee.
 
+
 | Source | The risk | Mitigation in place |
-|--------|----------|---------------------|
+| -------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | PR title, body, comments | embedded instructions to mislead or exfiltrate | prompt declares them untrusted data |
 | Issue body and comments | same | same declaration in each prompt |
 | Source files, tests, docs | hidden instructions in checked-in content | same declaration |
@@ -400,6 +411,7 @@ The docs enumerate every channel through which someone could try to make the age
 | Imported skill playbooks | malicious method text from an external repo | pinned to a tag, declared as data to reason over |
 | Tool output | malicious responses from a fetched URL | egress limited to `network.allowed` |
 | Agent output | leaking a secret into the posted comment | prompt forbids it, `safe_outputs` gate reviews content, and the agent holds no secret to leak |
+
 
 The last row is the one with teeth. The rest depend on the model behaving. The last is enforced by the architecture: there is no key in the container.
 
