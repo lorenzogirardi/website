@@ -1,4 +1,47 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 28 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Scraping Through Cloudflare: How to Hide Behind Trusted IPs</title><link>https://www.k8s.it/posts/protecting-a-scraping-service-with-cloudflare-waf/</link><pubDate>Fri, 28 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/protecting-a-scraping-service-with-cloudflare-waf/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 07 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Git on AI Steroids: GitHub Agentic Workflows</title><link>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</link><pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/github-agentic-workflows-git-on-ai-steroids/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The thing I did not want to do</li>
+<li>Enter gh-aw</li>
+<li>Five workflows, one that runs itself</li>
+<li>How a run is wired</li>
+<li>The workflow file, in full</li>
+<li>PR #8: a hidden proxy endpoint</li>
+<li>What the run looked like</li>
+<li>The review it posted</li>
+<li>A finding is a challenge, not a verdict
+<ul>
+<li>The rate-limiter that is not a bug</li>
+<li>The blocklist claim that is wrong in a detail</li>
+<li>The firewall that fails silently</li>
+</ul>
+</li>
+<li>Asking it to fix something, without letting it</li>
+<li>Pairing it with cybersecurity skills
+<ul>
+<li>How the agent picks its skills</li>
+</ul>
+</li>
+<li>What the framework gets right</li>
+<li>Security considerations
+<ul>
+<li>The trust boundary, drawn</li>
+<li>The prompt-injection threat model</li>
+<li>Turning it off</li>
+</ul>
+</li>
+<li>Cost and observability</li>
+<li>Conclusion</li>
+<li>Reflections
+<ul>
+<li>Why an LLM here, and not just more CI</li>
+<li>The gaps that still bother me</li>
+<li>What is still missing</li>
+</ul>
+</li>
+</ul>
+<p>Well, here we are: I wanted a second reviewer on every pull request, a sanity pass on every failed pipeline, and a monthly security sweep, and I was not willing to hand a language model a write token to get any of it.</p>]]></description></item><item><title>Scraping Through Cloudflare: How to Hide Behind Trusted IPs</title><link>https://www.k8s.it/posts/protecting-a-scraping-service-with-cloudflare-waf/</link><pubDate>Fri, 28 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/protecting-a-scraping-service-with-cloudflare-waf/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/protecting-a-scraping-service-with-cloudflare-waf/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -236,15 +279,4 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item><item><title>Algolia prometheus exporter</title><link>https://www.k8s.it/posts/algolia-prometheus-exporter/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/algolia-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.jpg" referrerpolicy="no-referrer">
-            </div><h1 id="algolia-usage-exporter--a-case-study-in-ai-assisted-tooling">Algolia Usage Exporter — A Case Study in AI-Assisted Tooling</h1>
-<h2 id="what-is-this">What is this?</h2>
-<p>A lightweight Prometheus exporter that collects usage and infrastructure metrics from the Algolia search API and exposes them at <code>/metrics</code> for Prometheus / Datadog scraping.</p>
-<p>It runs as a standalone HTTP server (single binary via Docker/Podman), requires minimal configuration (just two API keys), and exports metrics like:</p>
-<ul>
-<li><strong>Usage statistics</strong>: search operations, records, processing time, QPS, write operations</li>
-<li><strong>Infrastructure metrics</strong>: CPU, RAM, SSD utilization, build times (Premium plan only)</li>
-<li><strong>Health signals</strong>: scrape success status, timestamps</li>
-</ul>
-<p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item></channel></rss>
+<p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item></channel></rss>
