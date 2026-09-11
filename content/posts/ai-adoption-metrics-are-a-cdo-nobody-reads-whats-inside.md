@@ -33,6 +33,7 @@ images:
   * The Visibility Cost of Getting Good at This
   * From Examples to Agents
   * Conclusion
+  * Reflections
 
 
 
@@ -225,3 +226,9 @@ LLMs are non-deterministic by nature. That's not a defect to engineer away. The 
 One project, three reports, and the number that actually mattered wasn't $144.25 or $2.65. It was the pattern underneath both: every good outcome had context behind it, every bad outcome had a documented, specific reason, and every AI usage figure meant something different depending on what was actually inside it.
 
 That's one data point. One project, one team. It's useful as a first observation and as a template for collecting the same data elsewhere, not as a verdict. The only way to make objective claims about what AI assistance looks like at scale is a series of these, across different teams, different stacks, different tasks, each one read for its contents and not just its total. Anything less is a rating without a loan file.
+
+## Reflections
+
+I'll be honest about one thing: I don't know if $144.25 for this project, or $20.60 for that one CI/CD ticket, is a good number or a bad one. I don't have ten other teams' showbacks sitting next to this one to compare against, and this post doesn't pretend otherwise.
+
+What I do have is the questions the exercise forced me to ask that I wasn't asking before. Not "is this cheap," but "what actually happened in this session, and why." Writing this up made something else obvious: I'm not asking that question often enough myself, day to day, on my own AI usage. If the whole argument here is that the label isn't the diligence, that cuts both ways. It's not just a management problem. It's on me to ask it more, not less, if I want the tool to actually make the work easier instead of just running unexamined next to everything else I do.
