@@ -55,7 +55,7 @@ A team I work with ran an AI usage showback on a single project: a loyalty ident
 
 The names in this post are anonymized: the company, the internal team, the project, and every downstream system are placeholders. The numbers, the findings, and the reasoning are real, taken from actual session logs, an actual security review, and an actual team debrief.
 
-I'm writing it up because the exercise itself is the useful part. Not "AI cost us $144 this quarter." That number is worthless on its own. What's useful is the method for finding out *what the $144 actually bought*, and the discipline of asking that question before declaring victory.
+I'm writing it up because the exercise itself is the useful part. Not "AI cost us $139 this quarter." That number is worthless on its own. What's useful is the method for finding out *what the $139 actually bought*, and the discipline of asking that question before declaring victory.
 
 ## One Project, Three Reports
 
@@ -89,7 +89,7 @@ ccusage session --json -i <session-id>
     "cache_write":      2356718,
     "cache_read":      54131444
   },
-  "cost_usd": 30.53
+  "cost_usd": 32.95
 }
 ```
 
@@ -97,17 +97,17 @@ Two numbers matter here. `input` (11K) is what the engineer actually typed: prom
 
 ## What the Development Spend Actually Shows
 
-Ten sessions, six tickets, $144.25 total.
+Ten sessions, six tickets, $139.40 total.
 
 | Ticket | Model | Description | Output tokens | Cache read | Cost |
 |---|---|---|---|---|---|
-| AUR-9001 | Opus + Sonnet | DB for account mappings | 293,430 | 79.3M | $65.94 |
-| AUR-9002 | Sonnet | IdP JWT auth | 361,354 | 54.1M | $30.53 |
-| AUR-9003 | Opus | CI/CD pipeline | 70,791 | 17.8M | $20.60 |
-| AUR-9004 | Opus | Init repo + Terraform | 37,599 | 12.2M | $10.69 |
-| AUR-9005 | Sonnet | IdP password rotation hook | 109,907 | 12.6M | $10.09 |
-| AUR-9006 | Opus | Observability + metrics | 33,395 | 5.2M | $6.40 |
-| **Total** | | | **906,476** | **181.3M** | **$144.25** |
+| AUR-9001 | Opus + Sonnet | Data layer for account mappings | 293,430 | 79.3M | $63.10 |
+| AUR-9002 | Sonnet | IdP token verification | 361,354 | 54.1M | $32.95 |
+| AUR-9003 | Opus | Deploy pipeline setup | 70,791 | 17.8M | $23.40 |
+| AUR-9004 | Opus | Repo bootstrap + IaC | 37,599 | 12.2M | $8.15 |
+| AUR-9005 | Sonnet | IdP credential-rotation hook | 109,907 | 12.6M | $7.60 |
+| AUR-9006 | Opus | Telemetry + dashboards | 33,395 | 5.2M | $4.20 |
+| **Total** | | | **906,476** | **181.3M** | **$139.40** |
 
 Cache hit rate across the whole project: 99.98% (181.3M of 181.3M tokens served from cache). Reuse ratio: 19.5x. Each fresh engineer prompt effectively cost about 2% of what it would have without caching.
 
@@ -119,7 +119,7 @@ Read only the top-line cost and you'd draw the wrong conclusion about difficulty
 
 ### The CI/CD Question (One Example Among Many)
 
-Take one ticket as a worked example of a question you should ask about *any* line in a table like this, not just this one. AUR-9003, "CI/CD pipeline," is the second most expensive ticket: $20.60 on Opus, more than the password rotation hook, more than observability. GitHub Actions is about as standard as backend work gets. So what does it mean that a "standard" task pulled this much AI usage?
+Take one ticket as a worked example of a question you should ask about *any* line in a table like this, not just this one. AUR-9003, "deploy pipeline setup," sits well up the cost table at $23.40 on Opus, more than the credential-rotation hook, more than telemetry. GitHub Actions is about as standard as backend work gets. So what does it mean that a "standard" task pulled this much AI usage?
 
 Three readings are possible, and they lead to opposite conclusions:
 
@@ -127,7 +127,7 @@ Three readings are possible, and they lead to opposite conclusions:
 - **It's just complex.** Matrix builds, environment secrets, branch protection rules, multi-stage deploys: "standard" doesn't mean "simple," and Opus's slower, more deliberate mode is appropriate for getting the wiring right the first time.
 - **It's a one-time setup cost that paid for future speed.** This was a greenfield pipeline. Once it exists as a working reference, the next project's CI/CD ticket should cost a fraction of this, because it's now an example to copy instead of a problem to solve.
 
-You cannot tell which of these is true from the cost figure alone. This one data point leans toward the third reading: it was one session, not five, so it wasn't a struggle so much as a build; it was greenfield, alongside AUR-9004's repo init, both foundational; and the team feedback from later in this same showback independently flagged that *infrastructure work without a team-specific template requires far more correction prompts than work with one* (more on that below). That's a plausible story, not a proven one. It's one project. Maybe $20 on Opus for a first CI/CD pipeline is completely normal and every team would land near that figure. Maybe it isn't, and this team specifically needed more hand-holding than most on something that should be closer to boilerplate. Nothing in this single showback can tell the two apart. That takes the same table from several teams, several stacks, run the same way, so the number stops being a one-off anecdote and starts being a baseline you can compare against.
+You cannot tell which of these is true from the cost figure alone. This one data point leans toward the third reading: it was one session, not five, so it wasn't a struggle so much as a build; it was greenfield, alongside AUR-9004's repo bootstrap, both foundational; and the team feedback from later in this same showback independently flagged that *infrastructure work without a team-specific template requires far more correction prompts than work with one* (more on that below). That's a plausible story, not a proven one. It's one project. Maybe $23 on Opus for a first deploy pipeline is completely normal and every team would land near that figure. Maybe it isn't, and this team specifically needed more hand-holding than most on something that should be closer to boilerplate. Nothing in this single showback can tell the two apart. That takes the same table from several teams, several stacks, run the same way, so the number stops being a one-off anecdote and starts being a baseline you can compare against.
 
 CI/CD isn't special here. Swap in any other "standard" line item, an onboarding script, a logging config, a Terraform module, and the same question applies, with the same honest answer: we don't know yet, and pretending the cost figure alone settles it is exactly the mistake this whole post is arguing against. That's the point in miniature, one ticket standing in for the general case: the number told me nothing by itself. The number plus the surrounding context narrowed the possibilities. Only more data, across more teams, closes the gap the rest of the way.
 
@@ -149,7 +149,7 @@ flowchart LR
 
 Phase one reads the project's stack and picks the relevant skills out of the library. Phase two runs once per selected skill: read the skill's description, read the relevant source, report any match with severity, confidence, file and line, exploit scenario, and suggested fix. Skip the skill if nothing matches.
 
-For Aurora, phase one selected 8 skills out of roughly 800. Phase two produced 8 findings. Total cost: $2.65, one session, 44K output tokens. The baseline posture was already solid, parameterized SQL, timing-safe webhook verification, JWKS with issuer and audience checks, secrets via a CSI driver, non-root container, so the findings were gaps in depth, not fundamental failures.
+For Aurora, phase one selected 8 skills out of roughly 800. Phase two produced 8 findings. Total cost: $3.05, one session, 44K output tokens. The baseline posture was already solid, parameterized SQL, timing-safe webhook verification, JWKS with issuer and audience checks, secrets via a CSI driver, non-root container, so the findings were gaps in depth, not fundamental failures.
 
 ### Eight Findings, Three Fixed, Five Documented
 
@@ -223,12 +223,12 @@ LLMs are non-deterministic by nature. That's not a defect to engineer away. The 
 
 ## Conclusion
 
-One project, three reports, and the number that actually mattered wasn't $144.25 or $2.65. It was the pattern underneath both: every good outcome had context behind it, every bad outcome had a documented, specific reason, and every AI usage figure meant something different depending on what was actually inside it.
+One project, three reports, and the number that actually mattered wasn't $139.40 or $3.05. It was the pattern underneath both: every good outcome had context behind it, every bad outcome had a documented, specific reason, and every AI usage figure meant something different depending on what was actually inside it.
 
 That's one data point. One project, one team. It's useful as a first observation and as a template for collecting the same data elsewhere, not as a verdict. The only way to make objective claims about what AI assistance looks like at scale is a series of these, across different teams, different stacks, different tasks, each one read for its contents and not just its total. Anything less is a rating without a loan file.
 
 ## Reflections
 
-I'll be honest about one thing: I don't know if $144.25 for this project, or $20.60 for that one CI/CD ticket, is a good number or a bad one. I don't have ten other teams' showbacks sitting next to this one to compare against, and this post doesn't pretend otherwise.
+I'll be honest about one thing: I don't know if $139.40 for this project, or $23.40 for that one deploy pipeline ticket, is a good number or a bad one. I don't have ten other teams' showbacks sitting next to this one to compare against, and this post doesn't pretend otherwise.
 
 What I do have is the questions the exercise forced me to ask that I wasn't asking before. Not "is this cheap," but "what actually happened in this session, and why." Writing this up made something else obvious: I'm not asking that question often enough myself, day to day, on my own AI usage. If the whole argument here is that the label isn't the diligence, that cuts both ways. It's not just a management problem. It's on me to ask it more, not less, if I want the tool to actually make the work easier instead of just running unexamined next to everything else I do.
