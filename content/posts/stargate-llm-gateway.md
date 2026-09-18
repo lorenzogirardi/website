@@ -6,9 +6,9 @@ tags:
   - ai
   - gateway
   - llm
-featuredImage: /images/herostargate.jpg
+featuredImage: /images/stargate-llm-gateway/featured.jpg
 images:
-  - "/images/herostargate.jpg"
+  - "/images/stargate-llm-gateway/featured.jpg"
 ---
 # Stargate LLM Gateway
 

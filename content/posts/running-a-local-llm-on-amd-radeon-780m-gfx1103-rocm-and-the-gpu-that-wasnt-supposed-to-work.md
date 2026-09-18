@@ -17,9 +17,9 @@ tags:
   - radeon
   - inference
   - monitoring
-featuredImage: /images/Screenshot 2026-06-07 at 13.10.19.jpg
+featuredImage: /images/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/featured.jpg
 images:
-  - "/images/Screenshot 2026-06-07 at 13.10.19.jpg"
+  - "/images/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/featured.jpg"
 ---
 ### Table of Contents
 

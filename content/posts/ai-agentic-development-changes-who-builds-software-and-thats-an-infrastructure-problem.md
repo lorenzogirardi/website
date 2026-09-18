@@ -21,9 +21,9 @@ tags:
   - ai4ai
   - contracts
   - platform contract
-featuredImage: /images/vibeenv1.0.jpg
+featuredImage: /images/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/featured.jpg
 images:
-  - "/images/vibeenv1.0.jpg"
+  - "/images/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/featured.jpg"
 ---
 ### Table of Contents
 

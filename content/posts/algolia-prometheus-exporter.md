@@ -8,9 +8,9 @@ tags:
   - opencode
   - algolia
   - "prometheus "
-featuredImage: /images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.jpg
+featuredImage: /images/algolia-prometheus-exporter/featured.jpg
 images:
-  - "/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.jpg"
+  - "/images/algolia-prometheus-exporter/featured.jpg"
 ---
 # Algolia Usage Exporter — A Case Study in AI-Assisted Tooling
 
