@@ -1840,7 +1840,7 @@ And the honest open question: is version-controlling the skill alongside the con
 URL: https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/
 Date: 2026-08-08
 Tags: ai, security, github actions, automation, python
-Description: Trivy, Checkov, pytest and kubectl each speak their own dialect, readable only if you already know that tool well. A free AI step at the end of the pipeline translates all of it into one human-readable report.
+Description: Trivy, Checkov, pytest and kubectl each speak their own dialect, readable only if you already know that tool well. A near-zero-cost AI step at the end of the pipeline translates all of it into one human-readable report.
 --------------------------------------------------------------------------------
 
 ### Table of Contents
@@ -1863,24 +1863,17 @@ Description: Trivy, Checkov, pytest and kubectl each speak their own dialect, re
 
 Here we are.
 
-My debug/test API, `pytbak`, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Every gate maps to a category of failure I have seen before, and every gate produces its own wall of technical output, in its own dialect. Trivy prints CVE tables. Checkov prints a SARIF file and rule ids. `kubectl describe` prints a paragraph of Kubernetes internals. pytest prints its own summary line. Each one is perfectly readable, if you already speak that tool fluently. Put them all in one Actions log and what you get is five monologues, none of them talking to the others, and none of them talking to you unless you already know where to look.
+My debug/test API, `pytbak`, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Nothing exotic, just the usual pile of gates everyone bolts onto a pipeline these days. And every single one of them talks a different language. Trivy prints CVE tables. Checkov spits out a SARIF file and rule ids that mean nothing unless you've memorized them. `kubectl describe` gives you a wall of Kubernetes internals. pytest just wants you to count green dots. Each of these is perfectly readable, as long as you already speak that tool. Stack them all in one Actions log and you basically get five people talking over each other, none of them talking to you, unless you already know exactly where in the wall of text to look.
 
-That's the actual itch this post scratches: not "find me a bug", but "stop making me learn five dialects to read one pipeline run".
+That's really the itch behind this post. Not "find me a bug", more like "I'm tired of switching dialects five times just to read one pipeline run".
 
 ## The Problem
 
-I don't lack tools. I have Trivy for CVEs, Checkov for Terraform/cloud misconfiguration, `kubectl` for whether my objects even parse, pytest and flake8 for the code itself. Five gates, five outputs, five vocabularies. Reading the Actions log after a run means switching mental models five times in ninety seconds: CVE severity scale, then Checkov rule ids, then Kubernetes pod conditions, then test counts, then lint codes. Nobody does that carefully every single time, which is exactly how a finding sits unread in a log nobody scrolled to the bottom of.
+It's not that I lack tools, quite the opposite. Trivy for CVEs, Checkov for the Terraform/cloud misconfigurations, `kubectl` to check my manifests even make sense, pytest and flake8 for the code itself. Five gates, five outputs, five vocabularies. To actually read an Actions log after a run you have to switch mental models over and over: CVE severity here, Checkov rule ids there, pod conditions somewhere else, then test counts, then lint codes. Nobody does that carefully every time, and that's exactly how a real finding ends up sitting unread at the bottom of a log nobody scrolled to.
 
-Goals for the solution:
+So the thing I actually wanted was simple: something that runs after all the deterministic gates, reads whatever they produced, and gives it back to me in plain language, one report, no dialect required, purely informative, never a step that can block the pipeline on its own. And it had to be cheap enough that nobody would ever think about switching it off. Not literally free, I'm running a paid model here, but the cost per run is small enough to round to nothing on a monthly bill, which for this purpose is basically the same thing.
 
-- Add a step that runs **after** all deterministic gates and reads everything they produced
-- Turn five tool-specific outputs into one human-readable report, in plain language, no dialect required
-- Make it informative only: it notes findings, it never blocks the pipeline on a whim
-- Keep it at zero dollars per month
-
-The last point matters. If the AI review costs money, it will be switched off the moment the manager notices. Free means it becomes a permanent fixture.
-
-A nice side effect, and it's the part that turned this from "a summarizer" into something worth writing about: to translate the tool output into plain language, the model also has to actually understand what each tool is saying. And once it understands it, it can connect the dots between them, and between them and the source code. That's how it ended up citing an inverted authorization check by file and line, further down in this post. It wasn't the goal. It was what "actually read the output instead of just reformatting it" gets you for free.
+There's a nice side effect too, and it's honestly the part that made this worth writing up. To translate the tool output into plain language, the model has to actually understand what each tool is saying, not just reformat it. And once it understands each piece, it starts connecting them to each other, and to the source code sitting right there. That's how it ended up pointing at an inverted authorization check, by file and line, further down in this post. That wasn't the goal going in. It's just what you get when something actually reads the output instead of copy-pasting it into a nicer font.
 
 ## Naaa... the alternatives
 
@@ -2311,7 +2304,7 @@ section = (
 )
 ```
 
-Since the free model is $0, the price is reported against the commercial counterpart, so every report shows a real economic value instead of "free".
+The model is a paid one, but the per-run cost is small enough to round to nothing on a monthly bill. The script still computes it precisely against the model's actual per-token price, so every report shows a real number instead of a shrug.
 
 ## The Report That Actually Reads Every Dialect
 
@@ -2425,11 +2418,11 @@ One change over the other, the model went from silent to finding the deliberatel
 
 ## Monitoring and Observability
 
-The step also reports token usage and estimated cost. Since a free tier model is at `$0`, I tie the price to the commercial counterpart so every report shows a true economic value, even when the provider bills zero.
+The step also reports token usage and estimated cost. It's a paid model, so this isn't a free-tier hand-wave, it's the actual per-token price times the actual tokens used, printed at the bottom of every report.
 
 ## Conclusion
 
-The actual feature here is boring on purpose: one tiny, free, always-on step that reads Trivy's table, Checkov's SARIF, kubectl's pod description, pytest's summary and the app's own source, and writes it all back as one report in plain English. No dialect required, no scrolling between five sections of a log to build the picture yourself. That it also caught a genuine inverted authorization check, the first time I let it read the source, is the bonus round: proof it was actually reading, not just reformatting.
+The actual feature here is boring on purpose: one tiny, cheap, always-on step that reads Trivy's table, Checkov's SARIF, kubectl's pod description, pytest's summary and the app's own source, and writes it all back as one report in plain English. No dialect required, no scrolling between five sections of a log to build the picture yourself. That it also caught a genuine inverted authorization check, the first time I let it read the source, is the bonus round: proof it was actually reading, not just reformatting.
 
 And, since it's the obvious joke and somebody has to make it: no, a human-readable AI summary of your CI output does not mean you get to stop reading your CI output. It means that when you do read it, you're reading one paragraph in your own language instead of five men shouting in five different ones. Read the report. Then, at least once in a while, still go read the log.
 
