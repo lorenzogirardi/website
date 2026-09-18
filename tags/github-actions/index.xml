@@ -41,4 +41,25 @@
 </ul>
 </li>
 </ul>
-<p>Well, here we are: I wanted a second reviewer on every pull request, a sanity pass on every failed pipeline, and a monthly security sweep, and I was not willing to hand a language model a write token to get any of it.</p>]]></description></item></channel></rss>
+<p>Well, here we are: I wanted a second reviewer on every pull request, a sanity pass on every failed pipeline, and a monthly security sweep, and I was not willing to hand a language model a write token to get any of it.</p>]]></description></item><item><title>Your CI Pipeline Speaks Five Languages. Here's the Translator.</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Pipeline</li>
+<li>The ai-analysis Job, Commented</li>
+<li>Downloading Results, Bundling the Source</li>
+<li>The Empty Report</li>
+<li>Downloading Artifacts, Watching the Run</li>
+<li>The AI Scripts</li>
+<li>The Report That Caught the Bug</li>
+<li>The Full Results, as an Example</li>
+<li>The Numbers</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>My debug/test API, <code>pytbak</code>, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Every gate maps to a category of failure I have seen before, and every gate produces its own wall of technical output, in its own dialect. Trivy prints CVE tables. Checkov prints a SARIF file and rule ids. <code>kubectl describe</code> prints a paragraph of Kubernetes internals. pytest prints its own summary line. Each one is perfectly readable, if you already speak that tool fluently. Put them all in one Actions log and what you get is five monologues, none of them talking to the others, and none of them talking to you unless you already know where to look.</p>]]></description></item></channel></rss>

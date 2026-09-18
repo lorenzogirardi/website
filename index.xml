@@ -102,7 +102,28 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
+<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>Your CI Pipeline Speaks Five Languages. Here's the Translator.</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Pipeline</li>
+<li>The ai-analysis Job, Commented</li>
+<li>Downloading Results, Bundling the Source</li>
+<li>The Empty Report</li>
+<li>Downloading Artifacts, Watching the Run</li>
+<li>The AI Scripts</li>
+<li>The Report That Caught the Bug</li>
+<li>The Full Results, as an Example</li>
+<li>The Numbers</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>My debug/test API, <code>pytbak</code>, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Every gate maps to a category of failure I have seen before, and every gate produces its own wall of technical output, in its own dialect. Trivy prints CVE tables. Checkov prints a SARIF file and rule ids. <code>kubectl describe</code> prints a paragraph of Kubernetes internals. pytest prints its own summary line. Each one is perfectly readable, if you already speak that tool fluently. Put them all in one Actions log and what you get is five monologues, none of them talking to the others, and none of them talking to you unless you already know where to look.</p>]]></description></item><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -263,20 +284,4 @@
 <li>Conclusion</li>
 </ul>
 <hr>
-<p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item><item><title>Monitoring Contentful Usage — Building a Prometheus Exporter Because the UI Won't Tell You</title><link>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/monitoring-contentful-usage-with-a-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/monitoring-contentful-usage-with-prometheus-exporter/image-contentful.png" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>Introduction</li>
-<li>The Problem</li>
-<li>The Architecture</li>
-<li>How It Works</li>
-<li>CLI Mode — One-Shot Reports</li>
-<li>Prometheus Mode — Continuous Monitoring</li>
-<li>Deploying on Kubernetes with Helm</li>
-<li>Grafana Dashboards</li>
-<li>Security Considerations</li>
-<li>Conclusion</li>
-<li>Reflections</li>
-</ul>
-<p>Here we are. If you&rsquo;ve ever managed a Contentful space at scale — I mean real scale, with thousands of entries, a dozen environments, and a team that publishes hourly — you&rsquo;ve hit the wall. The Contentful web app shows you&hellip; not much. A few dashboard widgets, some high-level numbers, but nothing you can export, alert on, or trend over time.</p>]]></description></item></channel></rss>
+<p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item></channel></rss>
