@@ -11,7 +11,7 @@ tags:
   - github actions
   - automation
   - python
-featuredImage: /images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg
+featuredImage: /images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/featured.jpg
 ---
 ### Table of Contents
 
