@@ -1,4 +1,25 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 07 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Git on AI Steroids: GitHub Agentic Workflows</title><link>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</link><pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 18 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Your CI Pipeline Speaks Five Languages. Here's the Translator.</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Pipeline</li>
+<li>The ai-analysis Job, Commented</li>
+<li>Downloading Results, Bundling the Source</li>
+<li>The Empty Report</li>
+<li>Downloading Artifacts, Watching the Run</li>
+<li>The AI Scripts</li>
+<li>The Report That Caught the Bug</li>
+<li>The Full Results, as an Example</li>
+<li>The Numbers</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>My debug/test API, <code>pytbak</code>, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Nothing exotic, just the usual pile of gates everyone bolts onto a pipeline these days. And every single one of them talks a different language. Trivy prints CVE tables. Checkov spits out a SARIF file and rule ids that mean nothing unless you&rsquo;ve memorized them. <code>kubectl describe</code> gives you a wall of Kubernetes internals. pytest just wants you to count green dots. Each of these is perfectly readable, as long as you already speak that tool. Stack them all in one Actions log and you basically get five people talking over each other, none of them talking to you, unless you already know exactly where in the wall of text to look.</p>]]></description></item><item><title>Git on AI Steroids: GitHub Agentic Workflows</title><link>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</link><pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/github-agentic-workflows-git-on-ai-steroids/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -102,28 +123,7 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>Your CI Pipeline Speaks Five Languages. Here's the Translator.</title><link>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</link><pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-security-review-finds-the-bug-ci-gates-missed/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>The Problem</li>
-<li>Naaa&hellip; the alternatives</li>
-<li>The Pipeline</li>
-<li>The ai-analysis Job, Commented</li>
-<li>Downloading Results, Bundling the Source</li>
-<li>The Empty Report</li>
-<li>Downloading Artifacts, Watching the Run</li>
-<li>The AI Scripts</li>
-<li>The Report That Caught the Bug</li>
-<li>The Full Results, as an Example</li>
-<li>The Numbers</li>
-<li>Security Considerations</li>
-<li>Monitoring and Observability</li>
-<li>Conclusion</li>
-<li>Reflections</li>
-</ul>
-<p>Here we are.</p>
-<p>My debug/test API, <code>pytbak</code>, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Nothing exotic, just the usual pile of gates everyone bolts onto a pipeline these days. And every single one of them talks a different language. Trivy prints CVE tables. Checkov spits out a SARIF file and rule ids that mean nothing unless you&rsquo;ve memorized them. <code>kubectl describe</code> gives you a wall of Kubernetes internals. pytest just wants you to count green dots. Each of these is perfectly readable, as long as you already speak that tool. Stack them all in one Actions log and you basically get five people talking over each other, none of them talking to you, unless you already know exactly where in the wall of text to look.</p>]]></description></item><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
+<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
