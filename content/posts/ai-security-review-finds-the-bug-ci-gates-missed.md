@@ -1,5 +1,5 @@
 ---
-title: Your CI Pipeline Speaks Five Languages. Here's the Translator.
+title: Your CI Pipeline Speaks Too Many Languages. Here's the Translator.
 date: 2026-09-18
 draft: false
 description: Trivy, Checkov, pytest and kubectl each speak their own dialect,
@@ -33,13 +33,13 @@ featuredImage: /images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg
 
 Here we are.
 
-My debug/test API, `pytbak`, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Nothing exotic, just the usual pile of gates everyone bolts onto a pipeline these days. And every single one of them talks a different language. Trivy prints CVE tables. Checkov spits out a SARIF file and rule ids that mean nothing unless you've memorized them. `kubectl describe` gives you a wall of Kubernetes internals. pytest just wants you to count green dots. Each of these is perfectly readable, as long as you already speak that tool. Stack them all in one Actions log and you basically get five people talking over each other, none of them talking to you, unless you already know exactly where in the wall of text to look.
+My debug/test API, `pytbak`, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Nothing exotic, just the usual pile of gates everyone bolts onto a pipeline these days. And every single one of them talks a different language. Trivy prints CVE tables. Checkov spits out a SARIF file and rule ids that mean nothing unless you've memorized them. `kubectl describe` gives you a wall of Kubernetes internals. pytest just wants you to count green dots. Each of these is perfectly readable, as long as you already speak that tool. Stack them all in one Actions log and you basically get a bunch of people talking over each other, none of them talking to you, unless you already know exactly where in the wall of text to look.
 
-That's really the itch behind this post. Not "find me a bug", more like "I'm tired of switching dialects five times just to read one pipeline run".
+That's really the itch behind this post. Not "find me a bug", more like "I'm tired of switching dialects over and over just to read one pipeline run".
 
 ## The Problem
 
-It's not that I lack tools, quite the opposite. Trivy for CVEs, Checkov for the Terraform/cloud misconfigurations, `kubectl` to check my manifests even make sense, pytest and flake8 for the code itself. Five gates, five outputs, five vocabularies. To actually read an Actions log after a run you have to switch mental models over and over: CVE severity here, Checkov rule ids there, pod conditions somewhere else, then test counts, then lint codes. Nobody does that carefully every time, and that's exactly how a real finding ends up sitting unread at the bottom of a log nobody scrolled to.
+It's not that I lack tools, quite the opposite. Trivy for CVEs, Checkov for the Terraform/cloud misconfigurations, `kubectl` to check my manifests even make sense, pytest and flake8 for the code itself, and there's room to add more. Every gate, its own output, its own vocabulary. To actually read an Actions log after a run you have to switch mental models over and over: CVE severity here, Checkov rule ids there, pod conditions somewhere else, then test counts, then lint codes. Nobody does that carefully every time, and that's exactly how a real finding ends up sitting unread at the bottom of a log nobody scrolled to.
 
 So the thing I actually wanted was simple: something that runs after all the deterministic gates, reads whatever they produced, and gives it back to me in plain language, one report, no dialect required, purely informative, never a step that can block the pipeline on its own. And it had to be cheap enough that nobody would ever think about switching it off. Not literally free, I'm running a paid model here, but the cost per run is small enough to round to nothing on a monthly bill, which for this purpose is basically the same thing.
 
@@ -478,7 +478,7 @@ The model is a paid one, but the per-run cost is small enough to round to nothin
 
 ## The Report That Actually Reads Every Dialect
 
-Here's the proof that "translate five tools into one report" is a different thing from "paste five tools into one file". The summary table at the top, as it appeared in the report, is the whole pipeline's result in one glance, no CVE scale or rule id required:
+Here's the proof that "translate every tool into one report" is a different thing from "paste every tool's output into one file". The summary table at the top, as it appeared in the report, is the whole pipeline's result in one glance, no CVE scale or rule id required:
 
 
 | Stage | Result |
@@ -592,9 +592,9 @@ The step also reports token usage and estimated cost. It's a paid model, so this
 
 ## Conclusion
 
-The actual feature here is boring on purpose: one tiny, cheap, always-on step that reads Trivy's table, Checkov's SARIF, kubectl's pod description, pytest's summary and the app's own source, and writes it all back as one report in plain English. No dialect required, no scrolling between five sections of a log to build the picture yourself. That it also caught a genuine inverted authorization check, the first time I let it read the source, is the bonus round: proof it was actually reading, not just reformatting.
+The actual feature here is boring on purpose: one tiny, cheap, always-on step that reads Trivy's table, Checkov's SARIF, kubectl's pod description, pytest's summary and the app's own source, and writes it all back as one report in plain English. No dialect required, no scrolling between a dozen sections of a log to build the picture yourself. That it also caught a genuine inverted authorization check, the first time I let it read the source, is the bonus round: proof it was actually reading, not just reformatting.
 
-And, since it's the obvious joke and somebody has to make it: no, a human-readable AI summary of your CI output does not mean you get to stop reading your CI output. It means that when you do read it, you're reading one paragraph in your own language instead of five men shouting in five different ones. Read the report. Then, at least once in a while, still go read the log.
+And, since it's the obvious joke and somebody has to make it: no, a human-readable AI summary of your CI output does not mean you get to stop reading your CI output. It means that when you do read it, you're reading one paragraph in your own language instead of a room full of tools shouting in their own. Read the report. Then, at least once in a while, still go read the log.
 
 ## Reflections
 
