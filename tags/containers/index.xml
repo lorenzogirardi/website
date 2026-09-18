@@ -45,7 +45,7 @@
 <li>Reflections</li>
 </ul>
 <p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/vibeenv1.0.jpg" referrerpolicy="no-referrer">
+                <img src="/images/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Shift Is Already Happening</li>

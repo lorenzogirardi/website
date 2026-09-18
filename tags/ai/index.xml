@@ -200,7 +200,7 @@
 <li>Conclusion</li>
 </ul>
 <p>Strange&hellip; an AI assistant that talks less should cost less. Obvious, right? I wanted a number, not a vibe.</p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/vibeenv1.0.jpg" referrerpolicy="no-referrer">
+                <img src="/images/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
 <li>The Shift Is Already Happening</li>
@@ -234,7 +234,7 @@
 </ul>
 <hr>
 <p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item><item><title>Algolia prometheus exporter</title><link>https://www.k8s.it/posts/algolia-prometheus-exporter/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/algolia-prometheus-exporter/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/Gemini_Generated_Image_u9oq1ru9oq1ru9oq.jpg" referrerpolicy="no-referrer">
+                <img src="/images/algolia-prometheus-exporter/featured.jpg" referrerpolicy="no-referrer">
             </div><h1 id="algolia-usage-exporter--a-case-study-in-ai-assisted-tooling">Algolia Usage Exporter — A Case Study in AI-Assisted Tooling</h1>
 <h2 id="what-is-this">What is this?</h2>
 <p>A lightweight Prometheus exporter that collects usage and infrastructure metrics from the Algolia search API and exposes them at <code>/metrics</code> for Prometheus / Datadog scraping.</p>
@@ -245,7 +245,7 @@
 <li><strong>Health signals</strong>: scrape success status, timestamps</li>
 </ul>
 <p>The entire project lives in a single Python package with ~50KB of code, a Helm chart for Kubernetes deployment, and full test coverage across unit, integration, and e2e layers.</p>]]></description></item><item><title>Stargate LLM Gateway</title><link>https://www.k8s.it/posts/stargate-llm-gateway/</link><pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/stargate-llm-gateway/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/herostargate.jpg" referrerpolicy="no-referrer">
+                <img src="/images/stargate-llm-gateway/featured.jpg" referrerpolicy="no-referrer">
             </div><h1 id="stargate-llm-gateway">Stargate LLM Gateway</h1>
 <p>
 </p>
@@ -263,7 +263,7 @@
 </ul>
 <hr>
 <h2 id="overview">Overview</h2>
-<div class="mermaid" id="id-18">flowchart LR
+<div class="mermaid" id="id-16">flowchart LR
     subgraph Clients
         cc[Claude Code]
         api[API Clients]
@@ -351,7 +351,7 @@
 <hr>
 <h2 id="architecture">Architecture</h2>
 <h3 id="request-flow">Request Flow</h3>
-<div class="mermaid" id="id-19">sequenceDiagram
+<div class="mermaid" id="id-17">sequenceDiagram
     participant Client as Claude Code
     participant CF as CloudFront
     participant LiteLLM as LiteLLM Proxy
@@ -376,7 +376,7 @@
     end
 
     VM-&gt;&gt;LiteLLM: Scrape /metrics/</div><h3 id="deployment-architecture">Deployment Architecture</h3>
-<div class="mermaid" id="id-20">flowchart TB
+<div class="mermaid" id="id-18">flowchart TB
     subgraph Internet
         clients[Claude Code / API Clients]
     end
@@ -422,7 +422,7 @@
     style cf fill:#ffcccc,stroke:#ff0000
     style rds fill:#336791,color:#fff
     style langfuse fill:#e6f3ff</div><h3 id="security-model">Security Model</h3>
-<div class="mermaid" id="id-21">flowchart TB
+<div class="mermaid" id="id-19">flowchart TB
     subgraph Public[&#34;Public Access (CloudFront)&#34;]
         chat[&#34;/v1/chat/completions ✅&#34;]
         models[&#34;/v1/models ✅&#34;]
