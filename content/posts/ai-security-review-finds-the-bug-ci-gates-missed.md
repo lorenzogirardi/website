@@ -1,10 +1,10 @@
 ---
 title: Your CI Pipeline Speaks Five Languages. Here's the Translator.
-date: 2026-08-08
+date: 2026-09-18
 draft: false
 description: Trivy, Checkov, pytest and kubectl each speak their own dialect,
-  readable only if you already know that tool well. A near-zero-cost AI step at the end
-  of the pipeline translates all of it into one human-readable report.
+  readable only if you already know that tool well. A near-zero-cost AI step at
+  the end of the pipeline translates all of it into one human-readable report.
 tags:
   - ai
   - security
