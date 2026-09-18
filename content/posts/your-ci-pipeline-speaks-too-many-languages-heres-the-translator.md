@@ -314,7 +314,7 @@ The script treats a genuinely empty reply as an error, not a success. That's the
 
 This run, the one that finally produced the report, is the one in the screenshot. The pipeline shows all the jobs, from `build` through the AI, and its green after my change:
 
-![Pipeline run with the AI job green](/images/ai-security-review-finds-the-bug-ci-gates-missed/01-pipeline-jobs-and-docker-summary.png)
+![Pipeline run with the AI job green](/images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/01-pipeline-jobs-and-docker-summary.png)
 
 The screenshot was taken from the run. Aside from the jobs, it shows a side-effect I didn't plan: StepSecurity's Hardened Runner auditing the network egress of every step. Not useful for the report, but a good habit for anything that talks to an external LLM API.
 
@@ -512,13 +512,13 @@ The model also triaged, in the same report:
 - the Trivy findings for the Debian base image
 - the Kubernetes probe that the pod was ready, but the HTTP probe returned `405 Method Not Allowed`
 
-![AI report, high severity and summary](/images/ai-security-review-finds-the-bug-ci-gates-missed/02-ai-report-part1.png)
+![AI report, high severity and summary](/images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/02-ai-report-part1.png)
 
-![AI report, code quality and false positives](/images/ai-security-review-finds-the-bug-ci-gates-missed/03-ai-report-part2.png)
+![AI report, code quality and false positives](/images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/03-ai-report-part2.png)
 
 And the context artifacts downloaded from all the gate jobs:
 
-![The gate context artifacts](/images/ai-security-review-finds-the-bug-ci-gates-missed/04-artifacts-context.png)
+![The gate context artifacts](/images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/04-artifacts-context.png)
 
 It wasn't only the exact finding I was after. The report ran a full sweep: SQLi, mass assignment, SSRF, hardcoded tokens, DoS paths, and it flagged a "False positives" section for code that looked alarming but was safe. That section is the sign of a mature reviewer: it distinguished the actual bug from the noise.
 
