@@ -1,9 +1,10 @@
 ---
-title: AI Security Review Finds the Bug Your CI Gates Missed
+title: Your CI Pipeline Speaks Five Languages. Here's the Translator.
 date: 2026-08-08
-draft: true
-description: Learn how to add a free AI security review to a CI pipeline that
-  runs after the deterministic gates and eats their results as context.
+draft: false
+description: Trivy, Checkov, pytest and kubectl each speak their own dialect,
+  readable only if you already know that tool well. A free AI step at the end
+  of the pipeline translates all of it into one human-readable report.
 tags:
   - ai
   - security
@@ -32,24 +33,24 @@ featuredImage: /images/Gemini_Generated_Image_cm9tiacm9tiacm9t.jpeg
 
 Here we are.
 
-My debug/test API, `pytbak`, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Every gate maps to a category of failure I have seen before. And yet, I kept being bothered by one specific class of bug, the one that no scanner materializes out of thin air, because it lives in my logic and not in a CVE database.
+My debug/test API, `pytbak`, runs a proper CI: unit tests, linting, a Docker build, Trivy scanning, Checkov, a Kubernetes syntax check. Every gate maps to a category of failure I have seen before, and every gate produces its own wall of technical output, in its own dialect. Trivy prints CVE tables. Checkov prints a SARIF file and rule ids. `kubectl describe` prints a paragraph of Kubernetes internals. pytest prints its own summary line. Each one is perfectly readable, if you already speak that tool fluently. Put them all in one Actions log and what you get is five monologues, none of them talking to the others, and none of them talking to you unless you already know where to look.
 
-Strange, how we run five deterministic checks and still push an inverted access control to production?
+That's the actual itch this post scratches: not "find me a bug", but "stop making me learn five dialects to read one pipeline run".
 
 ## The Problem
 
-Security scanners are good at known unknowns. Trivy knows the CVE database, Checkov knows the Terraform/cloud misconfiguration patterns, `kubectl` knows my objects don't parse. Nothing knows that `if admin_token == OPERATOR_TOKEN: raise 403` is an inverted gate that hands the data to everyone except the operator.
-
-That's a logical vulnerability. It bypasses controls and leaks data, and it has no CVE, because I wrote it five minutes ago.
+I don't lack tools. I have Trivy for CVEs, Checkov for Terraform/cloud misconfiguration, `kubectl` for whether my objects even parse, pytest and flake8 for the code itself. Five gates, five outputs, five vocabularies. Reading the Actions log after a run means switching mental models five times in ninety seconds: CVE severity scale, then Checkov rule ids, then Kubernetes pod conditions, then test counts, then lint codes. Nobody does that carefully every single time, which is exactly how a finding sits unread in a log nobody scrolled to the bottom of.
 
 Goals for the solution:
 
-- Add a security review step that runs **after** all deterministic gates
-- Feed it the artifacts those gates produce (Trivy, Checkov, k8s probe) as context
-- Make it informative: it notes findings, it never blocks the pipeline on a whim
+- Add a step that runs **after** all deterministic gates and reads everything they produced
+- Turn five tool-specific outputs into one human-readable report, in plain language, no dialect required
+- Make it informative only: it notes findings, it never blocks the pipeline on a whim
 - Keep it at zero dollars per month
 
 The last point matters. If the AI review costs money, it will be switched off the moment the manager notices. Free means it becomes a permanent fixture.
+
+A nice side effect, and it's the part that turned this from "a summarizer" into something worth writing about: to translate the tool output into plain language, the model also has to actually understand what each tool is saying. And once it understands it, it can connect the dots between them, and between them and the source code. That's how it ended up citing an inverted authorization check by file and line, further down in this post. It wasn't the goal. It was what "actually read the output instead of just reformatting it" gets you for free.
 
 ## Naaa... the alternatives
 
@@ -482,9 +483,9 @@ section = (
 
 Since the free model is $0, the price is reported against the commercial counterpart, so every report shows a real economic value instead of "free".
 
-## The Report That Caught the Bug
+## The Report That Actually Reads Every Dialect
 
-Here's the proof. The report the AI produced, and it swallowed the injected bug whole, citing the exact line. The summary table at the top, as it appeared in the report:
+Here's the proof that "translate five tools into one report" is a different thing from "paste five tools into one file". The summary table at the top, as it appeared in the report, is the whole pipeline's result in one glance, no CVE scale or rule id required:
 
 
 | Stage | Result |
@@ -598,7 +599,9 @@ The step also reports token usage and estimated cost. Since a free tier model is
 
 ## Conclusion
 
-A logical vulnerability, no CVE, in your own code, is the one thing that static scanners and container scans can't find. A tiny, free, always-on second reviewer, that consumes the whole pipeline's output at the end, caught mine the first time I let it read the source. It didn't invent it, it read the inverted operator. The secret is that the AI reads everything the gate already read, plus the source, and it writes the report as an informative artifact, not as a gate that decides whether to deploy.
+The actual feature here is boring on purpose: one tiny, free, always-on step that reads Trivy's table, Checkov's SARIF, kubectl's pod description, pytest's summary and the app's own source, and writes it all back as one report in plain English. No dialect required, no scrolling between five sections of a log to build the picture yourself. That it also caught a genuine inverted authorization check, the first time I let it read the source, is the bonus round: proof it was actually reading, not just reformatting.
+
+And, since it's the obvious joke and somebody has to make it: no, a human-readable AI summary of your CI output does not mean you get to stop reading your CI output. It means that when you do read it, you're reading one paragraph in your own language instead of five men shouting in five different ones. Read the report. Then, at least once in a while, still go read the log.
 
 ## Reflections
 
