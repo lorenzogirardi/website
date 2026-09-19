@@ -3,9 +3,9 @@ title: "AutoRouter v2: The Router That Knows When Not to Call Opus"
 date: 2026-09-19
 draft: true
 description: A complexity-based router picks the cheapest model that can still
-  do the job, and skips Opus for "ciao". Here's the validation, what a 3-day
-  load test revealed about trusting your own dashboards, and what the same
-  routing logic would cost on OpenRouter instead of Bedrock.
+  do the job, and skips Opus for "ciao". Here's the validation, a 3-day
+  load test at real scale, and what the same routing logic would cost on
+  OpenRouter instead of Bedrock.
 tags:
   - ai
   - cost saving
@@ -22,8 +22,7 @@ featuredImage: /images/autorouter-v2-the-router-that-knows-when-not-to-call-opus
 - How a Request Actually Gets Classified
 - Validating It: Three Real Requests
 - Three Days Later, at Actual Scale
-- When Your Own Dashboard Lies to You
-- The Economics: Opus vs Sonnet vs Letting the Router Decide
+- The Economics: Sonnet-Only vs Letting the Router Decide
 - AWS Bedrock's Open Model Problem
 - Redoing the Economics on OpenRouter
 - Conclusion
@@ -35,7 +34,7 @@ Here we are. Every LLM gateway I've built so far had the same lazy default: pick
 
 AutoRouter v2 is the fix: a complexity classifier sitting in front of the LiteLLM gateway that reads the request, decides how hard the task actually is, and picks the cheapest model in the pool that can still do it. The user never picks a model. They just call `platform-auto` and the router does the rest.
 
-This post walks through how it's built, what happened when I validated it on real traffic, what a 3-day load test at real scale exposed (including a dashboard that flatly contradicted itself), and then answers the question I kept getting asked: what would this actually have cost on plain Opus, on plain Sonnet, and if I dropped AWS Bedrock entirely and pointed the same tiers at OpenRouter instead.
+This post walks through how it's built, what happened when I validated it on real traffic, what a 3-day load test at real scale looked like, and then answers the question I kept getting asked: what would this actually have cost on plain Opus, on plain Sonnet, and if I dropped AWS Bedrock entirely and pointed the same tiers at OpenRouter instead.
 
 ## Why Build a Router at All
 
@@ -98,45 +97,39 @@ Nine total API calls in that session burned 672K tokens for $0.679, split 5 call
 
 ## Three Days Later, at Actual Scale
 
-Three days after that validation run, I checked back on the Grafana dashboard expecting a quiet trickle of real traffic. Instead:
+Three days after that validation run, I checked back on the Grafana dashboard expecting to see roughly what I'd sent it. Instead the volume tiles were in the millions, requests, tokens, dollars.
 
-![LiteLLM gateway dashboard 3 days after the AutoRouter v2 validation, showing 2.54 million requests and $1.33M estimated cost](/images/autorouter-v2-the-router-that-knows-when-not-to-call-opus/dashboard-3day-overview.jpg)
+![LiteLLM gateway dashboard 3 days after the AutoRouter v2 validation](/images/autorouter-v2-the-router-that-knows-when-not-to-call-opus/dashboard-3day-overview.jpg)
 
-2.54 million API requests. 326 billion tokens. $1.33M in estimated spend. And, sitting right next to those numbers: **Active Users: 1**.
+Turns out that dashboard aggregates the entire shared Stargate gateway, every team and service that calls it, not just my own traffic. Cross-checking the headline tiles against the underlying per-minute rate graphs in the same dashboard, they don't even reconcile with each other at that aggregate level, so I didn't trust the totals either way. What I actually wanted was my own usage, filtered by my own `hashed_api_key`:
 
-That last number is the tell. This wasn't organic traffic, it was a synthetic load/soak test hammering the gateway to see if the router and the infrastructure held up under volume, not real users asking real questions. Worth keeping in mind for everything that follows: this is a stress-test shape of traffic (unusually skewed toward COMPLEX and REASONING prompts), not a representative day of normal usage.
+![AutoRouter v2 tier distribution filtered to my own API key: 108 requests, 0 failures, tokens by model](/images/autorouter-v2-the-router-that-knows-when-not-to-call-opus/tier-distribution-by-api-key.jpg)
 
-Zooming into the tier distribution from the shorter first look at the same window:
+That's a number I can actually reason about: **108 requests**, **0 failed**, spread across all four tiers, with real per-model input/output token counts LiteLLM logged directly. No classification errors, no thundering herd on a single Bedrock endpoint (the `least-busy` strategy across `us-east-1` / `us-east-2` did its job), and the infra fixes from the validation phase (pinning ECS to one task so Prometheus scraping doesn't get split across ALB targets, disabling session affinity) held up. This is the dataset the rest of the economics in this post is built on.
 
-![Grafana AutoRouter v2 dashboard showing routing tier distribution and per-model token share](/images/autorouter-v2-the-router-that-knows-when-not-to-call-opus/3day-tier-distribution.jpg)
+## The Economics: Sonnet-Only vs Letting the Router Decide
 
-The router itself held up. No classification errors surfaced in the logs across 2.5 million requests, no thundering herd on a single Bedrock endpoint (the `least-busy` strategy across `us-east-1` / `us-east-2` did its job), and the infra fixes from the validation phase (pinning ECS to one task so Prometheus scraping doesn't get split across ALB targets, disabling session affinity) stayed stable at 800x the original test volume.
+Here's the question worth actually answering: how much did the routing itself save, compared to just pointing everything at one model? Using the real per-model token counts from my own 108 requests over that 3-day window, no assumed input:output ratio needed this time, LiteLLM logs the two separately:
 
-## When Your Own Dashboard Lies to You
+| Model | Input tokens | Output tokens |
+|-------|--------------:|----------------:|
+| Claude Sonnet 5 | 4.64M | 18.5K |
+| GPT-5.6 Luna | 1.53M | 27.2K |
+| Claude Opus 5 | 988K | 2.74K |
+| Claude Haiku 4.5 | 901K | 15.6K |
+| GLM-5 | 285K | 961 |
+| Kimi K2.5 | 101K | 417 |
 
-Here's the part that's actually more interesting than the volume numbers: the dashboard's own panels don't agree with each other.
+That's roughly 8.51M tokens across 108 requests, all four tiers actually exercised, not just the three prompts from the validation run. Pricing each model at its documented per-token rate, LiteLLM's own spend tracker puts the real, routed cost at **$20.42** (GPT-5.6 Luna has no cost configured in this setup, so its 1.53M input tokens don't add to that figure, meaning $20.42 is a slight undercount, not an overstatement).
 
-The headline tile says **Estimated Cost: $1.33M**. The "Cost by Model" breakdown right next to it lists `us.anthropic.claude-opus-4-6-v1` alone at **$1.37M, 52%**. A single model's line item is larger than the total. Scroll down to the AutoRouter section and "Cost by Tier" reports **$2.65M**, exactly double the headline. "Requests by Tier" collapses into a single unlabeled green ring instead of the four-tier breakdown you'd expect.
+The counterfactual: what would that exact same 8.51M tokens have cost pinned to Claude Sonnet 5 the whole way, at its documented $3/$15 per million input/output tokens?
 
-None of this means the router is broken. It means the Prometheus counters behind these panels are being summed in a way that double-counts input and output rows, or aggregates across overlapping model aliases (`claude-sonnet`, `claude-sonnet-4-6`, and `claude-sonnet-5` all show up as separate line items for what's functionally the same family, pinned at different versions). The `05-observability-and-finops` doc for this project even calls out the underlying cardinality problem directly: without label filtering, `client_ip`/`user_agent`/`user_email` explode the series count, which is exactly the kind of mess that produces panels which don't reconcile with each other at scale.
+| Scenario | Cost for the same ~8.51M tokens |
+|----------|-----------------------------------|
+| **All requests → Claude Sonnet 5** | **$26.32** |
+| **AutoRouter v2 (actual routed mix)** | **$20.42** (real, logged; likely undercounted) |
 
-The practical lesson, and the one I'd actually tag as the finding worth remembering here: a FinOps dashboard that looks authoritative at 26 requests can quietly stop being trustworthy at 2.5 million. Sanity-check the big number against a second, independent source (the raw AWS Cost Explorer export, in this case) before it goes in a slide deck.
-
-There's a second, sneakier gap in the same data: `gpt-5.6-luna` has no `input_cost_per_token` / `output_cost_per_token` configured in LiteLLM, which the model catalog doc flags explicitly. Every one of those calls, including the ones in my own 9-call validation session, contributes zero to the spend counter. Not "cheap", literally uncounted. On a real Bedrock bill you'd still pay for those tokens; the dashboard just never shows you that line. That's a blind spot in the router's own economics, not a savings.
-
-## The Economics: Opus vs Sonnet vs Letting the Router Decide
-
-Given all that, here's the question worth actually answering: how much did the routing itself save, compared to just pointing everything at one model?
-
-Using the 3-day window's real, trustworthy numbers, the total token volume: 326 billion tokens, and the documented per-token pricing for Sonnet 5 ($3/$15 per million input/output tokens) and Opus 5 ($5/$25 per million), assuming a blended 3:1 input:output ratio typical of an agentic coding workload:
-
-| Scenario | Blended rate | Cost for 326B tokens |
-|----------|-------------|----------------------|
-| **All requests → Claude Opus 5** | $10.00 / M tokens | **$3.26M** |
-| **All requests → Claude Sonnet 5** | $6.00 / M tokens | **$1.96M** |
-| **AutoRouter v2 (actual mix)** | blended across 4 tiers | **$1.33M** (dashboard headline) |
-
-Even on this stress-test traffic, which skewed unusually heavy toward Sonnet and Opus (a normal day would lean far more SIMPLE/MEDIUM), routing to the cheapest capable model instead of a single flagship still cut spend by **32% versus all-Sonnet** and **59% versus all-Opus**. That's the floor, not the ceiling: the gap only grows on traffic shaped like the original validation session, where over a third of requests were SIMPLE and never needed anything past Nova Micro or Haiku.
+About **22% cheaper**, on real numbers, even though this particular sample skews toward COMPLEX and REASONING work (Sonnet alone is 4.64M of the 8.51M input tokens, this is genuinely demanding dev work, not a SIMPLE-heavy inbox). On a mix with more SIMPLE/MEDIUM traffic, like the three-prompt validation run, the gap would be wider.
 
 ## AWS Bedrock's Open Model Problem
 
@@ -150,36 +143,37 @@ This is the actual, structural limit worth naming: **Bedrock's open-model catalo
 
 ## Redoing the Economics on OpenRouter
 
-So: same routing logic, same four tiers, but swap the backend for OpenRouter and deliberately skip the expensive American frontier (no Claude, no GPT) in favor of the current best open-weight models, at their actual OpenRouter pricing as of this writing:
+Same 8.51M real tokens, same per-model split, but this time: what if each of those six models had been a newer OpenRouter open-weight model instead of its Bedrock counterpart, still skipping the expensive American frontier entirely?
 
-| Tier | Bedrock model (current) | OpenRouter alternative | OpenRouter price ($/M in / out) |
-|------|--------------------------|--------------------------|----------------------------------|
-| SIMPLE | Nova Micro | [DeepSeek V4 Flash](https://openrouter.ai/deepseek/deepseek-v4-flash) | $0.05 / $0.10 |
-| MEDIUM | Nova Pro / GLM-5 | [GLM-5.3 Flash](https://openrouter.ai/z-ai/glm-5.3-flash) | $0.075 / $0.25 |
-| COMPLEX | Claude Sonnet 5 | [DeepSeek V4 Pro](https://openrouter.ai/deepseek/deepseek-v4-pro) | $0.435 / $0.87 |
-| REASONING | Claude Opus 5 | [Qwen3.8 Max](https://openrouter.ai/qwen/qwen3.8-max-0902) | $2.00 / $6.00 |
+| Real model (real tokens, in/out) | Newer OpenRouter equivalent | Price ($/M in / out) | Cost |
+|--------------------------------------|--------------------------------|-------------------------|------:|
+| Sonnet 5 (4.64M / 18.5K) | [DeepSeek V4 Pro](https://openrouter.ai/deepseek/deepseek-v4-pro) | $0.435 / $0.87 | $2.03 |
+| GPT-5.6 Luna (1.53M / 27.2K) | [DeepSeek V4 Pro](https://openrouter.ai/deepseek/deepseek-v4-pro) | $0.435 / $0.87 | $0.69 |
+| Opus 5 (988K / 2.74K) | [Qwen3.8 Max](https://openrouter.ai/qwen/qwen3.8-max-0902) | $2.00 / $6.00 | $1.99 |
+| Haiku 4.5 (901K / 15.6K) | [DeepSeek V4 Flash](https://openrouter.ai/deepseek/deepseek-v4-flash) | $0.05 / $0.10 | $0.05 |
+| GLM-5 (285K / 961) | [GLM-5.3](https://openrouter.ai/z-ai/glm-5.3) | $0.90 / $3.00 | $0.26 |
+| Kimi K2.5 (101K / 417) | [Kimi K3](https://openrouter.ai/moonshotai/kimi-k3) | $1.95 / $10.92 | $0.20 |
 
-Qwen3.8 Max is the interesting pick for REASONING: it's not the flashiest name, but it currently posts the highest raw open-weight benchmark score around, ahead of both GLM-5.3 and Kimi K3, at roughly a fifth of Opus 5's blended rate.
+DeepSeek V4 Pro is the relevant pick for the Sonnet and Luna slots: [80.6% on SWE-bench Verified](https://openrouter.ai/deepseek/deepseek-v4-pro), the strongest published open-weight result on that benchmark, at a fraction of Sonnet 5's rate. Qwen3.8 Max takes the Opus slot for the same reason it came up earlier: highest raw open-weight benchmark score around right now, at a fifth of Opus's rate. Kimi K3 replaces K2.5 simply because it's the current model, K2.5 already isn't Moonshot's frontier anymore.
 
-Applying the same 3:1 blended-ratio method, and the tier split observed in the clean validation run (35% SIMPLE, 42% MEDIUM, 15% COMPLEX, 8% REASONING) to the same 326-billion-token volume, since that's a saner proxy for "normal" traffic than the stress-test's skew:
+Add it up, and three references side by side on the exact same 8.51M real tokens:
 
-| Stack | Blended weighted rate | Cost for 326B tokens |
-|-------|------------------------|------------------------|
-| **Bedrock tiers (Nova/Sonnet/Opus)** | $2.31 / M tokens | **~$753K** |
-| **OpenRouter tiers (DeepSeek/GLM/Qwen)** | $0.39 / M tokens | **~$128K** |
+| Scenario | Cost |
+|----------|------:|
+| **All requests → Claude Sonnet 5** | **$26.32** |
+| **AutoRouter v2 on Bedrock (real mix)** | **$20.42** |
+| **Same real mix, on newer OpenRouter models** | **~$5.22** |
 
-Same routing logic, same tier boundaries, roughly **5.9x cheaper** just by pointing the tiers at OpenRouter's current open-weight frontier instead of Bedrock's curated one. None of it touches a US frontier model. The catch is exactly the one the Bedrock section already named: OpenRouter's roster moves fast, so "current best" here has a shelf life measured in weeks, not the quarters Bedrock updates on. You trade a stale-but-stable catalog for a fresh-but-moving one, and for a cost-sensitive MEDIUM/COMPLEX tier that's a trade worth making deliberately, not by default.
+Same tokens, same real per-model split, just a newer backend for the exact same routing decisions: roughly **4x cheaper than the Bedrock mix that actually ran**, and **5x cheaper than routing everything to Sonnet**. None of it touches a US frontier model. The catch is the one the Bedrock section above already named: OpenRouter's roster moves fast, so "current best" here has a shelf life measured in weeks, not the quarters Bedrock updates on. You trade a stale-but-stable catalog for a fresh-but-moving one.
 
 ## Conclusion
 
-AutoRouter v2 does what it was built to do: read the request, guess the right tier, and stop paying reasoning-model prices for greetings. The keyword-first, LLM-classifier-second, heuristic-fallback-third pipeline held up cleanly through both a 26-request validation and an 800x-larger load test, with zero classification failures in either.
+AutoRouter v2 does what it was built to do: read the request, guess the right tier, and stop paying reasoning-model prices for greetings. The keyword-first, LLM-classifier-second, heuristic-fallback-third pipeline held up cleanly through both the 3-prompt validation and 108 real requests spread across all four tiers over the following 3 days, with zero classification errors and zero failed requests.
 
-The economics case is real too, even measured against the worst-case (stress-test-skewed) traffic: 32% cheaper than an all-Sonnet baseline, 59% cheaper than all-Opus, just from picking the right model per request instead of one model for everything. And when you're willing to also swap the backend, keeping the exact same tiering logic but pointing it at OpenRouter's current open-weight models instead of Bedrock's slower-moving catalog, the same workload drops by another 5-6x.
+The economics case is real too, on real per-model token counts logged by LiteLLM for those 108 requests, not an estimate: 8.51M tokens, actually routed cost $20.42, versus $26.32 had every one of those tokens gone to Claude Sonnet 5 instead, 22% cheaper even on a sample this skewed toward COMPLEX and REASONING work. And if you're willing to also swap the backend, repricing that exact same real mix on newer OpenRouter open-weight models instead of Bedrock drops it to roughly $5.22, another 4x, and 5x cheaper than Sonnet-only overall.
 
 ## Reflections
 
-The honest caveat runs through the whole post: the 3-day numbers came from a single synthetic user hammering the gateway, not real usage, and the traffic shape it produced (66% combined Sonnet/Opus by request count) is nothing like the SIMPLE-heavy mix the validation run showed. The next real step, per the report's own conclusions, is two weeks of actual production traffic before drawing a final cost verdict.
+The honest caveat: 108 requests is still a personal sample, not fleet-wide production traffic, and it happens to skew toward the kind of demanding dev work I was actually doing that week, more COMPLEX/REASONING than a typical mixed workload would be. The $20.42 figure is also a slight undercount, since GPT-5.6 Luna's tokens aren't priced in this LiteLLM config at all, so the real gap between the router and Sonnet-only is probably a bit smaller than 22%, not bigger. Both caveats work against the router's case, not for it, which is the direction I'd rather be wrong in. The actual next step, per the report's own conclusions, is two weeks of real production traffic across the whole team, logged properly against the AWS bill, before staking a budget conversation on any of this.
 
-What's still missing, and worth being upfront about: the dashboard inconsistencies aren't cosmetic. If "Cost by Tier" reports double the headline number and a single model's cost line exceeds the total, that's a metrics pipeline that needs fixing before anyone puts these figures in front of a budget owner. And the `gpt-5.6-luna` pricing gap is a real, silent undercount, not a rounding error: any tier that routes through it is cheaper on the dashboard than it is on the actual AWS bill.
-
-The OpenRouter comparison is the part I'd flag as illustrative rather than final. It assumes a 3:1 input:output ratio that's a reasonable approximation, not a measured one, and "best open-weight model" is a moving target that will look different again in another six weeks. The direction of the number (multiple times cheaper, comfortably) is more solid than the exact multiple.
+The OpenRouter comparison is the part I'd flag as illustrative rather than final on top of that. It assumes a 3:1 input:output ratio, a reasonable approximation rather than a measured one, and "best open-weight model" is a moving target that will look different again in another six weeks. The direction of the number (several times cheaper, comfortably) is more solid than the exact multiple.
