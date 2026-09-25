@@ -1,4 +1,20 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 18 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Your CI Pipeline Speaks Too Many Languages. Here's the Translator.</title><link>https://www.k8s.it/posts/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/</link><pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 25 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Building an LTE Fallback for My Flaky FTTC with a $45 ZTE MF286D and OpenWrt</title><link>https://www.k8s.it/posts/zte-mf286d-openwrt-lte-fallback-fttc/</link><pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/zte-mf286d-openwrt-lte-fallback-fttc/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/zte-mf286d-openwrt-lte-fallback-fttc/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Why a Fallback at All</li>
+<li>Picking the Hardware</li>
+<li>Flashing OpenWrt</li>
+<li>The LTE Interface: qmi and the Vodafone APN</li>
+<li>Multi-WAN with mwan3</li>
+<li>An Emergency Wi-Fi AP</li>
+<li>The LuCI Dashboard, in Practice</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. In Italy, and we all know how it goes: it works today, tomorrow who knows.</p>
+<h2 id="why-a-fallback-at-all">Why a Fallback at All</h2>
+<p>I live in the countryside outside town, more farmland than periphery really, so I already count myself lucky to have FTTC at all. Mine is saturated and picks up crosstalk (diafonia) from neighboring pairs, which means the sync rate wanders and, every so often, the line just drops for hours.</p>]]></description></item><item><title>Your CI Pipeline Speaks Too Many Languages. Here's the Translator.</title><link>https://www.k8s.it/posts/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/</link><pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -250,38 +266,4 @@
 <li>Lessons Learned</li>
 </ul>
 <hr>
-<p>I wanted a local AI box. Not a cloud API with latency and per-token billing. Not a GPU workstation that sounds like a jet engine. A quiet mini-PC that runs a capable model at home, on my desk, forever, for free.</p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/featured.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>The Shift Is Already Happening</li>
-<li>The Problem Nobody Prepared For</li>
-<li>The Design Principle: Safe by Default</li>
-<li>The Platform Contract — What Every App Must Be
-<ul>
-<li>Supported Languages and Base Images</li>
-<li>Supported Components</li>
-<li>T-shirt Sizing</li>
-<li>Port Contract</li>
-<li>Health Endpoints</li>
-<li>Secrets: Sealed, Always</li>
-<li>Images: Commit SHA, Never Latest</li>
-<li>Network: Default Deny, Every Time</li>
-</ul>
-</li>
-<li>The Three-Tier Monitoring Contract
-<ul>
-<li>System Tier — Automatic</li>
-<li>Framework Tier — App Metrics</li>
-<li>Business Tier — What the App Actually Does</li>
-</ul>
-</li>
-<li>The Review Gate — 35+ Checks Before Deploy</li>
-<li>The Helm Chart — Five Questions, Full Platform</li>
-<li>The CI/CD Pipeline — AI App Meets GitOps</li>
-<li>The Skill Pipeline — AI Onboarding an AI App</li>
-<li>The RACI Collapse</li>
-<li>Conclusion</li>
-</ul>
-<hr>
-<p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item></channel></rss>
+<p>I wanted a local AI box. Not a cloud API with latency and per-token billing. Not a GPU workstation that sounds like a jet engine. A quiet mini-PC that runs a capable model at home, on my desk, forever, for free.</p>]]></description></item></channel></rss>
