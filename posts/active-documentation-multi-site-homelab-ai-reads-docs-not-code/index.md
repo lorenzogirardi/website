@@ -205,7 +205,10 @@ When it came time to actually apply the manifests, the harness's own permission 
 
 Here's the recording of that session, prompt to working service:
 
-Your browser doesn't support embedded video. [Watch the recording directly](https://res.cloudinary.com/ethzero/video/upload/v1790449820/ai/ai-active-documentation-case-study/ai-active-documentation-case-study.mp4).
+<video controls preload="metadata" width="100%" style="max-width: 100%; height: auto;">
+  <source src="https://res.cloudinary.com/ethzero/video/upload/v1790449820/ai/ai-active-documentation-case-study/ai-active-documentation-case-study.mp4" type="video/mp4">
+  Your browser doesn't support embedded video. <a href="https://res.cloudinary.com/ethzero/video/upload/v1790449820/ai/ai-active-documentation-case-study/ai-active-documentation-case-study.mp4">Watch the recording directly</a>.
+</video>
 
 What made the agent this exact wasn't confidence, it was reading before writing: template first, then live cluster state, then upstream docs, in that order, every time. That's the property worth naming: **active documentation**, docs written so an agent (or a rushed human) can execute directly against them, not just read them for understanding. Five things did the actual work here, and all five are things this post already describes for other reasons:
 
