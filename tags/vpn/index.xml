@@ -1,4 +1,24 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Vpn - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/vpn/</link><description>Vpn - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 18 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/vpn/" rel="self" type="application/rss+xml"/><item><title>YA VPN Service in Kubernetes</title><link>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</link><pubDate>Mon, 18 Jul 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Vpn - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/vpn/</link><description>Vpn - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 26 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/vpn/" rel="self" type="application/rss+xml"/><item><title>Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read the Docs, Not the Code</title><link>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</link><pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>From One NUC to Five Sites</li>
+<li>The Real Problem Isn&rsquo;t Compute, It&rsquo;s Memory</li>
+<li>Docs as Code, With Rules</li>
+<li>The Layout: Where New Things Go, Decided Once</li>
+<li>Templates: the Only Way New Hosts Look Like Old Hosts</li>
+<li>Runbooks Instead of &ldquo;I Remember How I Did This&rdquo;</li>
+<li>STATUS.md: the One File That Tells the Truth</li>
+<li>The Migration Folder: Rigor Where It&rsquo;s Easy to Cut Corners</li>
+<li>Sysadmin via MCP: Claude Remote Agent, With Guardrails</li>
+<li>Reflections</li>
+<li>Three Questions for Your Own Docs</li>
+<li>Does This System Have a Name?</li>
+<li>Case Study: Watching the Agent Actually Use These Docs</li>
+<li>Conclusion</li>
+</ul>
+<p></p>]]></description></item><item><title>YA VPN Service in Kubernetes</title><link>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</link><pubDate>Mon, 18 Jul 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/ya-vpn-service-in-kubernetes/wirecardmobile.jpg" referrerpolicy="no-referrer">
             </div><h2 id="why">Why</h2>
 <p>I had my beloved IPsec setup based on strongswan running in Kubernetes for a while — you can read about that <a href="/posts/kubernetes-strongswan/" rel="">here</a>. It worked fine. I wasn&rsquo;t looking to change it. Then a colleague pointed out WireGuard&rsquo;s overhead numbers and I got curious enough to evaluate it myself.</p>

@@ -1,4 +1,24 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 25 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Building an LTE Fallback for My Flaky FTTC with a $45 ZTE MF286D and OpenWrt</title><link>https://www.k8s.it/posts/zte-mf286d-openwrt-lte-fallback-fttc/</link><pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/zte-mf286d-openwrt-lte-fallback-fttc/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 26 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read the Docs, Not the Code</title><link>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</link><pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>From One NUC to Five Sites</li>
+<li>The Real Problem Isn&rsquo;t Compute, It&rsquo;s Memory</li>
+<li>Docs as Code, With Rules</li>
+<li>The Layout: Where New Things Go, Decided Once</li>
+<li>Templates: the Only Way New Hosts Look Like Old Hosts</li>
+<li>Runbooks Instead of &ldquo;I Remember How I Did This&rdquo;</li>
+<li>STATUS.md: the One File That Tells the Truth</li>
+<li>The Migration Folder: Rigor Where It&rsquo;s Easy to Cut Corners</li>
+<li>Sysadmin via MCP: Claude Remote Agent, With Guardrails</li>
+<li>Reflections</li>
+<li>Three Questions for Your Own Docs</li>
+<li>Does This System Have a Name?</li>
+<li>Case Study: Watching the Agent Actually Use These Docs</li>
+<li>Conclusion</li>
+</ul>
+<p></p>]]></description></item><item><title>Building an LTE Fallback for My Flaky FTTC with a $45 ZTE MF286D and OpenWrt</title><link>https://www.k8s.it/posts/zte-mf286d-openwrt-lte-fallback-fttc/</link><pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/zte-mf286d-openwrt-lte-fallback-fttc/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/zte-mf286d-openwrt-lte-fallback-fttc/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -247,23 +267,4 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Here we are. Everyone is wiring AI agents to real systems — Kubernetes clusters, CI pipelines, internal APIs — and almost nobody is asking the boring question first: <strong>when the agent calls a tool, who is it?</strong></p>]]></description></item><item><title>Running a Local LLM on AMD Radeon 780M — gfx1103, ROCm, and the GPU That Wasn't Supposed to Work</title><link>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</link><pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/running-a-local-llm-on-amd-radeon-780m-gfx1103-rocm-and-the-gpu-that-wasnt-supposed-to-work/featured.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>The Machine</li>
-<li>The Problem: gfx1103 Doesn&rsquo;t Exist</li>
-<li>GTT Memory — 24 GB for Free</li>
-<li>The ROCm Stack</li>
-<li>Getting GPU Inference Working</li>
-<li>Optimizing: The Hidden GPU Clock Problem</li>
-<li>Benchmarks — Every Configuration Tested</li>
-<li>The Surprising Finding: CPU Beats GPU on Generation</li>
-<li>The Real Bottleneck: Single-Channel RAM</li>
-<li>The Breakthrough: MoE on CPU</li>
-<li>Monitoring with Collectd and Grafana</li>
-<li>What the Dashboard Actually Shows</li>
-<li>Lessons Learned</li>
-</ul>
-<hr>
-<p>I wanted a local AI box. Not a cloud API with latency and per-token billing. Not a GPU workstation that sounds like a jet engine. A quiet mini-PC that runs a capable model at home, on my desk, forever, for free.</p>]]></description></item></channel></rss>
+<p>Here we are. Everyone is wiring AI agents to real systems — Kubernetes clusters, CI pipelines, internal APIs — and almost nobody is asking the boring question first: <strong>when the agent calls a tool, who is it?</strong></p>]]></description></item></channel></rss>
