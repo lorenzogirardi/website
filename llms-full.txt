@@ -8,7 +8,7 @@
 
 URL: https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/
 Date: 2026-09-26
-Tags: homelab, kubernetes, proxmox, automation, monitoring, ai, documentation, vpn
+Tags: homelab, kubernetes, diataxis, automation, monitoring, ai, documentation, agent
 Description: Five sites, three virtualizers, four Kubernetes clusters, one hub-and-spoke VPN. Here's the docs-as-code system, and the AI agent deploy it survived, that keeps it operable instead of just growing.
 --------------------------------------------------------------------------------
 
