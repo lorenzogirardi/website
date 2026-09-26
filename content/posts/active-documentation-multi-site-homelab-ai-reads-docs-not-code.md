@@ -1,8 +1,8 @@
 ---
-title: "How I Manage a Multi-Site Homelab (So It Doesn't Manage Me)"
+title: "Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read the Docs, Not the Code"
 date: 2026-09-12
 draft: true
-description: "Five sites, three virtualizers, four Kubernetes clusters, one hub-and-spoke VPN. Here's the docs-as-code system that keeps it operable instead of just growing."
+description: "Five sites, three virtualizers, four Kubernetes clusters, one hub-and-spoke VPN. Here's the docs-as-code system, and the AI agent deploy it survived, that keeps it operable instead of just growing."
 tags:
   - homelab
   - kubernetes
@@ -12,9 +12,9 @@ tags:
   - ai
   - documentation
   - vpn
-featuredImage: /images/how-i-manage-a-multi-site-homelab-so-it-doesnt-manage-me/featured.jpg
+featuredImage: /images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg
 images:
-  - "/images/how-i-manage-a-multi-site-homelab-so-it-doesnt-manage-me/featured.jpg"
+  - "/images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg"
 ---
 ### Table of Contents
 
@@ -31,11 +31,12 @@ images:
   * Reflections
   * Three Questions for Your Own Docs
   * Does This System Have a Name?
+  * Case Study: Watching the Agent Actually Use These Docs
   * Conclusion
 
 
 
-![Infrastructure management domains: know-how repository, runbooks, compliance policies, monitoring, feeding an agent reasoning core against the managed infrastructure](/images/how-i-manage-a-multi-site-homelab-so-it-doesnt-manage-me/featured.jpg)
+![Infrastructure management domains: know-how repository, runbooks, compliance policies, monitoring, feeding an agent reasoning core against the managed infrastructure](/images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg)
 
 Here we are, again, with a homelab post. Except this time it's not about a NUC under a desk.
 
@@ -203,6 +204,45 @@ None of this is new in isolation. It sits close to a few named things, none of w
 The one piece none of those names cover: `CLAUDE.md` isn't only read by a human, it's loaded into an agent's context and operated under, not just consulted. That's new enough it doesn't have a settled name yet. People are calling the general practice **context engineering**, deliberately curating what enters an LLM's context window, and the emerging `AGENTS.md`/`CLAUDE.md` convention as a repo's "constitution" is one instance of it. Too recent, as of 2026, to have earned a conference-track name of its own.
 
 If forced into one label: docs-as-code, shaped by Diataxis, with an agent-executable constitution layered on top. Accurate, and nobody's going to say that out loud twice.
+
+## Case Study: Watching the Agent Actually Use These Docs
+
+Everything above is the theory of why this layout should work. Here's a session where it did, on a real task: deploy Dozzle (a live container log viewer) at `services.k8s.it/dozzle/`, on `izanagi`, one of the k3s clusters.
+
+The agent didn't start by writing YAML. It started by reading `bitwarden.md` and its manifest folder, the reference template mentioned earlier for "how a service gets exposed on this cluster." That one read decided the whole file layout: `manifests/dozzle/` got the same four-file split (namespace, RBAC, deployment, service) as bitwarden, and `dozzle.md` inherited bitwarden's exact heading order. Nothing there was designed on the spot, it was copied from a pattern that already existed.
+
+Then it hit a real fork the repo couldn't answer: Dozzle's default log source is a Docker socket, and izanagi runs containerd, no dockerd, no socket. That's not something to guess at, so the agent stopped and asked instead of picking a mode and hoping. Correctly escalating a genuine unknown, rather than inventing an answer that looks plausible, is the other half of what makes this whole system trustworthy.
+
+For everything Dozzle-specific (its Kubernetes RBAC shape, its `DOZZLE_BASE` env var, its supported env vars), it fetched the project's own docs live and copied values verbatim rather than relying on trained-in memory that could be stale. It even caught its own mistake this way: a first-draft health probe guessed at an HTTP path, then a read of the actual Dockerfile showed the binary ships a `healthcheck` subcommand, so the probe switched to calling that directly. The correction came from reading the artifact that defines the real interface, not from a better guess.
+
+The trickiest edit wasn't Dozzle's own manifest, it was `apacherr`'s live ConfigMap, the single Apache pod doing path-based routing for the whole `services.k8s.it` domain. The agent read it before touching it (rule: read before write, same as everywhere else in this system), then noticed Dozzle streams logs over SSE, the same kind of long-lived connection Guacamole already handles through that proxy. So it copied Guacamole's `flushpackets=on` block instead of re-deriving the fix from Apache's documentation. Same problem shape, same solution, reused. That fix also happened to commit a previously live-but-undocumented ConfigMap into the repo for the first time, closing a documentation gap the task never asked it to close.
+
+When it came time to actually apply the manifests, the harness's own permission boundary blocked `kubectl apply`, and even blocked read-only `kubectl get`. The agent didn't look for a way around it, it stopped and handed back the exact command sequence for a human to run, plus a `curl` check and an explicit flag that the RBAC it wrote grants cluster-wide pod and log read by default, narrowable with `DOZZLE_NAMESPACE` if that's too broad. I ran the handoff as given. First `curl -I` came back `405` (Dozzle doesn't implement `HEAD`, expected), a plain `GET` came back `200` with real Dozzle HTML. Live on the first deploy.
+
+Here's the recording of that session, prompt to working service:
+
+Your browser doesn't support embedded video. [Watch the recording directly](https://res.cloudinary.com/ethzero/video/upload/v1790449820/ai/ai-active-documentation-case-study/ai-active-documentation-case-study.mp4).
+
+What made the agent this exact wasn't confidence, it was reading before writing: template first, then live cluster state, then upstream docs, in that order, every time. That's the property worth naming: **active documentation**, docs written so an agent (or a rushed human) can execute directly against them, not just read them for understanding. Five things did the actual work here, and all five are things this post already describes for other reasons:
+
+- **One canonical example per pattern, kept current.** `bitwarden.md` wasn't inspiration, it was the literal template, because there was exactly one of it. Two competing "reference" services and the agent has to guess which is authoritative.
+- **State that lives in the cluster has to also live in the repo.** The apacherr ConfigMap was real and undocumented until this task forced it into git. A doc describing a system without being (or matching) the deployed artifact rots silently.
+- **Tables that double as machine-parseable config.** The `services.k8s.it` path-routes table in `cluster.md` (path, backend, notes) is a lookup structure, not prose, it answers "is this path taken" and "what's the gotcha" without parsing a sentence.
+- **Extension recipes written inline, not just described.** `cluster.md` states outright that apacherr needs a restart after a ConfigMap change because config is read once at startup, no hot reload. Without that one sentence sitting next to the table, the deploy would have looked done and quietly served nothing.
+- **Gotchas as first-class citizens.** The ClusterRole scope note ("grants cluster-wide pod/log read, narrow with `DOZZLE_NAMESPACE` if too broad") is operational foresight nobody could derive from reading the YAML, written where the next reader will already be looking.
+
+This is also where the system's distance from Diataxis becomes measurable, not just a vibe. Diataxis (Daniele Procida's framework) scores a document on two axes: does it tell you what to *do* or what to *know*, and is the reader *studying* or *working*. That gives four quadrants:
+
+| Quadrant | Closest match in the repo | Fit |
+|---|---|---|
+| Reference | `overlay/vpn.md`, `_templates/*.md` | High, close to a textbook reference document |
+| How-to | `runbooks/*.md`, the apacherr restart sentence in `cluster.md` | High, goal-directed, assumes competence |
+| Explanation | `migration/README.md`'s "Why Migrate" and decision tables | Partial, but real, the one place explanation gets its own section |
+| Tutorial | none | Absent by design, there's no novice reader to teach |
+
+Reference and how-to content land squarely inside Diataxis's own definitions. The real departure is structural: `dozzle.md`, `bitwarden.md` and every host doc fold reference, how-to and explanation-lite into one file per resource instead of Diataxis's preferred four separate documents. That's a genuine distance from the framework, not a rounding error, and it's consistent across the whole repo (every `_templates/*.md` sets up that same combined shape), so it reads as a deliberate specialization rather than a miss. The reason traces to audience: Diataxis's studying-versus-working split serves a human who's sometimes learning a system and sometimes using it, at different times. This repo's actual readers, an on-call human or an agent mid-task, are almost never in learning mode for one specific host, they need the fact and the action in the same read. Splitting `izanagi.md` into four Diataxis-shaped files would mean four file reads to justify one `kubectl apply`, worse for this readership even if closer to the framework's letter. Tutorial stays empty for the same reason Diataxis itself gives it a separate readership: a private homelab (or an internal platform repo) has no novice to onboard.
+
+That's the actual argument for a tree like this over "just read the code," for a team of any size, and doubly for an enterprise where nobody has time to read every service's source before touching it. Code stays available, but only for verification, to catch the rare case where a doc drifted from reality, not as the primary way anyone (human or agent) is expected to learn what's true. When the tree is structured, typed and kept current, the code becomes a check on the documentation instead of a replacement for it.
 
 ## Conclusion
 
