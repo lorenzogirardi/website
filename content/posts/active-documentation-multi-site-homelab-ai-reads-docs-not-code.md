@@ -1,8 +1,11 @@
 ---
-title: "Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read the Docs, Not the Code"
-date: 2026-09-12
-draft: true
-description: "Five sites, three virtualizers, four Kubernetes clusters, one hub-and-spoke VPN. Here's the docs-as-code system, and the AI agent deploy it survived, that keeps it operable instead of just growing."
+title: "Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read
+  the Docs, Not the Code"
+date: 2026-09-26
+draft: false
+description: Five sites, three virtualizers, four Kubernetes clusters, one
+  hub-and-spoke VPN. Here's the docs-as-code system, and the AI agent deploy it
+  survived, that keeps it operable instead of just growing.
 tags:
   - homelab
   - kubernetes
@@ -13,26 +16,24 @@ tags:
   - documentation
   - vpn
 featuredImage: /images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg
-images:
-  - "/images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg"
 ---
 ### Table of Contents
 
-  * Introduction
-  * From One NUC to Five Sites
-  * The Real Problem Isn't Compute, It's Memory
-  * Docs as Code, With Rules
-  * The Layout: Where New Things Go, Decided Once
-  * Templates: the Only Way New Hosts Look Like Old Hosts
-  * Runbooks Instead of "I Remember How I Did This"
-  * STATUS.md: the One File That Tells the Truth
-  * The Migration Folder: Rigor Where It's Easy to Cut Corners
-  * Sysadmin via MCP: Claude Remote Agent, With Guardrails
-  * Reflections
-  * Three Questions for Your Own Docs
-  * Does This System Have a Name?
-  * Case Study: Watching the Agent Actually Use These Docs
-  * Conclusion
+- Introduction
+- From One NUC to Five Sites
+- The Real Problem Isn't Compute, It's Memory
+- Docs as Code, With Rules
+- The Layout: Where New Things Go, Decided Once
+- Templates: the Only Way New Hosts Look Like Old Hosts
+- Runbooks Instead of "I Remember How I Did This"
+- STATUS.md: the One File That Tells the Truth
+- The Migration Folder: Rigor Where It's Easy to Cut Corners
+- Sysadmin via MCP: Claude Remote Agent, With Guardrails
+- Reflections
+- Three Questions for Your Own Docs
+- Does This System Have a Name?
+- Case Study: Watching the Agent Actually Use These Docs
+- Conclusion
 
 
 
@@ -221,10 +222,7 @@ When it came time to actually apply the manifests, the harness's own permission 
 
 Here's the recording of that session, prompt to working service:
 
-<video controls preload="metadata" width="100%" style="max-width: 100%; height: auto;">
-  <source src="https://res.cloudinary.com/ethzero/video/upload/v1790449820/ai/ai-active-documentation-case-study/ai-active-documentation-case-study.mp4" type="video/mp4">
-  Your browser doesn't support embedded video. <a href="https://res.cloudinary.com/ethzero/video/upload/v1790449820/ai/ai-active-documentation-case-study/ai-active-documentation-case-study.mp4">Watch the recording directly</a>.
-</video>
+Your browser doesn't support embedded video. [Watch the recording directly](https://res.cloudinary.com/ethzero/video/upload/v1790449820/ai/ai-active-documentation-case-study/ai-active-documentation-case-study.mp4).
 
 What made the agent this exact wasn't confidence, it was reading before writing: template first, then live cluster state, then upstream docs, in that order, every time. That's the property worth naming: **active documentation**, docs written so an agent (or a rushed human) can execute directly against them, not just read them for understanding. Five things did the actual work here, and all five are things this post already describes for other reasons:
 
@@ -236,12 +234,14 @@ What made the agent this exact wasn't confidence, it was reading before writing:
 
 This is also where the system's distance from Diataxis becomes measurable, not just a vibe. Diataxis (Daniele Procida's framework) scores a document on two axes: does it tell you what to *do* or what to *know*, and is the reader *studying* or *working*. That gives four quadrants:
 
+
 | Quadrant | Closest match in the repo | Fit |
-|---|---|---|
+| ----------- | -------------------------------------------------------------- | ----------------------------------------------------------------- |
 | Reference | `overlay/vpn.md`, `_templates/*.md` | High, close to a textbook reference document |
 | How-to | `runbooks/*.md`, the apacherr restart sentence in `cluster.md` | High, goal-directed, assumes competence |
 | Explanation | `migration/README.md`'s "Why Migrate" and decision tables | Partial, but real, the one place explanation gets its own section |
 | Tutorial | none | Absent by design, there's no novice reader to teach |
+
 
 Reference and how-to content land squarely inside Diataxis's own definitions. The real departure is structural: `dozzle.md`, `bitwarden.md` and every host doc fold reference, how-to and explanation-lite into one file per resource instead of Diataxis's preferred four separate documents. That's a genuine distance from the framework, not a rounding error, and it's consistent across the whole repo (every `_templates/*.md` sets up that same combined shape), so it reads as a deliberate specialization rather than a miss. The reason traces to audience: Diataxis's studying-versus-working split serves a human who's sometimes learning a system and sometimes using it, at different times. This repo's actual readers, an on-call human or an agent mid-task, are almost never in learning mode for one specific host, they need the fact and the action in the same read. Splitting `izanagi.md` into four Diataxis-shaped files would mean four file reads to justify one `kubectl apply`, worse for this readership even if closer to the framework's letter. Tutorial stays empty for the same reason Diataxis itself gives it a separate readership: a private homelab (or an internal platform repo) has no novice to onboard.
 
