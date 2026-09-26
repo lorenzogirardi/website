@@ -9,12 +9,12 @@ description: Five sites, three virtualizers, four Kubernetes clusters, one
 tags:
   - homelab
   - kubernetes
-  - proxmox
+  - diataxis
   - automation
   - monitoring
   - ai
   - documentation
-  - vpn
+  - agent
 featuredImage: /images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg
 ---
 ### Table of Contents
