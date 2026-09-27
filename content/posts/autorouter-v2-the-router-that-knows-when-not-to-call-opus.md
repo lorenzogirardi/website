@@ -14,6 +14,8 @@ tags:
   - automation
   - aws bedrock
 featuredImage: /images/autorouter-v2-the-router-that-knows-when-not-to-call-opus/featured.jpg
+images:
+  - "/images/autorouter-v2-the-router-that-knows-when-not-to-call-opus/featured.jpg"
 ---
 ### Table of Contents
 

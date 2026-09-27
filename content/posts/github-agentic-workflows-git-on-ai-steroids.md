@@ -16,6 +16,8 @@ tags:
   - code review
   - devsecops
 featuredImage: /images/github-agentic-workflows-git-on-ai-steroids/featured.jpg
+images:
+  - "/images/github-agentic-workflows-git-on-ai-steroids/featured.jpg"
 ---
 ### Table of Contents
 

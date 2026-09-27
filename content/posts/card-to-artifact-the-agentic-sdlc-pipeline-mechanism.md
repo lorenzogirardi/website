@@ -13,6 +13,8 @@ tags:
   - security
   - python
 featuredImage: /images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/01-full-pipeline-sequence.png
+images:
+  - "/images/card-to-artifact-the-agentic-sdlc-pipeline-mechanism/01-full-pipeline-sequence.png"
 ---
 ### Table of Contents
 

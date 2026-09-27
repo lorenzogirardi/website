@@ -18,6 +18,8 @@ tags:
   - observability
   - grafana
 featuredImage: /images/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/featured.jpg
+images:
+  - "/images/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/featured.jpg"
 ---
 ### Table of Contents
 

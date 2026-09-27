@@ -12,6 +12,8 @@ tags:
   - automation
   - python
 featuredImage: /images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/featured.jpg
+images:
+  - "/images/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/featured.jpg"
 ---
 ### Table of Contents
 

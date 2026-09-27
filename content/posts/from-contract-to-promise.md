@@ -14,6 +14,8 @@ tags:
   - monitoring
   - dynamic infrastructure
 featuredImage: /images/from-contract-to-promise/featured.jpg
+images:
+  - "/images/from-contract-to-promise/featured.jpg"
 ---
 ### Table of Contents
 

@@ -12,6 +12,8 @@ tags:
   - agentic
   - ci
 featuredImage: /images/autopsy-of-an-agentic-loop/featured.jpg
+images:
+  - "/images/autopsy-of-an-agentic-loop/featured.jpg"
 ---
 
 ### Table of Contents

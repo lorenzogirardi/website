@@ -14,6 +14,8 @@ tags:
   - observability
   - performance
 featuredImage: /images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.jpg
+images:
+  - "/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.jpg"
 ---
 ### Table of Contents
 

@@ -11,6 +11,8 @@ tags:
   - mwan3
   - automation
 featuredImage: /images/zte-mf286d-openwrt-lte-fallback-fttc/featured.jpg
+images:
+  - "/images/zte-mf286d-openwrt-lte-fallback-fttc/featured.jpg"
 ---
 ### Table of Contents
 

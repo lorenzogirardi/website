@@ -12,6 +12,8 @@ tags:
   - workers
   - proxy
 featuredImage: /images/protecting-a-scraping-service-with-cloudflare-waf/featured.jpg
+images:
+  - "/images/protecting-a-scraping-service-with-cloudflare-waf/featured.jpg"
 ---
 
 ### Table of Contents

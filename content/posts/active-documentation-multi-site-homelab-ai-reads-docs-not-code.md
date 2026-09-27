@@ -16,6 +16,8 @@ tags:
   - documentation
   - agent
 featuredImage: /images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg
+images:
+  - "/images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg"
 ---
 ### Table of Contents
 
