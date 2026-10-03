@@ -2,7 +2,8 @@
 title: "Autopsy of an Agentic Loop: Six Pull Requests, Zero Humans"
 date: 2026-10-03
 draft: true
-description: "A pipeline with no person in it: one LangGraph state machine, the rules that let it merge, abandon or revert, and six real pull requests."
+description: "A pipeline with no person in it: one LangGraph state machine, the
+  rules that let it merge, abandon or revert, and six real pull requests."
 tags:
   - ai
   - automation
@@ -12,33 +13,30 @@ tags:
   - agentic
   - ci
   - kubernetes
-featuredImage: /images/autopsy-of-an-agentic-loop/featured.jpg
-images:
-  - "/images/autopsy-of-an-agentic-loop/featured.jpg"
+featuredImage: /images/Gemini_Generated_Image_gd8shigd8shigd8s.jpeg
 ---
-
 ### Table of Contents
 
-  * The goal: a pipeline with no person in it
-  * The rule that makes it safe
-  * The graph
-    * The engine, as a state machine
-    * What happens inside the nodes
-    * The system around it: events, workflows, merge
-  * The principles that replace a reviewer
-  * Six pull requests
-    * Case 1: a dependency bump that merges itself (PR #159)
-    * Case 2: my own pull request (PR #167)
-    * Case 3: a refactor that changes behaviour (PR #168)
-    * Case 4: a behaviour change on purpose (PR #169)
-    * Case 5: a failure only the cluster can see (PR #171)
-    * Case 6: a change nobody may repair (PR #170)
-    * After the merge: the guard
-  * The results, side by side
-  * What it costs
-  * Reflections
-    * What is still missing
-  * Conclusion
+- The goal: a pipeline with no person in it
+- The rule that makes it safe
+- The graph
+  - The engine, as a state machine
+  - What happens inside the nodes
+  - The system around it: events, workflows, merge
+- The principles that replace a reviewer
+- Six pull requests
+  - Case 1: a dependency bump that merges itself (PR #159)
+  - Case 2: my own pull request (PR #167)
+  - Case 3: a refactor that changes behaviour (PR #168)
+  - Case 4: a behaviour change on purpose (PR #169)
+  - Case 5: a failure only the cluster can see (PR #171)
+  - Case 6: a change nobody may repair (PR #170)
+  - After the merge: the guard
+- The results, side by side
+- What it costs
+- Reflections
+  - What is still missing
+- Conclusion
 
 
 
@@ -52,9 +50,9 @@ The target is simple to state and hard to honour: **no human in the loop, and th
 
 Those two halves pull in opposite directions. Removing the person removes the judgement. So the judgement has to go somewhere, and I put it in three places:
 
-* **Deterministic gates** that no model can overrule: lint, unit tests, an integration suite against real PostgreSQL and Redis, and an image built from the pull request and run in a Kubernetes cluster.
-* **A set of rules in code** that decide what a model is allowed to do: what it may edit, what it may never weaken, what it must quote before it may change a test.
-* **A safety net after the merge**: if something slips through, the branch goes back to the last green state on its own.
+- **Deterministic gates** that no model can overrule: lint, unit tests, an integration suite against real PostgreSQL and Redis, and an image built from the pull request and run in a Kubernetes cluster.
+- **A set of rules in code** that decide what a model is allowed to do: what it may edit, what it may never weaken, what it must quote before it may change a test.
+- **A safety net after the merge**: if something slips through, the branch goes back to the last green state on its own.
 
 The model (`deepseek/deepseek-v4.1-flash` through OpenRouter, about $0.30 per million input tokens) writes, reviews and argues. It never decides alone.
 
@@ -110,8 +108,9 @@ The same graph as a picture, for slides and for sharing: nine nodes, four ways i
 
 Every conditional edge is decided by the node itself: it writes a `route` into the state and the graph follows it. The only extra edge not drawn is the one every node shares: when the budget is spent, the node routes to `END` and the outcome is `abandoned`.
 
+
 | Node | What it does | Can it change files? |
-|------|--------------|----------------------|
+| ------------ | ----------------------------------------------------------------------- | ------------------------------ |
 | `start` | Picks the entry point | No |
 | `write` | The writer: explores the repo read-only, then proposes a patch | Yes, through a validated patch |
 | `verify` | Runs the deterministic checks in a process with no secrets | No (it can revert) |
@@ -121,6 +120,7 @@ Every conditional edge is decided by the node itself: it writes a `route` into t
 | `review` | Reviewers A and B, in parallel, independent, validated and deduplicated | No |
 | `final` | A third reviewer that checks the earlier findings are really fixed | No |
 | `docs` | Documentation reviewer, then a deterministic changelog entry | Docs and changelog only |
+
 
 The whole graph is wrapped by one function: it runs once, and if it does not converge it runs **once more with twice the budget**, continuing from whatever the first attempt committed. If that fails too, the result is `abandoned`. Two attempts, never three.
 
@@ -174,9 +174,9 @@ And the same flow as a picture. Read it left to right: an event starts a workflo
 
 Three of these boxes carry the safety:
 
-* **Certification.** When the engine finishes with no blocking finding and the checks pass, it posts a comment with a marker bound to the exact head commit: `agent-certified: <sha>`. A new push changes the sha, so an old certification never applies to new code. A comment from anyone but the agent account is ignored.
-* **`agent-merge`.** It runs on every CI completion, on every push to `main` and every 30 minutes, and each run judges every open pull request. It merges a pull request only if its head is certified, the required checks (`checks`, `integration`, `image`, `workflows`) succeeded on that same commit, and a circuit breaker is closed. Whichever finishes first, the certification or the CI, and whichever event gets lost, the next pass picks it up.
-* **`agent-main-guard`.** It re-runs the failed jobs once, to rule out a flake. If the failure repeats, was not already repaired by a later green run, and comes from a job a code change can cause (not a scanner), it reverts everything since the last green run and opens a work item for the pipeline to redo the change. Three automatic reverts in 24 hours open the circuit breaker, which also stops automatic merging.
+- **Certification.** When the engine finishes with no blocking finding and the checks pass, it posts a comment with a marker bound to the exact head commit: `agent-certified: <sha>`. A new push changes the sha, so an old certification never applies to new code. A comment from anyone but the agent account is ignored.
+- `**agent-merge`.** It runs on every CI completion, on every push to `main` and every 30 minutes, and each run judges every open pull request. It merges a pull request only if its head is certified, the required checks (`checks`, `integration`, `image`, `workflows`) succeeded on that same commit, and a circuit breaker is closed. Whichever finishes first, the certification or the CI, and whichever event gets lost, the next pass picks it up.
+- `**agent-main-guard`.** It re-runs the failed jobs once, to rule out a flake. If the failure repeats, was not already repaired by a later green run, and comes from a job a code change can cause (not a scanner), it reverts everything since the last green run and opens a work item for the pipeline to redo the change. Three automatic reverts in 24 hours open the circuit breaker, which also stops automatic merging.
 
 ## The principles that replace a reviewer
 
@@ -214,10 +214,10 @@ About seven minutes from the push to the merge, and the base image now runs a ve
 
 A documentation change, "what to expect on your own pull request", opened from a branch like any human would.
 
-* The engine reviewed the diff with the two reviewers and the documentation reviewer, and decided no existing doc was made wrong.
-* It posted `Certified at 08fce29`.
-* The merge pass merged it once the four checks were green on that commit.
-* On `main`, the pipeline ran green end to end (build, image, vulnerability scan, SBOM, the kind cluster with the integration suite), and `changelog.yml` appended the entry to `CHANGELOG.md` by itself, from the pull request title.
+- The engine reviewed the diff with the two reviewers and the documentation reviewer, and decided no existing doc was made wrong.
+- It posted `Certified at 08fce29`.
+- The merge pass merged it once the four checks were green on that commit.
+- On `main`, the pipeline ran green end to end (build, image, vulnerability scan, SBOM, the kind cluster with the integration suite), and `changelog.yml` appended the entry to `CHANGELOG.md` by itself, from the pull request title.
 
 ![The agent's comment on PR #167: no blocking findings, the checks pass, certified at 08fce29, merges automatically once its CI is green](/images/autopsy-of-an-agentic-loop/pr167-own-pr-certified.png)
 
@@ -240,10 +240,10 @@ for _ in range(1, n):
 
 `/api/fib/10` now returned 34 instead of 55. Here is what the pipeline did, in order:
 
-* `verify` ran the unit tests and two failed: `test_api.py::test_fibonacci` and, which I had not even thought of, `test_mcp.py::test_fibonacci`.
-* The adjudicator classified **both as `code_defect`**, with the reason written in the comment: the tests passed on the base commit, and the description says no behaviour change was intended.
-* The writer fixed the code, not the tests, about 90 seconds after the pull request was opened.
-* Reviewers A, B and the final reviewer: 0 findings. Certified at the new commit. Merged.
+- `verify` ran the unit tests and two failed: `test_api.py::test_fibonacci` and, which I had not even thought of, `test_mcp.py::test_fibonacci`.
+- The adjudicator classified **both as `code_defect`**, with the reason written in the comment: the tests passed on the base commit, and the description says no behaviour change was intended.
+- The writer fixed the code, not the tests, about 90 seconds after the pull request was opened.
+- Reviewers A, B and the final reviewer: 0 findings. Certified at the new commit. Merged.
 
 ![The agent's comment on PR #168: certified at a6e6204, and the verdict for each failing test, code_defect, with the reason](/images/autopsy-of-an-agentic-loop/pr168-code-defect.png)
 
@@ -308,9 +308,9 @@ async def count():
 
 Every request now advanced the counter by 2. The unit tests don't see it, because without Redis the counter is `None`. Only the integration suite, running against real Redis in the cluster, asserts that two calls differ by one. The agent's own job can't start a cluster, so its local checks were green.
 
-* CI went red on the integration suite.
-* `agent-ci-failure` started from the workflow run, first asked whether the job had failed in the runner (no, a test had), then read the **real logs of the failed checks** and handed them to the engine.
-* The fix **kept the purpose of the pull request**. It didn't delete the warm-up: it replaced the second increment with a read.
+- CI went red on the integration suite.
+- `agent-ci-failure` started from the workflow run, first asked whether the job had failed in the runner (no, a test had), then read the **real logs of the failed checks** and handed them to the engine.
+- The fix **kept the purpose of the pull request**. It didn't delete the warm-up: it replaced the second increment with a read.
 
 ```python
 async def count():
@@ -332,9 +332,9 @@ Not every pull request can be saved, and a pipeline with no person has to know w
 
 Both reviewers raised it as blocking and said, correctly, that the fix is in a file they are not allowed to touch. The writer agreed in so many words ("that file is explicitly outside my allowed scope"). After the second attempt, with twice the budget, the engine did what the rule says:
 
-* labelled the pull request `agent-abandoned`;
-* wrote a comment with the findings and the reason;
-* did **not** certify it. The `workflows` check stayed red, so nothing could merge it.
+- labelled the pull request `agent-abandoned`;
+- wrote a comment with the findings and the reason;
+- did **not** certify it. The `workflows` check stayed red, so nothing could merge it.
 
 ![The agent's comment on PR #170: abandoned after a second attempt with twice the budget, the two blocking findings and the notes of the writer](/images/autopsy-of-an-agentic-loop/pr170-abandoned.png)
 
@@ -354,8 +354,9 @@ I could have broken `main` on purpose to watch this end to end, but a broken `ma
 
 ## The results, side by side
 
+
 | Case | What I opened | Verdict | Outcome | Time | Model cost |
-|------|---------------|---------|---------|------|------------|
+| --------------- | ---------------------------------- | -------------------------- | ------------------------ | ------- | ---------- |
 | #159 | Python base image, patch bump | reviewers: clean | merged by the sweep | ~7 min | n/a |
 | #167 | Docs change, my own PR | certified | merged | n/a | n/a |
 | #168 | Refactor that breaks behaviour | `code_defect` x2 | merged, net change empty | ~5 min | $0.016 |
@@ -363,6 +364,7 @@ I could have broken `main` on purpose to watch this end to end, but a broken `ma
 | #171 | Defect only visible in the cluster | `code_defect` from CI logs | merged, intent kept | ~11 min | $0.080 |
 | #170 | Workflow edit, unrepairable | blocking, out of scope | abandoned, labelled | ~4 min | $0.029 |
 | main, flaky job | cluster did not start | `environment` | re-run, nothing reverted | n/a | n/a |
+
 
 Behind these there is a full test pyramid: 66 unit tests, 25 integration tests against real backends in the pull request checks and again against the published image in the cluster, and 364 tests on the engine itself (graph routing against real throw-away git repositories, the adjudication rules, the merge gate, the guard against a local bare remote, the terminal states).
 
@@ -382,10 +384,10 @@ The other thing I got wrong at the start was thinking of "needs human" as a safe
 
 I'd rather say it than have you find it:
 
-* **Agents cannot edit `.github/workflows/`.** A pull request that needs a change in the CI itself stays a human job (or a job for Renovate, which has its own permission for action bumps). That is deliberate, and it is the one real dependency on a person that is left.
-* **The guarantee is only as strong as the checks.** A defect none of the checks can see will merge. The guard limits the damage, it doesn't prevent it. A diff-coverage gate, so that every changed line must be exercised by a test, would raise the floor, and I haven't built it yet.
-* **Two paths are covered by tests but not yet seen live:** a genuine revert for a genuine break on `main`, and the loop where a blocking finding on a Renovate pull request is handed to the writer. Both work against fakes and real git repositories; I simply haven't had a real occasion.
-* **A vague description gives the model room to pick a side.** "Tests win" makes it predictable, but it will sometimes fix code that was right.
+- **Agents cannot edit `.github/workflows/`.** A pull request that needs a change in the CI itself stays a human job (or a job for Renovate, which has its own permission for action bumps). That is deliberate, and it is the one real dependency on a person that is left.
+- **The guarantee is only as strong as the checks.** A defect none of the checks can see will merge. The guard limits the damage, it doesn't prevent it. A diff-coverage gate, so that every changed line must be exercised by a test, would raise the floor, and I haven't built it yet.
+- **Two paths are covered by tests but not yet seen live:** a genuine revert for a genuine break on `main`, and the loop where a blocking finding on a Renovate pull request is handed to the writer. Both work against fakes and real git repositories; I simply haven't had a real occasion.
+- **A vague description gives the model room to pick a side.** "Tests win" makes it predictable, but it will sometimes fix code that was right.
 
 ## Conclusion
 
