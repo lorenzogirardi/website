@@ -13,7 +13,9 @@ tags:
   - agentic
   - ci
   - kubernetes
-featuredImage: /images/Gemini_Generated_Image_gd8shigd8shigd8s.jpeg
+featuredImage: /images/autopsy-of-an-agentic-loop/featured.jpg
+images:
+  - "/images/autopsy-of-an-agentic-loop/featured.jpg"
 ---
 ### Table of Contents
 
