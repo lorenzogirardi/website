@@ -32,3 +32,27 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           cname: www.k8s.it
+
+      - name: Notify IndexNow
+        if: github.event_name == 'push'
+        continue-on-error: true
+        env:
+          BEFORE: ${{ github.event.before }}
+          KEY: 2f1e3829a71a476599c52f6301324135
+        run: |
+          # posts added or modified in this push; drafts are not built, so they are skipped
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then BEFORE=HEAD~1; fi
+          urls=$(git diff --name-only --diff-filter=AM "$BEFORE" HEAD -- 'content/posts/*.md' \
+            | while read -r f; do
+                slug=$(basename "$f" .md)
+                [ -f "public/posts/$slug/index.html" ] && echo "https://www.k8s.it/posts/$slug/"
+              done)
+          if [ -z "$urls" ]; then echo "no published post changed, nothing to submit"; exit 0; fi
+          urls="https://www.k8s.it/"$'\n'"$urls"
+          echo "$urls"
+          # give GitHub Pages time to publish before the crawler comes
+          sleep 90
+          body=$(echo "$urls" | jq -R . | jq -s --arg key "$KEY" \
+            '{host:"www.k8s.it", key:$key, keyLocation:("https://www.k8s.it/"+$key+".txt"), urlList:.}')
+          curl -s -o /dev/null -w 'IndexNow HTTP %{http_code}\n' -X POST https://api.indexnow.org/IndexNow \
+            -H 'Content-Type: application/json; charset=utf-8' -d "$body"
