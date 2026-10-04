@@ -23,6 +23,7 @@ featuredImage: /images/Gemini_Generated_Image_gd8shigd8shigd8s.jpeg
   - The engine, as a state machine
   - What happens inside the nodes
   - The system around it: events, workflows, merge
+  - One engine, many projects
 - The prompt of every agent
   - Planner
   - Writer
@@ -189,6 +190,49 @@ Three of these boxes carry the safety:
 - **Certification.** When the engine finishes with no blocking finding and the checks pass, it posts a comment with a marker bound to the exact head commit: `agent-certified: <sha>`. A new push changes the sha, so an old certification never applies to new code. A comment from anyone but the agent account is ignored.
 - `**agent-merge`.** It runs on every CI completion, on every push to `main` and every 30 minutes, and each run judges every open pull request. It merges a pull request only if its head is certified, the required checks (`checks`, `integration`, `image`, `workflows`) succeeded on that same commit, and a circuit breaker is closed. Whichever finishes first, the certification or the CI, and whichever event gets lost, the next pass picks it up.
 - `**agent-main-guard`.** It re-runs the failed jobs once, to rule out a flake. If the failure repeats, was not already repaired by a later green run, and comes from a job a code change can cause (not a scanner), it reverts everything since the last green run and opens a work item for the pipeline to redo the change. Three automatic reverts in 24 hours open the circuit breaker, which also stops automatic merging.
+
+### One engine, many projects
+
+Nothing above is specific to this repository. The engine, the workflows and the prompts live in a separate repository, `ci-shared`, and the application repository holds only thin callers.
+
+```text
+ci-shared                              flask-test-api
+  .github/workflows/                     .github/workflows/
+    reusable_agent-change.yml    <----     agent-change.yml      (triggers + parameters)
+    reusable_agent-merge.yml     <----     agent-merge.yml
+    reusable_agent-main-guard.yml<----     agent-main-guard.yml
+    reusable_pr-review-sweep.yml <----     ai-review-sweep.yml
+  scripts/                               variables: AI_ENABLED, OPENROUTER_MODEL
+    agent_pipeline.py  (the graph)       secrets:   OPENROUTER_API_KEY,
+    agent_lib.py       (guards, patches)            AUTOFIX_PUSH_TOKEN
+    pr_review_sweep.py (Renovate)
+  prompts/agents/*.md
+```
+
+A caller is a few lines: the events that start it, and a `uses:` pointing at the reusable workflow at a tag.
+
+```yaml
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+jobs:
+  pull-request:
+    uses: lorenzogirardi/ci-shared/.github/workflows/reusable_agent-change.yml@v2
+    with:
+      mode: pr
+      required_checks: 'checks,integration,image,workflows'
+      python_version: "3.14"
+```
+
+Three things make this reusable rather than copied:
+
+* **A tag, not a branch.** The caller says `@v2`, and the reusable workflow checks out `ci-shared` at the same tag, so workflow, scripts and prompts always come from the same version. Moving `v2` upgrades every project at once. A change that breaks callers becomes `v3`, and each project moves when it is ready.
+* **Parameters for what is project specific, nothing else.** The project says how it is tested (the verify command, the required checks, the Python version), gives the reviewers a paragraph of context, and chooses its base branch. It cannot change the engine or the prompts, so the safety rules (tests cannot be weakened, the model never holds a write token, certification is bound to a commit) are the same everywhere.
+* **Defaults that keep old behaviour.** A new capability arrives as an input that is off by default. The rule that leaves workflow pull requests to Renovate, for example, is the input `workflow_prs_to_bot`: it exists for every project from the moment the tag moves, and only the projects that set it get the behaviour.
+
+Adding a project means copying the thin callers, changing the parameters, and setting the variables and secrets. No logic is copied.
+
+The honest limits: the engine assumes a Python project tested with pytest, a caller must grant the permissions the reusable workflow asks for (a missing one makes the workflow fail to start, so callers are updated before the tag moves), and this repository is so far the only real consumer. The reuse is designed and tested, not yet proven on a second project.
 
 ## The prompt of every agent
 
