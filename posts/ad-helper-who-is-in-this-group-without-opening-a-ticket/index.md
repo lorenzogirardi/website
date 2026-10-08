@@ -216,9 +216,9 @@ The API is usable from scripts too, which is handy for audits:
 curl -s "http://localhost:3080/api/groups/search.json?q=app-finance" | jq '.[].cn'
 ```
 
-![AD Helper: user detail on the left, Domain Users members on the right](/images/ad-helper-who-is-in-this-group-without-opening-a-ticket/ad-helper-user-and-group.png)
+![AD Helper showing the members of the Domain Users group](/images/ad-helper-who-is-in-this-group-without-opening-a-ticket/ad-helper-domain-users.png)
 
-User detail on the left, group members on the right, with CSV and JSON export one click away. Domain Users lists the same four accounts that the ADUC console shows.
+The group view lists the members with name and mail, with CSV and JSON export one click away. Domain Users shows the same four accounts that the ADUC console shows, including the ones that have it only as **primary group**, which AD does not list in the `member` attribute.
 
 ## Security Considerations
 
