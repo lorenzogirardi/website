@@ -98,13 +98,13 @@ If it can't write, it can't break.
 
 It is deliberately boring: a vanilla JS frontend, a small Express API, a thin layer of query logic and the `ldapjs` client.
 
-{{</* mermaid */>}}
+{{< mermaid >}}
 flowchart LR
     A[Browser :3080] -->|HTTP| B[Express API :3000]
     B --> C[adQueries]
     C --> D[ldapClient]
     D -->|LDAP search only| E[Active Directory]
-{{</* /mermaid */>}}
+{{< /mermaid >}}
 
 The request flow for a user search:
 
