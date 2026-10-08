@@ -37,7 +37,7 @@ Here we are, one more ticket for a question that has a one-line answer.
 
 Every infrastructure person knows the scene. You need to know if a colleague is in a group, or who is in a group, or in which OU an account lives. You have no access to the domain controller, no AD console, no RSAT. So you open a ticket, wait for someone to read it, and get back a screenshot two days later.
 
-In this article I'll walk you through **AD Helper**, a tiny read-only web UI I built to answer exactly these questions in seconds. It starts from a simple observation: you probably can already do this, you just do not know it.
+In this article I'll walk you through **AD Helper** ([source on GitHub](https://github.com/lorenzogirardi/ad-helper)), a tiny read-only web UI I built to answer exactly these questions in seconds. It starts from a simple observation: you probably can already do this, you just do not know it.
 
 ## The Problem: A Ticket for a Question
 
@@ -113,8 +113,6 @@ The request flow for a user search:
 3. `adQueries` escapes the input and builds the LDAP filter
 4. `ldapClient` opens a fresh connection, binds, searches, always unbinds
 5. Entries are mapped to `{ dn, sAMAccountName, displayName, mail, ou, disabled }` and returned as JSON
-
-![AD Helper architecture overview](/media/ad-helper-who-is-in-this-group-without-opening-a-ticket/architecture.drawio.png)
 
 The container publishes the port only on `127.0.0.1`, so it is reachable just from the machine running Docker.
 
@@ -210,7 +208,7 @@ Then the member DNs are resolved to mail, account name and status in batches of 
 
 ## Running It
 
-Copy `.env.example` to `.env`, fill the values, start:
+Clone the [repo](https://github.com/lorenzogirardi/ad-helper), copy `.env.example` to `.env`, fill the values, start:
 
 ```bash
 # .env
@@ -231,9 +229,9 @@ The API is usable from scripts too, which is handy for audits:
 curl -s "http://localhost:3080/api/groups/search.json?q=app-finance" | jq '.[].cn'
 ```
 
-![AD Helper group members view](/media/ad-helper-who-is-in-this-group-without-opening-a-ticket/Screenshot-2026-10-08-at-16.02.00.png)
+![AD Helper: user detail on the left, Domain Users members on the right](/images/ad-helper-who-is-in-this-group-without-opening-a-ticket/ad-helper-user-and-group.png)
 
-The group view lists members with name, mail and a clear marker for disabled accounts, with CSV and JSON export one click away.
+User detail on the left, group members on the right, with CSV and JSON export one click away. Domain Users lists the same four accounts that the ADUC console shows.
 
 ## Security Considerations
 
@@ -266,6 +264,10 @@ Most of the "I need access" tickets are really "I need an answer". The directory
 If you are working on similar automation, you may also like [Lazy People Do It Better](/posts/lazy-people-do-it-better/).
 
 ## References
+
+The tool:
+
+* [AD Helper source code (GitHub)](https://github.com/lorenzogirardi/ad-helper)
 
 Default read access for authenticated users:
 
