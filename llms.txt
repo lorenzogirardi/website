@@ -6,6 +6,7 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
+- [AD Helper: Who Is in This Group? Answering It Without Opening a Ticket](https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/): How I wrapped the ldapsearch every domain user can already run into a small read-only web UI, to check Active Directory group members without tickets.
 - [Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read the Docs, Not the Code](https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/): Five sites, three virtualizers, four Kubernetes clusters, one hub-and-spoke VPN. Here's the docs-as-code system, and the AI agent deploy it survived, that keeps it operable instead of just growing.
 - [Building an LTE Fallback for My Flaky FTTC with a $45 ZTE MF286D and OpenWrt](https://www.k8s.it/posts/zte-mf286d-openwrt-lte-fallback-fttc/): How I turned a cheap ZTE MF286D LTE router into an OpenWrt-based failover WAN for a saturated countryside FTTC line, using mwan3 and a Vodafone data SIM.
 - [Your CI Pipeline Speaks Too Many Languages. Here's the Translator.](https://www.k8s.it/posts/your-ci-pipeline-speaks-too-many-languages-heres-the-translator/): Trivy, Checkov, pytest and kubectl each speak their own dialect, readable only if you already know that tool well. A near-zero-cost AI step at the end of the pipeline translates all of it into one human-readable report.

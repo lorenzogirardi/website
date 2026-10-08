@@ -1,4 +1,24 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Active Directory - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/active-directory/</link><description>Active Directory - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 11 Aug 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/active-directory/" rel="self" type="application/rss+xml"/><item><title>Kubernetes VPN Strongswan — IPsec with LDAP Auth</title><link>https://www.k8s.it/posts/kubernetes-strongswan/</link><pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-strongswan/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Active Directory - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/active-directory/</link><description>Active Directory - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 08 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/active-directory/" rel="self" type="application/rss+xml"/><item><title>AD Helper: Who Is in This Group? Answering It Without Opening a Ticket</title><link>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</link><pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/ad-helper-who-is-in-this-group-without-opening-a-ticket/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem: A Ticket for a Question</li>
+<li>Enter ldapsearch</li>
+<li>Why a Web UI on Top of It?</li>
+<li>The Architecture</li>
+<li>Setting Up the LDAP Client</li>
+<li>Searching Users and Groups</li>
+<li>Groups With Thousands of Members: Ranged Retrieval</li>
+<li>Running It</li>
+<li>Security Considerations</li>
+<li>Reflections</li>
+<li>Conclusion</li>
+<li>References</li>
+</ul>
+<p>Here we are, one more ticket for a question that has a one-line answer.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Every infrastructure person knows the scene. You need to know if a colleague is in a group, or who is in a group, or in which OU an account lives. You have no access to the domain controller, no AD console, no RSAT. So you open a ticket, wait for someone to read it, and get back a screenshot two days later.</p>]]></description></item><item><title>Kubernetes VPN Strongswan — IPsec with LDAP Auth</title><link>https://www.k8s.it/posts/kubernetes-strongswan/</link><pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-strongswan/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/kubernetes-strongswan/vpn_diagram.jpg" referrerpolicy="no-referrer">
             </div><h2 id="how-to-manage-vpn-in-a-kubernetes-environment">How to Manage VPN in a Kubernetes Environment</h2>
 <p>Traditional IPsec-XAuth VPN manages credentials in flat files. Adding a user means editing a file and redeploying. Removing a user means the same. In a Kubernetes environment, that&rsquo;s not acceptable.</p>
