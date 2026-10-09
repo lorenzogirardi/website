@@ -1,4 +1,19 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 08 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>AD Helper: Who Is in This Group? Answering It Without Opening a Ticket</title><link>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</link><pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>AI Makes Developers Faster. Does It Make the Team Faster?</title><link>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</link><pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/ai-makes-developers-faster-does-it-make-the-team-faster/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>AI-First and AI-Native</li>
+<li>Aurora: a Real AI-First Showback</li>
+<li>The Security Review as a Usage Strategy</li>
+<li>The Team&rsquo;s Own Account</li>
+<li>Where the Speed Goes</li>
+<li>What AI-Native Looks Like</li>
+<li>The Sameness Risk</li>
+<li>How You Would Know</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. Everybody wants to measure how much faster AI makes developers, and it&rsquo;s fair: an agent writes code faster, that&rsquo;s indisputable. The number lands on a slide, next to a dollar figure and a session count, and everyone nods. Nobody asks what it&rsquo;s divided by, or what happens to the code after it&rsquo;s written.</p>]]></description></item><item><title>AD Helper: Who Is in This Group? Answering It Without Opening a Ticket</title><link>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</link><pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/ad-helper-who-is-in-this-group-without-opening-a-ticket/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -253,21 +268,4 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Here we are. I recently put together an internal presentation on introducing AI into business processes, and the hardest part wasn&rsquo;t the technology. It was convincing people to look in the opposite direction of where they instinctively point AI.</p>]]></description></item><item><title>I Made Claude Code Talk Like a Caveman for 61 Days, Then Did the Math</title><link>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</link><pubDate>Sun, 19 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/i-made-claude-code-talk-like-a-caveman-for-61-days-then-did-the-math/caveman-hero.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>Introduction</li>
-<li>The Problem: Verbose Agents Cost Real Money</li>
-<li>Enter Caveman Mode</li>
-<li>The Question I Actually Wanted Answered</li>
-<li>Method: Mining 27 Session Logs</li>
-<li>The Results, Per Model</li>
-<li>Where the Money Actually Goes</li>
-<li>How Big Were These Sessions, Really?</li>
-<li>The Fable 5 Shift</li>
-<li>From a Homelab Toy to an Enterprise Line Item</li>
-<li>Reflections</li>
-<li>Conclusion</li>
-</ul>
-<p>Strange&hellip; an AI assistant that talks less should cost less. Obvious, right? I wanted a number, not a vibe.</p>]]></description></item></channel></rss>
+<p>Here we are. I recently put together an internal presentation on introducing AI into business processes, and the hardest part wasn&rsquo;t the technology. It was convincing people to look in the opposite direction of where they instinctively point AI.</p>]]></description></item></channel></rss>

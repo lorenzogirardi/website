@@ -1,4 +1,19 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Security - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/security/</link><description>Security - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 08 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/security/" rel="self" type="application/rss+xml"/><item><title>AD Helper: Who Is in This Group? Answering It Without Opening a Ticket</title><link>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</link><pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Security - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/security/</link><description>Security - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/security/" rel="self" type="application/rss+xml"/><item><title>AI Makes Developers Faster. Does It Make the Team Faster?</title><link>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</link><pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/ai-makes-developers-faster-does-it-make-the-team-faster/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>AI-First and AI-Native</li>
+<li>Aurora: a Real AI-First Showback</li>
+<li>The Security Review as a Usage Strategy</li>
+<li>The Team&rsquo;s Own Account</li>
+<li>Where the Speed Goes</li>
+<li>What AI-Native Looks Like</li>
+<li>The Sameness Risk</li>
+<li>How You Would Know</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are. Everybody wants to measure how much faster AI makes developers, and it&rsquo;s fair: an agent writes code faster, that&rsquo;s indisputable. The number lands on a slide, next to a dollar figure and a session count, and everyone nods. Nobody asks what it&rsquo;s divided by, or what happens to the code after it&rsquo;s written.</p>]]></description></item><item><title>AD Helper: Who Is in This Group? Answering It Without Opening a Ticket</title><link>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</link><pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/ad-helper-who-is-in-this-group-without-opening-a-ticket/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -210,9 +225,4 @@
 <li>Monitor</li>
 </ul>
 <p>Each could be its own post. This one will cut across all of them because they&rsquo;re connected.</p>
-<p><em>This is not a post about how to create a blog. This post inspects some technology that can simplify your life or your work with small but important concepts.</em></p>]]></description></item><item><title>Kubernetes Guacamole — Bastion Host Without MySQL</title><link>https://www.k8s.it/posts/kubernetes-guacamole/</link><pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/kubernetes-guacamole/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/kubernetes-guacamole/guacamole-linux.jpg" referrerpolicy="no-referrer">
-            </div><h2 id="another-guacamole-in-kubernetes">Another Guacamole in Kubernetes</h2>
-<p>A bastion host is &ldquo;the only host computer that a company allows to be addressed directly from the public network.&rdquo; It&rsquo;s the security barrier between the internet and your internal infrastructure — the single controlled point for SSH and RDP access.</p>
-<p>Apache Guacamole turns a bastion host into a browser-accessible portal: no VPN client, no SSH client, just a browser.</p>
-<p>The problem with most Guacamole deployments: MySQL. A database dependency for something that&rsquo;s fundamentally config management.</p>]]></description></item></channel></rss>
+<p><em>This is not a post about how to create a blog. This post inspects some technology that can simplify your life or your work with small but important concepts.</em></p>]]></description></item></channel></rss>
