@@ -1,5 +1,5 @@
 ---
-title: "Autopsy of an Agentic Loop: Six Pull Requests, Zero Humans"
+title: "Autopsy of an Agentic Loop"
 date: 2026-10-09
 draft: true
 description: "How an agentic loop takes a pull request to merged, abandoned or
