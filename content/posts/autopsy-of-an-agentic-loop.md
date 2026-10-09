@@ -3,7 +3,7 @@ title: "Autopsy of an Agentic Loop: Six Pull Requests, Zero Humans"
 date: 2026-10-09
 draft: true
 description: "How an agentic loop takes a pull request to merged, abandoned or
-  reverted with no person in it: the flow, the agents, the rules, eight real cases."
+  reverted with no person in it: the flow, the agents, the rules, nine real cases."
 tags:
   - ai
   - automation
@@ -25,7 +25,7 @@ images:
 - The cast: who does what
 - The loop as a graph
 - The rules the agents cannot break
-- Eight use cases
+- Nine use cases
   - Use case 1: a dependency bump that merges itself
   - Use case 2: a change with nothing wrong
   - Use case 3: a bug the tests catch
@@ -34,6 +34,7 @@ images:
   - Use case 6: a change nobody may repair
   - Use case 7: main goes red after a merge
   - Use case 8: a pull request nobody is looking at
+  - Use case 9: a change to the engine itself
 - Who watches the loop
 - The prompt of every agent
 - One engine, many projects
@@ -47,7 +48,7 @@ images:
 
 Well, here we are. I wanted a pipeline where I write a pull request, go away, and come back to find it merged or closed, with a reason. No approval button, no "needs a human" label, no pull request sitting open for a week because nobody knows who owns it.
 
-This post explains how that works, as a flow you can follow step by step, and then shows it on eight real situations taken from a real repository: the comments, the commits, the timings and the costs. If you only want the idea, read the next three sections. If you want to build one, read the rest.
+This post explains how that works, as a flow you can follow step by step, and then shows it on nine real situations taken from a real repository: the comments, the commits, the timings and the costs. If you only want the idea, read the next three sections. If you want to build one, read the rest.
 
 ## What an agentic loop is, in one paragraph
 
@@ -127,6 +128,7 @@ flowchart TD
     S -->|push on main| R[review]
     S -->|finding on a dependency PR| W[write]
     W --> V
+    W -->|edited a test the verdict found right| W
     V -->|checks pass, code touched| T[tests]
     V -->|checks pass| R
     V -->|code is wrong| W
@@ -194,11 +196,11 @@ Only one agent run works on a pull request at a time: when the checks fail, the 
 
 Removing the person forces you to write down what the person was doing. These rules are code, not prompt, and no agent can talk its way around them.
 
-**1. Tests are the specification.** When a test and the code disagree, the code gives way, unless the change itself says, in words, that it is redefining what the test checks. The adjudicator must *quote* those words. The quote is compared with the title and description of the change, piece by piece: every piece must be there word for word. No quote, no `test_defect`: the verdict becomes `code_defect` and the writer fixes the code.
+**1. Tests are the specification.** When a test and the code disagree, the code gives way, unless the change itself says, in words, that it is redefining what the test checks. The adjudicator must *quote* those words. The quote is compared with the title and description of the change, piece by piece: every piece must be there word for word. No quote, no `test_defect`: the verdict becomes `code_defect` and the writer fixes the code. And the writer fixes the *code*: after that verdict it may not edit the file of the failing test, because changing the value a test expects makes the failure disappear without fixing anything. A patch that does is reverted and refused.
 
 **2. A test an agent has just written is not the specification.** If the steward writes or rewrites a test and it fails, the test is what is wrong: it asserts something the code does not do. It is discarded and the steward is asked again, with the failure in front of it. The application is never changed to satisfy a test a model wrote a minute earlier.
 
-**3. Evidence overrules the model.** Each failing test is re-run before anyone has an opinion. If it passes the second time it is flaky, whatever the model says.
+**3. Evidence overrules the model.** Each failing test is re-run before anyone has an opinion. If it passes the second time it is flaky, whatever the model says. Evidence counts only when the test really ran: a job that cannot run it reports "unreproducible", never "failing".
 
 **4. Tests can only get stronger.** A patch that deletes a test file, removes a test or an assertion, or adds `skip` or `xfail` is reverted and refused, whoever proposed it.
 
@@ -210,7 +212,7 @@ Removing the person forces you to write down what the person was doing. These ru
 
 **8. The checks the agent cannot run, it reads.** The integration suite needs PostgreSQL and Redis, which the agent's own job does not have. When CI runs them and fails, the agent reads the real logs of the failed checks and judges those.
 
-## Eight use cases
+## Nine use cases
 
 All of these happened in the repository `flask-test-api` (a FastAPI application with PostgreSQL and Redis, deployed on Kubernetes). Times are from the pull request being opened, costs are the model spend reported by the pipeline itself. For each one: the situation, what the loop did, and how it ended.
 
@@ -383,6 +385,51 @@ That turns "open forever" into one of the three endings. Then a new commit was p
 
 **How it ended.** Abandoned by the health check, then merged after the next push. That push was the only thing a person did.
 
+### Use case 9: a change to the engine itself
+
+**The situation.** The engine that does all of the above is code too, in its own repository. A change to it reaches every pull request of every project that uses it, and unit tests do not show what a model will do with a real pull request. So the engine goes through its own loop, and then through one more step.
+
+**What the loop did**, for a small change, with the real timestamps (UTC):
+
+| Time | What happened |
+| --- | --- |
+| 11:16 | The pull request is opened on the engine's repository |
+| 11:19 | Its own agents (running the published version, not the one under review) certify it, and it is merged |
+| 11:19 | The tests pass on `main`, and the commit is published as a **candidate** |
+| 11:20 | The application's canary starts, with its pull requests judged by the candidate |
+| 11:24 | The three scenarios hold |
+| 11:25 | The candidate becomes the released version |
+
+![The release run on the engine's repository: triggered by the tests, success, 5 minutes 44 seconds, the commit that became the released version](/images/autopsy-of-an-agentic-loop/engine-released.png)
+
+The release run: it waits for the canary of the application, then moves the tag. Nobody starts it.
+
+The other direction matters more, so I tried that as well: an engine with a defect put in on purpose (it never accepts the quote of the intent, so it can never agree that a test should change), published only as a candidate. This is what the canary said:
+
+```text
+## Pipeline canary
+
+### repair: passed (PR #228)
+- every expectation held
+
+### intent: FAILED (PR #229)
+- nothing under tests/test_canary.py was changed, and something had to be
+- app/canary.py does not contain 'CANARY_LIMIT = 20'
+- the agents' report does not say '**test_defect**'
+- the agents' report says '**code_defect**', and must not
+
+### coverage: passed (PR #230)
+- every expectation held
+```
+
+![The canary run started for the defective candidate: failure after 8 minutes 41 seconds, with the candidate commit in its title](/images/autopsy-of-an-agentic-loop/canary-stops-defective-engine.png)
+
+The same canary, started for the defective candidate: red, with the commit it judged in its title.
+
+The defective engine gave the wrong verdict, could not touch the test (rule 1), and "fixed" the code by undoing the intended change. Four expectations failed, the release did not happen, and no real pull request ever met that engine.
+
+**How it ended.** A good engine released nine minutes after its pull request was opened, a defective one stopped before release, and in both cases nobody decided anything.
+
 ## Who watches the loop
 
 Use case 8 is one half of the answer. With no person in it, nobody notices when a piece of the loop silently stops working, so the loop is checked by two things that are not agents.
@@ -400,20 +447,24 @@ Use case 8 is one half of the answer. With no person in it, nobody notices when 
 | --- | --- | --- |
 | `repair` | A bug the existing tests catch, with a vague description | The code is restored, the tests are not touched, the commit is certified |
 | `intent` | A limit raised on purpose, said in the description, that an existing test contradicts | The test is updated, the code keeps the new limit, no other file changes, the commit is certified |
+| `coverage` | A new function added with no test | The test steward adds a test for it, the function stays as written, no other file changes, the commit is certified |
 
-The scenarios are use cases 3 and 4 in miniature, and the canary checks facts, not opinions: the verdict, the required checks, which files the pull request ended up changing, what they contain.
+The first two are use cases 3 and 4 in miniature, and the canary checks facts, not opinions: the verdict, the required checks, which files the pull request ended up changing, what they contain, and what the agents' report says. The last one is there because the right files can be reached by the wrong road: `repair` must be reported as `code_defect` and `intent` as `test_defect`.
 
 ![A run of the canary workflow: success, total duration 4 minutes 55 seconds](/images/autopsy-of-an-agentic-loop/canary-run.png)
 
-One run of the canary: both scenarios opened, judged and closed in under five minutes. Its summary is two lines per scenario:
+One run of the canary: the scenarios opened, judged and closed in about five minutes. Its summary is two lines per scenario:
 
 ```text
 ## Pipeline canary
 
-### repair: passed (PR #204)
+### repair: passed (PR #212)
 - every expectation held
 
-### intent: passed (PR #205)
+### intent: passed (PR #213)
+- every expectation held
+
+### coverage: passed (PR #214)
 - every expectation held
 ```
 
@@ -423,7 +474,7 @@ And this is what the agents wrote on the `intent` pull request before the canary
 
 The verdict on the test (`test_defect`, with the reason), what was updated, and the cost: under one cent.
 
-Both scenarios together take about five minutes and cost about one cent each. If an agent ever touches a file it should not, leaves a pull request without a verdict or abandons a legitimate change, the run goes red the same night.
+The three scenarios together take about six minutes and cost about one cent each. If an agent ever touches a file it should not, gives the wrong verdict, leaves a pull request without a verdict or abandons a legitimate change, the run goes red the same night. The same canary is what a new version of the engine has to pass before it is released (use case 9).
 
 ## The prompt of every agent
 
@@ -596,7 +647,8 @@ jobs:
       python_version: "3.14"
 ```
 
-* **A tag, not a branch.** The caller says `@v2`, and the reusable workflow checks out the scripts and prompts at the same tag. The tag follows `main` of `ci-shared` by itself, and only after the tests of that commit have passed.
+* **A tag, not a branch.** The caller says `@v2`, and the reusable workflow checks out the scripts and prompts at the same tag. The tag follows `main` of `ci-shared` by itself, after the tests of that commit have passed and the application's canary has passed against it (use case 9).
+* **The engine uses itself.** Pull requests to `ci-shared` are reviewed, repaired and merged by the same agents, running at the released tag.
 * **Parameters for what is project specific, nothing else.** The project says how it is tested, which checks are required and what its canary scenarios are. It cannot change the graph or the prompts, so the rules are the same everywhere.
 
 The honest limit: the engine assumes a Python project tested with pytest, and this repository is so far its only real consumer.
@@ -613,9 +665,10 @@ The honest limit: the engine assumes a Python project tested with pytest, and th
 | 6 | Workflow edit, unrepairable | blocking, out of scope | abandoned | ~4 min | $0.029 |
 | 7 | `main` red after a commit | failed twice | reverted | ~5 min red | none |
 | 8 | Pull request with no verdict | found by the health check | abandoned, then merged | n/a | none |
-| canary | Both scenarios, every night | as expected | closed, never merged | ~5 min | ~$0.02 |
+| 9 | A change to the engine | canary against the candidate | released; a defective one stopped | ~9 min | the canary's |
+| canary | Three scenarios, every night | as expected | closed, never merged | ~6 min | ~$0.03 |
 
-Behind these there is a full test pyramid: about 80 unit tests, 25 integration tests against real backends (in the pull request checks, and again against the published image in the cluster), and 435 tests on the engine itself: graph routing against real throw-away git repositories, the adjudication rules, the merge gate, the guard against a local bare remote, the endings.
+Behind these there is a full test pyramid: about 80 unit tests, 25 integration tests against real backends (in the pull request checks, and again against the published image in the cluster), and about 450 tests on the engine itself: graph routing against real throw-away git repositories, the adjudication rules, the merge gate, the guard against a local bare remote, the endings.
 
 ## What it costs
 
@@ -625,11 +678,13 @@ The more useful saving is attention. A pull request needs a person's eyes only w
 
 ## Reflections
 
-I thought the hard part would be the model. It isn't. Use cases 3 and 4 use the same model, the same prompts and the same code, and reach opposite conclusions about a failing test, because one description contains a sentence and the other does not. The model's job is small and well fenced, and the rest is a state machine, a handful of string comparisons and a lot of `git`.
+**The model is the small part.** Use cases 3 and 4 use the same model, the same prompts and the same code, and reach opposite conclusions about a failing test, because one description contains a sentence and the other does not. The model's job is narrow and fenced; the rest is a state machine, a handful of string comparisons and a lot of `git`.
 
-The second thing I got wrong was thinking of "needs a human" as a safe default. It is a state in which nothing happens, indefinitely, and in a system with no person it is the most dangerous state there is. The three endings exist so that every path finishes with something done.
+**"Needs a human" is not a safe default.** It is a state in which nothing happens, indefinitely, and in a system with no person it is the most dangerous state there is. The three endings exist so that every path finishes with something done.
 
-The third is the one I would tell anyone starting: **the agents are not the part that needs watching, the loop is**. An agent that writes a bad patch is caught by the checks. A loop that quietly stops applying one of its own rules is caught by nothing, unless you build the thing that looks. That is what the health check and the canary are for, and I would build them first next time.
+**The agents are not the part that needs watching, the loop is.** An agent that writes a bad patch is caught by the checks. A loop that quietly stops applying one of its own rules is caught by nothing, unless something looks. That is the job of the health check and the canary, and they are the first thing I would build.
+
+**The result is not enough, the road matters.** A change can end on exactly the right files for the wrong reason. That is why the canary reads the verdict as well as the diff, and why use case 9 is worth running with a broken engine and not only with a good one.
 
 ### What is still missing
 
@@ -638,10 +693,10 @@ I'd rather say it than have you find it:
 - **Agents cannot edit `.github/workflows/`.** A pull request that needs a change in the CI itself stays a human job (or a job for Renovate, which has its own permission for action bumps). That is deliberate, and it is the one real dependency on a person that is left.
 - **The guarantee is only as strong as the checks.** A defect none of the checks can see will merge. The guard limits the damage, it does not prevent it. A diff-coverage gate, so that every changed line must be exercised by a test, would raise the floor.
 - **A description is part of the input.** A vague one gives the model room to pick a side, and a wrong one (a description that promises something the code does not do) sends the agents looking for it. "Tests win" keeps the outcome safe, but the change may be abandoned instead of merged.
-- **The engine does not yet review itself.** Changes to the shared engine are tested and tagged automatically, but they are not reviewed by the agents they define.
+- **The canary covers three scenarios.** A defect none of them exercises is not seen before a new engine is released.
 
 ## Conclusion
 
-A person used to be the thing that turned "the checks are green" into "this can merge", and "the checks are red" into "this should be fixed, and here is how". Both are now a graph: nine nodes, a few ways in, three endings, and a handful of rules written in code instead of in someone's head.
+In an ordinary pipeline a person is what turns "the checks are green" into "this can merge", and "the checks are red" into "this should be fixed, and here is how". Here both are a graph: nine nodes, a few ways in, three endings, and a handful of rules written in code instead of in someone's head.
 
-The measure that matters to me is not the eight use cases. It is that in none of them did anybody do anything after the change was pushed.
+The measure that matters to me is not the nine use cases. It is that in none of them did anybody do anything after the change was pushed.
