@@ -1,8 +1,8 @@
 ---
-title: "Autonomous Delivery of a Dev/SRE Toolbox by a Multi-Agent MAGI Pipeline"
+title: "MAGI: A Risk-Reduction System Inside an Agentic Loop"
 date: 2026-10-16
 draft: true
-description: "One run of magi-system on a FastAPI service: three architects, two developers, QA, SRE and security. 19 minutes, one dollar, ten gates, a case study."
+description: "A risk-reduction system inside an agentic loop: three architects, two developers, QA, SRE and security. One real run, 19 minutes, one dollar, ten gates."
 tags:
   - ai
   - agentic
@@ -12,9 +12,9 @@ tags:
   - fastapi
   - ci
   - cost saving
-featuredImage: /images/autonomous-delivery-of-a-dev-sre-toolbox-by-a-multi-agent-magi-pipeline/featured.jpg
+featuredImage: /images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg
 images:
-  - "/images/autonomous-delivery-of-a-dev-sre-toolbox-by-a-multi-agent-magi-pipeline/featured.jpg"
+  - "/images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg"
 ---
 ### Table of Contents
 
