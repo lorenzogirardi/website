@@ -115,7 +115,7 @@ wg pubkey &lt; server_privatekey &gt; server_publickey_me</code></pre></div><p>G
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><pre tabindex=0><code>kubectl get pods -n wireguard
 NAME                         READY   STATUS    RESTARTS   AGE
-wireguard-74ff66988d-ltwkq   1/1     Running   0          108m</code></pre></div><p>Jump into the container and check WireGuard status:</p><div class="code-block code-line-numbers" style="counter-reset:code-block 0"><div class="code-header language-"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+wireguard-74ff66988d-ltwkq   1/1     Running   0          108m</code></pre></div><p>Jump into the container and check WireGuard status:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><pre tabindex=0><code>kubectl exec -n wireguard -it deployment/wireguard -- bash
 root@wireguard-74ff66988d-ltwkq:/# wg show
