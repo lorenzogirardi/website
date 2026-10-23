@@ -1,7 +1,7 @@
 ---
 title: "Autopsy of an Agentic Loop (pt.1) "
 date: 2026-10-14
-draft: false
+draft: true
 description: "A pipeline that works like a team with no person in it: architect,
   two developers, QA, SRE, security, docs. The graph, the rules, the costs, a
   real repair."
