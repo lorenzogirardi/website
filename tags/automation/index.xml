@@ -1,49 +1,4 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Automation - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/automation/</link><description>Automation - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 14 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/automation/" rel="self" type="application/rss+xml"/><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/autopsy-of-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>From a loop to a team</li>
-<li>The three endings</li>
-<li>The cast</li>
-<li>The graph
-<ul>
-<li>The brief</li>
-<li>The architect&rsquo;s tools</li>
-</ul>
-</li>
-<li>The model proposes, the code decides
-<ul>
-<li>When a check fails: the code or the test?</li>
-</ul>
-</li>
-<li>Thinking, only where it is needed</li>
-<li>The loops, and their bounds</li>
-<li>The journal: how roles talk to each other</li>
-<li>The job, and who holds the keys</li>
-<li>One engine, many projects</li>
-<li>LangGraph: what is used, and what is not</li>
-<li>Case study: Python 3.15 on flask
-<ul>
-<li>First act: the engine dies with the application</li>
-<li>Second act: a repair in 7 minutes and 37 seconds</li>
-<li>What the case shows</li>
-</ul>
-</li>
-<li>How it got here: a day of corrections
-<ul>
-<li>Six replays of the same pull request</li>
-</ul>
-</li>
-<li>Who watches the engine</li>
-<li>What it costs</li>
-<li>Reflections
-<ul>
-<li>What is still missing</li>
-</ul>
-</li>
-<li>Conclusion</li>
-</ul>
-<p>Well, here we are again. The first version of this engine was a loop: a writer, two reviewers, a judge for failing tests, a test steward, a documentation reviewer, all around a set of checks. It worked, and then it started to fail in ways a loop fails: one reviewer call that hung for twenty minutes, a writer that used eight rounds and proposed nothing, roles that sent the same change back to each other over and over, and a run that lasted 49 minutes.</p>]]></description></item><item><title>AD Helper: Who Is in This Group? Answering It Without Opening a Ticket</title><link>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</link><pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Automation - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/automation/</link><description>Automation - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 08 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/automation/" rel="self" type="application/rss+xml"/><item><title>AD Helper: Who Is in This Group? Answering It Without Opening a Ticket</title><link>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</link><pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/ad-helper-who-is-in-this-group-without-opening-a-ticket/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -300,4 +255,38 @@
 <li>Reflections</li>
 <li>Conclusion</li>
 </ul>
-<p>Strange&hellip; an AI assistant that talks less should cost less. Obvious, right? I wanted a number, not a vibe.</p>]]></description></item></channel></rss>
+<p>Strange&hellip; an AI assistant that talks less should cost less. Obvious, right? I wanted a number, not a vibe.</p>]]></description></item><item><title>AI Agentic Development Changes Who Builds Software — and That's an Infrastructure Problem</title><link>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</link><pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/ai-agentic-development-changes-who-builds-software-and-thats-an-infrastructure-problem/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Shift Is Already Happening</li>
+<li>The Problem Nobody Prepared For</li>
+<li>The Design Principle: Safe by Default</li>
+<li>The Platform Contract — What Every App Must Be
+<ul>
+<li>Supported Languages and Base Images</li>
+<li>Supported Components</li>
+<li>T-shirt Sizing</li>
+<li>Port Contract</li>
+<li>Health Endpoints</li>
+<li>Secrets: Sealed, Always</li>
+<li>Images: Commit SHA, Never Latest</li>
+<li>Network: Default Deny, Every Time</li>
+</ul>
+</li>
+<li>The Three-Tier Monitoring Contract
+<ul>
+<li>System Tier — Automatic</li>
+<li>Framework Tier — App Metrics</li>
+<li>Business Tier — What the App Actually Does</li>
+</ul>
+</li>
+<li>The Review Gate — 35+ Checks Before Deploy</li>
+<li>The Helm Chart — Five Questions, Full Platform</li>
+<li>The CI/CD Pipeline — AI App Meets GitOps</li>
+<li>The Skill Pipeline — AI Onboarding an AI App</li>
+<li>The RACI Collapse</li>
+<li>Conclusion</li>
+</ul>
+<hr>
+<p>Here we are. Somewhere in the last twelve months, something quietly changed.</p>]]></description></item></channel></rss>
