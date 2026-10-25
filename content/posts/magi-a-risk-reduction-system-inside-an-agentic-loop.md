@@ -50,6 +50,14 @@ images:
   - What the architecture changed in this run
   - Threats to validity
   - Cost of robustness
+- Second run: the same request on Amazon Bedrock AgentCore
+  - What AgentCore changes
+  - The deployment in the AWS console
+  - The run: a second design round
+  - What it took to get a SUCCESS
+  - What the gates did not see
+  - Independent check outside the platform
+  - Two runs side by side
 - Conclusion
 - Appendix: mandatory gates
 
@@ -566,11 +574,134 @@ I'd rather list them myself than have you find them:
 
 Six model outputs were rejected because they hit the 32,000-token cap. The excerpts of earlier runs show these are repetition loops at temperature 0 (for example "No X. No Y. No Z. ..." for about 150,000 characters). The cap plus a retry with feedback recovered every case, at the price of about four minutes of the final review and a share of the output tokens.
 
+## Second run: the same request on Amazon Bedrock AgentCore
+
+A single run is an existence proof, so I did the obvious thing: same request, same kind of target (a public FastAPI repository, `fastapi-agentcore`), but the whole pipeline moved from my laptop to **Amazon Bedrock AgentCore**. Same three-tool Dev/SRE Toolbox, same ten gates, same model family through OpenRouter. What changes is where everything runs.
+
+It ended **SUCCESS** in **25 min 44 s** and **US$ 1.35** of model cost, plus about US$ 0.12 of infrastructure. Final commit `067510f`, 21 files (+2,329 / -49), 54 new passing tests (133 passed, 25 skipped, against 79 before), ten of ten gates, no push, no merge, no deployment.
+
+### What AgentCore changes
+
+One run is one AgentCore Runtime session. The graph is the same, the surroundings are not:
+
+| Concern | Local run | AgentCore run |
+|---|---|---|
+| Orchestrator | local process | one Runtime microVM per run (2 vCPU, 8 GB), kept alive with `/ping` = `HealthyBusy` |
+| Workspace and artifacts | local disk | Amazon EFS, `/magi/<run_id>/...` |
+| Run state and checkpoints | SQLite | DynamoDB, plus S3 for large checkpoints |
+| Target commands | Docker, `--network=none` | AgentCore Code Interpreter in VPC mode, no internet, per-run EFS access point |
+| Toolchain in the sandbox | image with the dependencies | wheels installed by the Runtime (which has NAT) into `.git/magi-toolchain` |
+| Code deployment | `uv run` | image with the locked dependencies, code bundle in S3 loaded at session start |
+| Observability | files | CloudWatch Logs, 15 metric filters, a dashboard filtered by run id |
+
+The sandbox is the part I care about. It has no internet, so the Runtime installs the toolchain for it, and the platform's rule stays the same: a gate is PASS only if a command was executed and succeeded.
+
+### The deployment in the AWS console
+
+Screenshots taken after the run, account id blacked out, region `eu-north-1`.
+
+**Network.** One VPC, six subnets over two availability zones (public, isolated and private in each), an internet gateway, a NAT gateway and the S3 and DynamoDB gateway endpoints. The Runtime and the sandbox sit in the private subnets, and the NAT gateway is the only way out.
+
+![VPC resource map of the lab VPC: six subnets over two availability zones, route tables, internet gateway, NAT gateway and the S3 and DynamoDB endpoints](/images/magi-a-risk-reduction-system-inside-an-agentic-loop/agentcore-vpc-resource-map.webp)
+
+**Runtime.** Version 8 of the `magi_runtime` is ready, with the `DEFAULT` endpoint, started from the image `magi-agentcore:base-1`, an IAM service role of its own and IAM inbound authentication.
+
+![AgentCore Runtime, version 8, endpoint DEFAULT, status Ready](/images/magi-a-risk-reduction-system-inside-an-agentic-loop/agentcore-runtime-version.webp)
+
+**Image and code are separate.** The base image (178 MB: Python, git, uv and the locked dependencies, no magi-system code) is pushed once. The code lives in the S3 `code/` prefix, a zip and a small JSON pointer per version, so shipping a fix does not mean rebuilding the image. This run used bundle `1ff47e1`, the first one with the preflight.
+
+![ECR repository with the base image magi-agentcore:base-1](/images/magi-a-risk-reduction-system-inside-an-agentic-loop/agentcore-ecr-image.webp)
+
+![S3 code bucket, code/ prefix, one zip and one pointer per bundle version](/images/magi-a-risk-reduction-system-inside-an-agentic-loop/agentcore-s3-code-bundles.webp)
+
+**Observability.** The `magi-runs` dashboard, filtered on this run: model cost against infrastructure cost, tokens, calls and latency, gate checks by verdict, tables per run and per agent. The numbers agree with the platform's own report: 116 calls, 5,474,396 input and 663,977 output tokens, US$ 1.3517 (computed and provider-reported are identical), 1,636 active seconds.
+
+![CloudWatch dashboard magi-runs for the run: cost, tokens, calls, latency and gate checks](/images/magi-a-risk-reduction-system-inside-an-agentic-loop/agentcore-cloudwatch-dashboard.webp)
+
+The "Run outcomes" panel shows no data in my capture: the end event fell outside the selected time window. I kept the screenshot as it is.
+
+### The run: a second design round
+
+The first run selected a plan in round 0. This one did not. **None of the three round-0 proposals was admissible**, the board went into a revision round, and the plan was chosen in round 1. That cost about 4 more minutes and US$ 0.19 of architect calls, on top of US$ 0.42 for round 0. The architects alone are US$ 0.60 of the 1.35.
+
+Why they were rejected is the interesting part. Verification of the 491 claims of the run: 359 supported, 77 refuted, 55 unverifiable. In round 0:
+
+| Proposal | Why inadmissible |
+|---|---|
+| Melchior | 22 critical claims refuted, 2 critical unknowns unresolved (PyYAML not installed, the 400 handler) |
+| Balthasar | 1 mandatory requirement not covered, 1 critical claim refuted (the protected `.github/workflows/**`) |
+| Casper | 8 critical claims refuted, 2 critical claims unresolved (no network needed, no payload logged) |
+
+Two different causes hide here. The first is real: an uncovered requirement, unresolved unknowns. The second is a defect of the platform, not of the agents. Nearly all the refuted critical claims of Melchior and Casper have the form "the router module exists after the change", or "the documentation page exists". The architects wrote claims in the future tense, the verifier checks the **baseline**, and on the baseline those files do not exist yet. In round 0, `file_exists` had 6 supported and 20 refuted, `text_present` 29 and 11. In round 1 the same kinds were all supported, because the architects restated them in a form the baseline can confirm.
+
+The platform did the safe thing, and the policy allowed one revision round, so the run recovered. But a claim about a file the plan creates should be a plan item, not a baseline fact. That is on my list.
+
+Can I blame something I changed between the runs? I looked. The MAGI phase code, the prompts, the selection logic and the verification tools are unchanged, and the preflight, the S3 bundle and the toolchain all act before or after the board. The likeliest explanation is model variance on an existing weakness. Not proven: one run per case, no controlled comparison.
+
+The selected plan (Balthasar's, round 1, rank score 4.68 against 4.41) mounts the router at the flat `/api/toolbox` prefix behind `verify_credentials`, parses YAML through a custom `SafeLoader` with a depth budget and an alias-expansion budget enforced during composition, dispatches CPU-bound work with `run_in_executor` wrapped in `asyncio.wait_for`, and answers over-limit input with 413 naming the limit.
+
+Casper, as usual, asked something the others did not: the original Italian text was not visible to it, only an English translation.
+
+### What it took to get a SUCCESS
+
+This was the tenth run on AgentCore and the first SUCCESS. The earlier nine failed for platform reasons, not model ones:
+
+| Defect | Fix |
+|---|---|
+| The sandbox had no toolchain (no pytest, no git) | the Runtime installs aarch64 wheels into `.git/magi-toolchain`, which survives `git clean -fdx` and is not scanned by `flake8 .` |
+| Heredocs and tools waited on stdin | commands run with stdin closed |
+| QA scenarios that searched source text or guessed `-k` selectors gave false negatives | text scans and empty selections are advisory, QA can correct a failed scenario once |
+| Claims written as `app/auth.py` instead of `app/auth.py::verify_credentials` were refuted | rejected at the schema, so the agent retries |
+| Warm containers kept serving old code after a new bundle was published | the Runtime reports `commit@bundle`, the launcher compares it with the published pointer and stops a stale start before it spends (4 of 5 starts in this run were stale) |
+| The previous run (US$ 1.44) passed every executed gate and ended FAILED_VERIFICATION: the target had no build or lint command | **preflight at intake**: a mandatory project gate that cannot run stops the run at cost zero, and the target got a `.magi/config.yaml` |
+
+The last row is the one I like. A pipeline that spends a dollar and a half to discover that the target has no lint command is not a risk-reduction system.
+
+QA also corrected one of its own scenarios. `acc-toolbox-routes-registered` first looked for "toolbox" in `create_app().routes`, which fails because the app mounts sub-applications. QA rewrote it to check `app.openapi()['paths']`, and it passed. The verdict is still the result of an executed command, what changed is that a scenario testing an implementation detail was replaced by one testing behaviour.
+
+### What the gates did not see
+
+Ten of ten gates passed, and the patch still has things I would not merge as they are:
+
+- **The generated documentation has no code fences.** `docs/14-dev-sre-toolbox.md` has five bare `bash` lines where a fence should open. The `docs.updated` gate checks that documentation changed, not how it renders. QA and a couple of architects noticed it as a minor finding, nobody was required to fix it.
+- **A failing test was rewritten.** `dev.writer` rewrote `test_document_budget` after it failed with `DID NOT RAISE ToolLimitExceeded`, and reported it itself as a major finding. Reviewers saw the final test and the guard is now exercised, but the platform has no rule that tells "the test was wrong" from "the test was weakened to pass". In the first run the same situation ended well, with a human checking the diff.
+- **Reviewers saw truncated diffs again.** The pair, Security and all three final reviewers say the diff did not contain the router, `main.py`, models and settings.
+- **Known minors shipped.** `text.diff` advertises `context_lines` up to 50 while the effective default is 10, so a client following the schema gets a 413. `max_findings` is checked after all findings are materialised. The 504 path has no test and cannot cancel the worker thread. And the empty tag `nginx:` is treated as clean, **the same defect as in the first run**. No gate failed, so no remediation cycle ran.
+
+Also, of the 64 mandatory explicit requirements, 29 are demonstrated by an executable scenario. The other 35 are process requirements ("read the repository instructions", "report what could not be verified"), satisfied by what the agents did and reported, not by a command. The platform does not claim otherwise.
+
+### Independent check outside the platform
+
+Same idea as before: do not trust the report, run the thing. The patch was applied to a fresh clone of the target, the 133 tests passed, the Docker image built, the container answered `/api/mgmt/ready` with 200, and the three tools answered over HTTP with Basic auth. The k8s tool reports 7 warnings on an `nginx:latest` Deployment as findings, not as an HTTP error, which was the requirement.
+
+![curl call to POST /api/toolbox/runs with k8s.manifest.inspect on a privileged nginx:latest Deployment](/images/magi-a-risk-reduction-system-inside-an-agentic-loop/agentcore-toolbox-k8s-curl.webp)
+
+This check exercised the tools with sample inputs, not the edge cases above.
+
+### Two runs side by side
+
+| | Local run | AgentCore run |
+|---|---|---|
+| Outcome | SUCCESS | SUCCESS |
+| Wall clock | 19 min 19 s | 25 min 44 s |
+| Model cost | US$ 1.05 | US$ 1.35 (+ about 0.12 infrastructure) |
+| Design rounds | 1 | 2 |
+| Model calls | 105 | 116 |
+| Claims checked | 290 (42 refuted) | 491 (77 refuted) |
+| Change | 21 files, +2,340 / -51 | 21 files, +2,329 / -49 |
+| Tests | 67 new, 146 passed | 54 new, 133 passed |
+| Mandatory gates | 10 of 10 | 10 of 10 |
+| Shared defect | empty image tag not flagged | empty image tag not flagged |
+
+Two runs, one pass each, a different plan chosen each time. It is still not a success rate. What it does say is that the move to a managed runtime did not change the verdicts: the gates stay executed commands, the evidence stays bound to a commit, and the same blind spots show up in the same places.
+
 ## Conclusion
 
 On a real FastAPI service and a demanding 230-line change request, magi-system delivered a verified change autonomously: requirements traced to the request, a plan selected by checked facts, code written and corrected by two developer agents, eleven acceptance scenarios and three specialist reviews passed, documentation updated, all evidence re-run on the final commit, and a final review by three architects. About one US dollar, 19 minutes.
 
 The change was not integrated. The patch and the local branch are artifacts for a human to review and merge, and that is by design. What I take from the run is not the dollar or the minutes. It is that the two real defects (the empty image tag and the truncated diff) were found by reading the evidence, not by the pipeline. The pipeline is good at not lying about what it checked. It is not yet good at knowing what it did not check.
+
+The second run on AgentCore says the same thing from another angle. Different infrastructure, a different plan, a second design round, and the same blind spots: the empty image tag, the truncated diff, a test rewritten to pass.
 
 ## Appendix: mandatory gates
 
