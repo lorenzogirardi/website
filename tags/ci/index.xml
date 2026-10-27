@@ -1,4 +1,49 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Ci - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/ci/</link><description>Ci - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 07 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/ci/" rel="self" type="application/rss+xml"/><item><title>Git on AI Steroids: GitHub Agentic Workflows</title><link>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</link><pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Ci - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/ci/</link><description>Ci - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/ci/" rel="self" type="application/rss+xml"/><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/autopsy-of-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>From a loop to a team</li>
+<li>The three endings</li>
+<li>The cast</li>
+<li>The graph
+<ul>
+<li>The brief</li>
+<li>The architect&rsquo;s tools</li>
+</ul>
+</li>
+<li>The model proposes, the code decides
+<ul>
+<li>When a check fails: the code or the test?</li>
+</ul>
+</li>
+<li>Thinking, only where it is needed</li>
+<li>The loops, and their bounds</li>
+<li>The journal: how roles talk to each other</li>
+<li>The job, and who holds the keys</li>
+<li>One engine, many projects</li>
+<li>LangGraph: what is used, and what is not</li>
+<li>Case study: Python 3.15 on flask
+<ul>
+<li>First act: the engine dies with the application</li>
+<li>Second act: a repair in 7 minutes and 37 seconds</li>
+<li>What the case shows</li>
+</ul>
+</li>
+<li>How it got here: a day of corrections
+<ul>
+<li>Six replays of the same pull request</li>
+</ul>
+</li>
+<li>Who watches the engine</li>
+<li>What it costs</li>
+<li>Reflections
+<ul>
+<li>What is still missing</li>
+</ul>
+</li>
+<li>Conclusion</li>
+</ul>
+<p>Well, here we are again. The first version of this engine was a loop: a writer, two reviewers, a judge for failing tests, a test steward, a documentation reviewer, all around a set of checks. It worked, and then it started to fail in ways a loop fails: one reviewer call that hung for twenty minutes, a writer that used eight rounds and proposed nothing, roles that sent the same change back to each other over and over, and a run that lasted 49 minutes.</p>]]></description></item><item><title>Git on AI Steroids: GitHub Agentic Workflows</title><link>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</link><pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/github-agentic-workflows-git-on-ai-steroids/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/github-agentic-workflows-git-on-ai-steroids/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>

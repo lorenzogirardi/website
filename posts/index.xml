@@ -1,4 +1,49 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>AI Makes Developers Faster. Does It Make the Team Faster?</title><link>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</link><pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Lorenzo's Blog</title><link>https://www.k8s.it/posts/</link><description>All Posts | Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/posts/" rel="self" type="application/rss+xml"/><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/autopsy-of-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>From a loop to a team</li>
+<li>The three endings</li>
+<li>The cast</li>
+<li>The graph
+<ul>
+<li>The brief</li>
+<li>The architect&rsquo;s tools</li>
+</ul>
+</li>
+<li>The model proposes, the code decides
+<ul>
+<li>When a check fails: the code or the test?</li>
+</ul>
+</li>
+<li>Thinking, only where it is needed</li>
+<li>The loops, and their bounds</li>
+<li>The journal: how roles talk to each other</li>
+<li>The job, and who holds the keys</li>
+<li>One engine, many projects</li>
+<li>LangGraph: what is used, and what is not</li>
+<li>Case study: Python 3.15 on flask
+<ul>
+<li>First act: the engine dies with the application</li>
+<li>Second act: a repair in 7 minutes and 37 seconds</li>
+<li>What the case shows</li>
+</ul>
+</li>
+<li>How it got here: a day of corrections
+<ul>
+<li>Six replays of the same pull request</li>
+</ul>
+</li>
+<li>Who watches the engine</li>
+<li>What it costs</li>
+<li>Reflections
+<ul>
+<li>What is still missing</li>
+</ul>
+</li>
+<li>Conclusion</li>
+</ul>
+<p>Well, here we are again. The first version of this engine was a loop: a writer, two reviewers, a judge for failing tests, a test steward, a documentation reviewer, all around a set of checks. It worked, and then it started to fail in ways a loop fails: one reviewer call that hung for twenty minutes, a writer that used eight rounds and proposed nothing, roles that sent the same change back to each other over and over, and a run that lasted 49 minutes.</p>]]></description></item><item><title>AI Makes Developers Faster. Does It Make the Team Faster?</title><link>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</link><pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/ai-makes-developers-faster-does-it-make-the-team-faster/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -236,36 +281,4 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Here we are. Every conversation about AI in engineering right now runs on vibes. It&rsquo;s faster. It&rsquo;s cheaper. It&rsquo;s transformative. Ask for a number and the room goes quiet.</p>]]></description></item><item><title>The Safe Zone: Where AI Actually Belongs in Business Processes</title><link>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</link><pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>Introduction</li>
-<li>The Problem With Urgency</li>
-<li>The Safe Zone Framework</li>
-<li>The Case: Algolia Usage Exporter
-<ul>
-<li>Before / After</li>
-<li>How It&rsquo;s Built</li>
-<li>The Skill Framework: Three Skills, Not One Prompt</li>
-<li>From API Schema to Natural-Language Contract</li>
-<li>What It Exposes</li>
-<li>Numbers That Weren&rsquo;t Visible Before</li>
-</ul>
-</li>
-<li>Why the Pattern Replicates</li>
-<li>The Honest Challenges
-<ul>
-<li>AI Amplifies Whatever Maturity Already Exists</li>
-<li>Tech Debt Doesn&rsquo;t Disappear</li>
-<li>Creating Is Easy. Deploying on Shared Platform Isn&rsquo;t</li>
-<li>Ownership Is Still Informal</li>
-<li>The Escalation Risk: Safe Today, Critical Tomorrow</li>
-</ul>
-</li>
-<li>A Maturity Model, Not a Tech Roadmap</li>
-<li>Security Considerations</li>
-<li>Conclusion</li>
-<li>Reflections</li>
-</ul>
-<p>Here we are. I recently put together an internal presentation on introducing AI into business processes, and the hardest part wasn&rsquo;t the technology. It was convincing people to look in the opposite direction of where they instinctively point AI.</p>]]></description></item></channel></rss>
+<p>Here we are. Every conversation about AI in engineering right now runs on vibes. It&rsquo;s faster. It&rsquo;s cheaper. It&rsquo;s transformative. Ask for a number and the room goes quiet.</p>]]></description></item></channel></rss>
