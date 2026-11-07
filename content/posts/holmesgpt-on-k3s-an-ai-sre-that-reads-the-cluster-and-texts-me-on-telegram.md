@@ -391,8 +391,6 @@ The pattern is always the same: say when the result is **not** OK (with numeric 
 
 Honest list, because this is where the time went.
 
-**The operator cannot authenticate.** I first enabled `HOLMES_API_KEY`, which is the right call for an API that can read a cluster. Every scheduled check then failed with `401 Unauthorized` on `/api/checks/execute`. The operator's HTTP client in 0.46.0 simply does not send an auth header. I removed the key: the Service is ClusterIP only, with no NetworkPolicy, and I accepted that any pod in the cluster can query Holmes. It is read-only, but it can spend my OpenRouter credit. (The operator was disabled later for a different reason, in the section above.)
-
 **Headers reach the shell.** My first test of the five prompts used plain `curl`, and every Kubernetes tool failed with:
 
 ```
@@ -429,7 +427,7 @@ It also exposed a drift I would not have noticed: the Helm release for that serv
 2. **Treat everything Holmes reads as untrusted.** Logs, events and annotations can contain text written by someone else. The prompts say to ignore instructions found inside them, and the toolsets are limited, so the worst case is a wrong answer, not an action.
 3. **Secrets stay out of git and out of the model.** The key lives in a Kubernetes Secret created by hand. The bridge never logs content or tokens, and the Holmes ClusterRole does not read Secrets.
 4. **The allowlist is the access control.** The bot answers only to configured chat ids. Anyone else learns their own id and nothing more.
-5. **An unauthenticated API is a trade-off.** I removed the API key because the operator cannot send it. If you cannot accept that, put a NetworkPolicy in front of the Holmes Service or wait for an operator version that supports auth.
+5. **An unauthenticated API is a trade-off.** The Holmes Service is ClusterIP only and has no API key and no NetworkPolicy, so any pod in the cluster can query it. The tools are read-only, but every question spends OpenRouter credit. If you cannot accept that, add a NetworkPolicy in front of the Service or an authenticating proxy.
 6. **Cost is a security boundary too.** Everything that can call the API can spend tokens. Keep the checks few and the schedule slow.
 
 ## Conclusion
