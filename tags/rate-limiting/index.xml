@@ -96,4 +96,5 @@
 <p>It&rsquo;s time to talk about the API gateway.</p>
 <p>In a modern infrastructure — especially in a microservices environment — you probably know what I&rsquo;m referring to. But it&rsquo;s worth being explicit about it:</p>
 <blockquote>
-<p>&ldquo;An API gateway takes all API calls from clients, then routes them to the appropriate microservice with request routing, composition, and protocol translation. Typically it handles a request by invoking multiple microservices and aggregating the results, to determine the best path.&rdquo;</p>]]></description></item></channel></rss>
+<p>&ldquo;An API gateway takes all API calls from clients, then routes them to the appropriate microservice with request routing, composition, and protocol translation. Typically it handles a request by invoking multiple microservices and aggregating the results, to determine the best path.&rdquo;</p>
+</blockquote>]]></description></item></channel></rss>
