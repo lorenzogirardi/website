@@ -184,7 +184,7 @@ So I adapted them with a few rules:
 
 The cron has no timezone field, so I ran the math myself: quiet hours from 22:00 to 08:00 in Rome become runs between 07:00 and 20:59 UTC. In summer time the window shifts by an hour, and that is in the docs as a reminder to my future self.
 
-The queries below are the ones running in the cluster, translated to English (the originals are in Italian, since that is how I think about my own cluster). The first four lines of every query are the same safety preamble, so I show it in full only once and abbreviate it after that.
+The queries below are the ones running in the cluster, translated to English (the originals are in Italian, since that is how I think about my own cluster). The first four lines of every query are the same safety preamble, so I show it in full only once and abbreviate it after that. They all also end with the same severity format block, which gets its own section after the five checks, so here it appears as `[severity format block]`.
 
 ### 1. Nodes: hourly
 
@@ -216,9 +216,8 @@ spec:
     ContainerStatusUnknown pods created in the last hour; kubelet or containerd show
     repeated errors. High CPU/memory is a signal to investigate, not a certain failure:
     tell real usage, requests and limit overcommit apart.
-    Otherwise it PASSES. If it fails: at most 8 lines, one per problem, formatted as
-    resource - evidence with numbers and UTC timestamps - probable cause - suggested
-    next check. No tables.
+    Otherwise it PASSES.
+    [severity format block]
 ```
 
 ### 2. Pods and workloads: every three hours
@@ -250,9 +249,8 @@ spec:
     Consider rollouts, scaling and ongoing maintenance.
     For every anomaly look at describe, events, container state and logs (also from the
     previous instance, max 200 lines per container, no credentials). Otherwise it PASSES.
-    If it fails: at most 8 lines grouped by workload, formatted as namespace/pod - node -
-    expected/available replicas - for how long - evidence with UTC timestamps - probable
-    cause - suggested next check. No tables.
+    [severity format block; in the resource field give namespace/pod, node, expected/
+    available replicas and for how long the problem lasts]
 ```
 
 The sentence about restarts is the one that cost me an hour of tuning. My first version flagged `csi-smb-controller` every time, because it has 153 restarts in total. The cumulative counter was never the problem: the restarts stopped more than a day ago. "Restarted in the last hour" is a different question from "has restarted".
@@ -285,10 +283,9 @@ spec:
     write" failures on the time field from sitespeedio (data is stored anyway).
     Deduplicate repeated events. Do not assign a cause just because two events are close
     in time.
-    Otherwise it PASSES. If it fails: the 5 main problems by impact, one line each,
-    formatted as resource - first and last observation UTC - frequency - state (active/
-    resolved/not verifiable) - probable cause. If the log history is incomplete, say so.
-    No tables.
+    Otherwise it PASSES.
+    [severity format block; in the evidence give first and last observation, frequency
+    and state (active/resolved/not verifiable); at most the 5 main problems by impact]
 ```
 
 "Do not assign a cause just because two events are close in time" is a rule copied from the original prompt, and it is the one I trust the least to be respected by a model. Correlation looks so reasonable when it is written by a machine.
@@ -325,8 +322,8 @@ spec:
     target is down; /readyz or /livez fail (if readable).
     The steady SERVFAIL rate around 1% on CoreDNS and the historic csi-smb restarts are
     known: report them only if they get worse. Otherwise it PASSES.
-    If it fails: at most 8 lines formatted as component - state - evidence with UTC
-    timestamps - impact - available visibility. No tables.
+    [severity format block; use the component as the resource and state the visibility
+    available]
 ```
 
 Note the exceptions at the end. The 1% of SERVFAIL on CoreDNS is a real finding from the first test runs, and I still do not know its cause. Writing it into the query turns "something I know and have not solved" into "report it only if it changes", which is how you keep an alert useful.
@@ -363,13 +360,51 @@ spec:
     connectivity: do not infer it from configuration alone. Otherwise it PASSES, but if
     end-to-end proof is missing, write in the message "Configuration verified;
     end-to-end behavior not verified".
-    If it fails: at most 8 lines formatted as resource - evidence with UTC timestamps -
-    impact - probable cause - suggested next check; then one line separating
-    infrastructure health, backend availability and demonstrated application behavior.
-    No tables.
+    [severity format block; end with one line separating infrastructure health, backend
+    availability and demonstrated application behavior]
 ```
 
-The last line of the query is my favorite part of the original prompt: "Configuration verified; end-to-end behavior not verified". A check that can only read Kubernetes objects must not claim that traffic flows. It forces the agent to say what it did not prove, which is exactly the habit I want from a human on call.
+One sentence of the query is my favorite part of the original prompt: "Configuration verified; end-to-end behavior not verified". A check that can only read Kubernetes objects must not claim that traffic flows. It forces the agent to say what it did not prove, which is exactly the habit I want from a human on call.
+
+### Making the output readable: severity levels
+
+My first adapted queries produced correct but flat messages: a wall of text on the phone, with the important line anywhere. I wanted to see at a glance whether something was fine, degraded or on fire, so I added a visual format block to every query. In English, it reads:
+
+```text
+MESSAGE FORMAT (mandatory): the "rationale" field of the final answer must contain
+ONLY the report described here, not a prose explanation, and "passed" must be
+consistent with the outcome. First line: "<emoji> <OUTCOME> - <check name>", where
+OUTCOME is the highest severity found:
+  ✅ OK        check completed, no anomaly
+  ⚠️ WARNING   anomaly or degradation to investigate, no critical impact proven
+  🚨 CRITICAL  active failure or proven serious impact
+  ❓ UNKNOWN   check not completable or insufficient evidence (if data is missing,
+               NEVER use OK)
+Assign severity from evidence and impact, not from the word "error" in logs. The check
+PASSES only with OK; WARNING, CRITICAL and UNKNOWN are FAILURES. After the first line:
+one line per anomaly, at most 8, as "<emoji> <OUTCOME> | resource | evidence with
+numbers and UTC timestamps | impact | probable cause | next check". No tables, no other
+emoji. Last line: "Coverage: complete" or "Coverage: incomplete (what is missing)".
+```
+
+The idea comes from a generic SRE report template I had, with one adaptation at a time:
+
+- **No tables.** A table becomes a monospace block on Telegram and wraps badly on a phone. One line per anomaly works better.
+- **The label stays next to the emoji.** The emoji alone is never the only indicator of the state.
+- **Missing data is never OK.** If the agent cannot read something, the result is UNKNOWN, and UNKNOWN fails the check so that it reaches me.
+
+The hard part is that the operator only understands `pass`, `fail` and `error`. The mapping is simple: only OK passes, and everything else fails and gets sent. A healthy cluster sends nothing, which is what I want, but it also means that I never see a green message.
+
+Then it did not work, and the reason is instructive. A Holmes check does not return a free report: it returns a structured answer `{rationale, passed}`, and the message I receive is the text "Check failed." followed by the rationale. My test check answered with a prose justification of the verdict, and the format block was silently ignored. The fix was one sentence at the top of the block: the `rationale` field must contain only the report. After that, a deliberately failing test check produced exactly this:
+
+```text
+🚨 CRITICAL - test-format
+⚠️ WARNING | esempio-test | TEST: 3 simulated latency events, 13:10 UTC | non-critical degradation | probable cause: resource throttling | next check: application metrics
+🚨 CRITICAL | esempio-test | TEST: 5 simulated errors on 5 requests, 13:11 UTC | serious impact on the service | probable cause: unavailable dependency | next check: logs and dependency state
+Coverage: complete
+```
+
+I do not trust the model to follow a format every time, so the bridge checks it. It strips the operator's "Check failed." prefix, bolds the first line, and verifies that it starts with an emoji and a severity. If an execution fails, the message becomes `❓ UNKNOWN - <check>: check execution failed`. If the answer has no valid header, it becomes `❓ UNKNOWN - <check>: answer without severity classification`, followed by the raw text. Format errors are never silent, and they always show up as the most honest severity there is: I do not know.
 
 ### Writing your own
 
@@ -382,7 +417,7 @@ query: >-
   measured numbers when it fails. At most 8 lines, no tables.
 ```
 
-To see what is going on, `kubectl -n holmes get scheduledhealthcheck` shows the last run and result of each check. When a false positive shows up, I add one sentence to the query and apply it again.
+Keep the severity block at the end of every query and the `rationale` sentence in it. To see what is going on, `kubectl -n holmes get scheduledhealthcheck` shows the last run and result of each check. When a false positive shows up, I add one sentence to the query and apply it again.
 
 ## Things that bit me
 
@@ -398,7 +433,9 @@ request header 'accept' contains disallowed shell metacharacter(s) '*'
 
 Holmes puts request headers into the context of its shell-based toolsets and rejects anything with metacharacters. `curl` sends `Accept: */*`. Holmes then answered from metrics only, politely admitting it could not reach the Kubernetes API. Sending `-H 'Accept:'` fixed it. The bridge (urllib sends no Accept) and the operator were not affected, which I verified separately instead of assuming.
 
-**kubectl ran out of memory, sometimes.** With five investigations in parallel, Holmes logged a Go `out of memory` from its local kubectl on a few calls. A single call worked fine and the pod used 410 MB out of 2 GB. I do not know the cause. I staggered the crons and wrote it down as an open question.
+**kubectl ran out of memory, sometimes.** Holmes logged a Go `runtime: out of memory: cannot allocate 4194304-byte block` from its local kubectl on a few calls. The pod used 410 MB out of 2 GB, and the same command worked fine when I ran it by hand inside the pod. I first blamed the five parallel investigations and staggered the crons. Wrong: a single count query failed too.
+
+The cause is a guard rail. Holmes runs every shell-based tool under `ulimit -v`, a limit on virtual memory, with a default of 800 MB (`TOOL_MEMORY_LIMIT_MB`). Go binaries reserve a lot of address space, and kubectl v1.37 starts failing around that value: it died at 700 MB and 512 MB, worked at 800 MB, and larger queries failed in between. The fix is one environment variable (`TOOL_MEMORY_LIMIT_MB=3072`). It limits address space, not resident memory, so the pod limit does not change. The lesson is to test the actual failing path with the actual limits, not a similar command in a different shell.
 
 **The wrong secret in the wrong place.** At one point I pasted an API key where a secret field name goes, and it ended up in the chat. Lesson learned: secrets are created by the human in their own terminal, the agent never sees them, and the exposed key was revoked.
 
