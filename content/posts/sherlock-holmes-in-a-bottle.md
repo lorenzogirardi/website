@@ -24,6 +24,7 @@ featuredImage: /images/sherlock-holmes-in-a-bottle/featured.jpg
     * The model
   * The Telegram bridge
   * Health checks: Holmes talks first
+  * Watching the watcher
   * Things that bit me
   * What the first runs found
   * Security considerations
@@ -64,18 +65,31 @@ Two directions, one cluster.
 
 {{< mermaid >}}
 flowchart LR
-    U[Telegram user] <-->|HTTPS long polling| B[telegram-bridge]
-    B -->|POST /api/chat, questions| H[holmes :80]
-    S[scheduler in the bridge] -->|POST /api/chat, checks| H
-    B --- S
-    H -->|read-only kubectl| K[k3s API]
-    H -->|PromQL| V[vmsingle :8428]
-    H -->|HTTPS| L[OpenRouter LLM]
+    U([Telegram])
+    subgraph NS[k3s cluster, single node]
+        B[telegram-bridge<br>long polling]
+        S[scheduler<br>5 health checks]
+        H[holmes<br>/api/chat]
+        K[k3s API<br>read-only]
+        V[vmsingle<br>PromQL]
+    end
+    L([OpenRouter LLM])
+
+    U -->|1 question| B
+    B -->|2 POST /api/chat| H
+    S -->|push: cron checks| H
+    S -.->|only if not OK| B
+    B -->|answer or alert| U
+    H -->|kubectl, logs| K
+    H -->|metrics| V
+    H -->|HTTPS| L
 {{< /mermaid >}}
 
-![Architecture overview](/images/sherlock-holmes-in-a-bottle/architecture.png)
+The same thing as the cluster sees it, in a network map of the `holmes` namespace: the two pods (`holmes` on 5050, `telegram-bridge` on 8080), the outbound HTTPS to the world on 443 (Telegram and OpenRouter), and the links to `vmsingle` (8428) and `vmagent` (8429) in the `monitoring` namespace. The `datadog-agent-deployment` also shows up in the map.
 
-The picture shows the two flows:
+![Network map of the holmes namespace: holmes, telegram-bridge, world on 443, vmsingle, vmagent and the Datadog agent](/images/sherlock-holmes-in-a-bottle/network-map.jpg)
+
+The diagram shows the two flows:
 
 1. **Pull.** I send a question to the bot. The bridge forwards it to Holmes, which investigates and answers.
 2. **Push.** A scheduler inside the bridge runs the health checks through the same chat endpoint. When a check is not OK, the bridge sends me a message. (It was not the plan: I first used Holmes' own operator for this, and I explain below why that did not survive contact with reality.)
@@ -163,6 +177,10 @@ resources:
 One detail makes the chat feel right. If you reply to a notification, the bridge prepends the notification text (and the quoted message) to your question. Holmes has no memory of messages it did not send, so without this "why did that happen?" would be a question about nothing.
 
 The other detail was formatting. Holmes answers in Markdown with titles, tables and code blocks, and my first version sent plain text: `###` and `**` everywhere. The bridge now converts Markdown to Telegram's HTML subset (bold, `code`, `<pre>` for code and tables, links), splits long messages at line boundaries and falls back to plain text if Telegram rejects the markup.
+
+![A question in Telegram: when does sitespeed.io run? Holmes answers from the cluster, with the cron, the last runs and yesterday's failure](/images/sherlock-holmes-in-a-bottle/telegram-question.jpg)
+
+This is a real question, asked in Italian: when does sitespeed.io run? Holmes found the Argo CronWorkflow (not a Kubernetes CronJob), listed the recent runs, and noticed that yesterday's failure was the missing RBAC rule, already fixed. Code and the run table arrive as monospace blocks.
 
 ## Health checks: Holmes talks first
 
@@ -386,6 +404,21 @@ I also never validated a real check end to end before it went live, only small t
 ### Writing your own
 
 The pattern is always the same: say when the result is **not** OK (with numeric thresholds), which metrics and resources to look at, which noise to ignore, and end with the severity block. Add the text file, one line in `schedule.json`, and apply it. To see what is going on, the bridge logs one line per run (`check izanagi-nodes: WARNING tools=63 secs=170`), and `/check` in the chat lists the checks with their last result. `/check nodes` runs one on demand and always answers, even when it is OK. When a false positive shows up, I add one sentence to the query and apply it again.
+
+![/check nodes in Telegram: eight OK lines with numbers, then a coverage note](/images/sherlock-holmes-in-a-bottle/telegram-check-nodes.jpg)
+
+The screenshot is a manual `/check nodes`: one OK line per verified item, each with its evidence, and a final coverage note. Holmes says the kubelet and containerd logs were not readable (on k3s they run as a systemd service, not as pods), so runtime errors were verified through Prometheus metrics only. That is exactly the "absence of data must be declared" rule at work.
+
+## Watching the watcher
+
+An agent that runs on a schedule and spends tokens needs its own dashboard. Mine is a Grafana board with two rows: the health checks seen from the bridge (last result per check, duration, tool calls, Telegram questions) and the agent itself, from the metrics Holmes exports (tokens, LLM calls, tool calls and errors, time spent).
+
+![Grafana dashboard Izanagi - Holmes Agent: health check results, token usage, LLM calls and tool errors](/images/sherlock-holmes-in-a-bottle/grafana-dashboard.jpg)
+
+The window in the screenshot is one hour: a single nodes check, one question from Telegram, 47 LLM calls, about 1 million input tokens against 77 thousand output, and 115 tool calls. Two things stand out:
+
+- **Time goes to the model, not to the tools.** 4.5 minutes of LLM time against 12 seconds of tools. The tools are local and fast, the model is the slow and costly part.
+- **Some tool calls fail.** 10 of 115, mostly PromQL queries (15% of the instant queries, 7.7% of the range ones). The checks still completed, but those failures are wasted calls and tokens that you only see if you measure them.
 
 ## Things that bit me
 
