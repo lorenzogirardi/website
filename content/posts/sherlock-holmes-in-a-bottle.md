@@ -1,5 +1,5 @@
 ---
-title: "HolmesGPT on k3s: an AI SRE that reads the cluster and texts me on Telegram"
+title: "Sherlock Holmes in a Bottle: HolmesGPT on k3s, an AI SRE that texts me on Telegram"
 date: 2026-11-07
 draft: true
 description: "How I installed HolmesGPT in a single-node k3s cluster, wired it to Telegram both ways, and what its first runs got right, wrong and expensive."
@@ -11,7 +11,7 @@ tags:
   - automation
   - prometheus
   - security
-featuredImage: /images/holmesgpt-on-k3s-an-ai-sre-that-reads-the-cluster-and-texts-me-on-telegram/featured.jpg
+featuredImage: /images/sherlock-holmes-in-a-bottle/featured.jpg
 ---
 
 ### Table of Contents
@@ -73,7 +73,7 @@ flowchart LR
     H -->|HTTPS| L[OpenRouter LLM]
 {{< /mermaid >}}
 
-![Architecture overview](/images/holmesgpt-on-k3s-an-ai-sre-that-reads-the-cluster-and-texts-me-on-telegram/architecture.png)
+![Architecture overview](/images/sherlock-holmes-in-a-bottle/architecture.png)
 
 The picture shows the two flows:
 
