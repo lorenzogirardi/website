@@ -1,5 +1,5 @@
 ---
-title: "MAGI: A Risk-Reduction System Inside an Agentic Loop"
+title: "MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)"
 date: 2026-11-13
 draft: false
 description: "A risk-reduction system inside an agentic loop: three architects,
