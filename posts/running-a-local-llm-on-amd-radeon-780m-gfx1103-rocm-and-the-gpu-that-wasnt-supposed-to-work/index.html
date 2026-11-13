@@ -73,7 +73,7 @@ HIP --> GPU
 GPU &lt;--> GTT
 COLLECTD -->|UDP :25826| DEVA
 OLLAMA -.->|metrics via journald| COLLECTD
-GPU -.->|sysfs hwmon| COLLECTD</div><p>Key environment variables in <code>/etc/systemd/system/ollama.service</code>:</p><div class="code-block code-line-numbers open" style="counter-reset:code-block 0"><div class="code-header language-ini"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
+GPU -.->|sysfs hwmon| COLLECTD</div><p>Key environment variables in <code>/etc/systemd/system/ollama.service</code>:</p><div class="code-block code-line-numbers" style="counter-reset:code-block 0"><div class="code-header language-ini"><span class=code-title><i class="arrow fas fa-angle-right" aria-hidden=true></i></span>
 <span class=ellipses><i class="fas fa-ellipsis-h" aria-hidden=true></i></span>
 <span class=copy title="Copy to clipboard"><i class="far fa-copy" aria-hidden=true></i></span></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-ini data-lang=ini><span class=line><span class=cl><span class=k>[Service]</span>
 </span></span><span class=line><span class=cl><span class=na>User</span><span class=o>=</span><span class=s>lgirardi</span>
