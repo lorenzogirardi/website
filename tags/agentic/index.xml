@@ -1,4 +1,75 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Agentic - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/agentic/</link><description>Agentic - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/agentic/" rel="self" type="application/rss+xml"/><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Agentic - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/agentic/</link><description>Agentic - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/agentic/" rel="self" type="application/rss+xml"/><item><title>MAGI: A Risk-Reduction System Inside an Agentic Loop</title><link>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</link><pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>Context
+<ul>
+<li>The platform</li>
+<li>Setup of the run</li>
+</ul>
+</li>
+<li>How the run unfolded
+<ul>
+<li>The pipeline as executed</li>
+<li>Timeline</li>
+<li>Live log</li>
+<li>Effort by agent</li>
+</ul>
+</li>
+<li>The MAGI board in detail
+<ul>
+<li>Independent analyses</li>
+<li>The three proposals</li>
+<li>Cross-review with authors masked</li>
+<li>Preventive review by QA, SRE, Security and the Tech Writer</li>
+<li>Claim verification and selection</li>
+</ul>
+</li>
+<li>Implementation: the code written by the developers
+<ul>
+<li>DEV1, the writer</li>
+<li>DEV2, the pair</li>
+</ul>
+</li>
+<li>Verification and reviews of the implemented change
+<ul>
+<li>QA: acceptance scenarios</li>
+<li>SRE</li>
+<li>Security</li>
+<li>Tech Writer</li>
+<li>Final review by the three architects</li>
+</ul>
+</li>
+<li>Functional requirements: from request to evidence
+<ul>
+<li>Traceability</li>
+<li>Requirement-by-requirement outcome</li>
+<li>Findings overall</li>
+</ul>
+</li>
+<li>Discussion
+<ul>
+<li>What the architecture changed in this run</li>
+<li>Threats to validity</li>
+<li>Cost of robustness</li>
+</ul>
+</li>
+<li>Second run: the same request on Amazon Bedrock AgentCore
+<ul>
+<li>What AgentCore changes</li>
+<li>The deployment in the AWS console</li>
+<li>The run: a second design round</li>
+<li>What it took to get a SUCCESS</li>
+<li>What the gates did not see</li>
+<li>Independent check outside the platform</li>
+<li>Two runs side by side</li>
+</ul>
+</li>
+<li>Conclusion</li>
+<li>Appendix: mandatory gates</li>
+</ul>
+<p>Well, here we are again. After the <a href="/posts/autopsy-of-an-agentic-loop/" rel="">autopsy of the agentic loop</a> I wanted to see the engine on something bigger than a Python upgrade: a long, demanding change request, written by a human, in Italian, for a service that already exists. Not a toy, not a fix. A feature.</p>]]></description></item><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/autopsy-of-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>

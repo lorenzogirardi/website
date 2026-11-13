@@ -1,4 +1,75 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>MAGI: A Risk-Reduction System Inside an Agentic Loop</title><link>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</link><pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>Context
+<ul>
+<li>The platform</li>
+<li>Setup of the run</li>
+</ul>
+</li>
+<li>How the run unfolded
+<ul>
+<li>The pipeline as executed</li>
+<li>Timeline</li>
+<li>Live log</li>
+<li>Effort by agent</li>
+</ul>
+</li>
+<li>The MAGI board in detail
+<ul>
+<li>Independent analyses</li>
+<li>The three proposals</li>
+<li>Cross-review with authors masked</li>
+<li>Preventive review by QA, SRE, Security and the Tech Writer</li>
+<li>Claim verification and selection</li>
+</ul>
+</li>
+<li>Implementation: the code written by the developers
+<ul>
+<li>DEV1, the writer</li>
+<li>DEV2, the pair</li>
+</ul>
+</li>
+<li>Verification and reviews of the implemented change
+<ul>
+<li>QA: acceptance scenarios</li>
+<li>SRE</li>
+<li>Security</li>
+<li>Tech Writer</li>
+<li>Final review by the three architects</li>
+</ul>
+</li>
+<li>Functional requirements: from request to evidence
+<ul>
+<li>Traceability</li>
+<li>Requirement-by-requirement outcome</li>
+<li>Findings overall</li>
+</ul>
+</li>
+<li>Discussion
+<ul>
+<li>What the architecture changed in this run</li>
+<li>Threats to validity</li>
+<li>Cost of robustness</li>
+</ul>
+</li>
+<li>Second run: the same request on Amazon Bedrock AgentCore
+<ul>
+<li>What AgentCore changes</li>
+<li>The deployment in the AWS console</li>
+<li>The run: a second design round</li>
+<li>What it took to get a SUCCESS</li>
+<li>What the gates did not see</li>
+<li>Independent check outside the platform</li>
+<li>Two runs side by side</li>
+</ul>
+</li>
+<li>Conclusion</li>
+<li>Appendix: mandatory gates</li>
+</ul>
+<p>Well, here we are again. After the <a href="/posts/autopsy-of-an-agentic-loop/" rel="">autopsy of the agentic loop</a> I wanted to see the engine on something bigger than a Python upgrade: a long, demanding change request, written by a human, in Italian, for a service that already exists. Not a toy, not a fix. A feature.</p>]]></description></item><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/autopsy-of-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -239,46 +310,4 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item><item><title>What AI Actually Costs: 27 Sessions of Real Data</title><link>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/what-ai-actually-costs-27-sessions-of-real-data/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/what-ai-actually-costs-27-sessions-of-real-data/featured.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>Introduction</li>
-<li>The Question Nobody Answers</li>
-<li>The Dataset: 27 Sessions, 61 Days</li>
-<li>Where the Money Actually Goes
-<ul>
-<li>Cache Read Is the Bill</li>
-<li>The Whale Session</li>
-<li>Head and Tail</li>
-</ul>
-</li>
-<li>The Model Mix Problem</li>
-<li>Output Compression: The Lever Everyone Reaches For First</li>
-<li>The Velocity Half of the Question
-<ul>
-<li>km/l Is Not the Metric. km/€ Is.</li>
-<li>The Efficiency Gap Between People</li>
-</ul>
-</li>
-<li>A Framework for Getting the Data
-<ul>
-<li>Step 1: Parse Your Own Logs</li>
-<li>Step 2: The Ticket Protocol</li>
-<li>Step 3: The Metrics That Matter</li>
-</ul>
-</li>
-<li>From Measurement to a Development Framework
-<ul>
-<li>Rule 1: One Ticket, One Session</li>
-<li>Rule 2: Route the Model to the Task</li>
-<li>Rule 3: Compress the Output</li>
-<li>Rule 4: Build Skills, Not Prompts</li>
-</ul>
-</li>
-<li>The Maturity Path</li>
-<li>The Honest Caveats</li>
-<li>Conclusion</li>
-<li>Reflections</li>
-</ul>
-<p>Here we are. Every conversation about AI in engineering right now runs on vibes. It&rsquo;s faster. It&rsquo;s cheaper. It&rsquo;s transformative. Ask for a number and the room goes quiet.</p>]]></description></item></channel></rss>
+<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item></channel></rss>
