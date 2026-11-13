@@ -1,8 +1,10 @@
 ---
 title: "MAGI: A Risk-Reduction System Inside an Agentic Loop"
-date: 2026-10-16
-draft: true
-description: "A risk-reduction system inside an agentic loop: three architects, two developers, QA, SRE and security. One real run, 19 minutes, one dollar, ten gates."
+date: 2026-11-13
+draft: false
+description: "A risk-reduction system inside an agentic loop: three architects,
+  two developers, QA, SRE and security. One real run, 19 minutes, one dollar,
+  ten gates."
 tags:
   - ai
   - agentic
@@ -13,8 +15,6 @@ tags:
   - ci
   - cost saving
 featuredImage: /images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg
-images:
-  - "/images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg"
 ---
 ### Table of Contents
 
@@ -92,8 +92,9 @@ magi-system is a LangGraph application. The graph state is JSON-native and check
 
 ### Setup of the run
 
+
 | Item | Value |
-|---|---|
+| ------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Target | `pytbak` 2.0.0 (FastAPI 0.143.1, Pydantic 2.14.1, Python 3.11 or later), 139 tracked files, baseline `e3920b5` |
 | Target config | `.magi/config.yaml`: build `python -m compileall -q app`, test `python -m pytest -q`, lint `ruff --select E9,F63,F7,F82` |
 | Runner | Docker, image with the target's dependencies preinstalled, `--network=none` |
@@ -101,6 +102,7 @@ magi-system is a LangGraph application. The graph state is JSON-native and check
 | Routing | OpenRouter `provider: {sort: throughput, require_parameters: true}`, schema-constrained output |
 | Budget | 3,000 tool calls, 600 LLM calls, 30 M tokens, US$ 5, 3,600 s |
 | Request | 230 lines in Italian |
+
 
 This is not the first attempt. The configuration is the result of eleven previous runs on the same target, and each one exposed a problem that became a fix. This is run twelve.
 
@@ -204,8 +206,9 @@ pie showData
     "Security" : 132190
 {{< /mermaid >}}
 
+
 | Agent | LLM calls | Input tokens | Output tokens | Tool calls |
-|---|---:|---:|---:|---:|
+| ------------------- | --------- | ------------- | ------------------------ | ---------- |
 | Melchior | 17 | 600,897 | 106,201 | 79 |
 | Balthasar | 20 | 739,261 | 137,386 | 90 |
 | Casper | 21 | 830,805 | 79,983 | 94 |
@@ -215,6 +218,7 @@ pie showData
 | QA / SRE / Security | 3 each | 132,193 each | 41,871 / 18,028 / 17,843 | 0 |
 | **Total** | **105** | **4,738,166** | **551,735** | **393** |
 
+
 Input dominates (90% of tokens) because each tool-loop turn resends the transcript. The three architects account for 46% of input tokens. The analysis is the part most exposed to hallucination, and it is where the platform spends most. I think that is the right place.
 
 ## The MAGI board in detail
@@ -223,14 +227,16 @@ Input dominates (90% of tokens) because each tool-loop turn resends the transcri
 
 The three architects started from the same snapshot, each with read-only tools (`list_files`, `read_file`, `grep`) and without seeing the others' work. Each analysis returns an understanding of the mandate, the requirements with their source quotes, typed claims about the repository, assumptions, open questions and risks.
 
-| | Melchior (evolution, minimal change) | Balthasar (failure modes) | Casper (challenge) |
-|---|---:|---:|---:|
+
+|  | Melchior (evolution, minimal change) | Balthasar (failure modes) | Casper (challenge) |
+| --------------------------- | ------------------------------------ | ------------------------- | ------------------ |
 | Requirements extracted | 79 | 64 | 27 |
 | Claims about the repository | 30 | 34 | 18 |
 | Assumptions | 8 | 10 | 7 |
 | Open questions | 7 | 10 | 6 |
 | Risks | 8 | 10 | 8 |
 | Duration | 62 s | 63 s | 123 s |
+
 
 The requirement sets overlap and are merged by id, so the union is the 135 requirements of the run.
 
@@ -246,8 +252,9 @@ Their risks show the different perspectives:
 
 All three proposals adapted the prefix to `/api/toolbox` (the repository has a single `/api` prefix and no versioning, and the request explicitly allows adapting it), reused `verify_credentials`, offloaded parsing with `loop.run_in_executor` after the existing `/api/fib/{x}` precedent, pinned PyYAML and kept analysis code free of FastAPI. They differed in structure and in a few contracts:
 
-| | **B, Melchior** (selected) | **A, Casper** | **C, Balthasar** |
-|---|---|---|---|
+
+|  | **B, Melchior** (selected) | **A, Casper** | **C, Balthasar** |
+| ---------------------- | --------------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
 | Analysis code | `app/toolbox/` (base, registry, tools/) | `app/toolbox/` + `runner.py` | `app/services/toolbox/` + `runner.py` |
 | Models | `app/models/toolbox.py` | `app/models/toolbox.py` | `app/models/toolbox.py` |
 | Planned file changes | **21** | 23 | 20 |
@@ -259,6 +266,7 @@ All three proposals adapted the prefix to `/api/toolbox` (the repository has a s
 | Rollback | revert, or `TOOLBOX_ENABLED=false` | revert | revert |
 | Regression test module | yes | yes | no (existing suites re-run) |
 
+
 Each proposal also listed its trade-offs explicitly. Melchior's, for example:
 
 > *Limit rejections use 413 rather than 400: the app-wide 400 handler would erase the specific reason; 413 keeps the message but is a slightly unusual code for "too many YAML documents".* And: *Findings cap is an analysis outcome rather than an HTTP error: preserves "a finding is not an HTTP error" and "no silent truncation", at the cost of two different limit-handling paths that must both be documented.*
@@ -267,14 +275,16 @@ Each proposal also listed its trade-offs explicitly. Melchior's, for example:
 
 Each architect scored the other two proposals, never its own, on the six rubric criteria of the platform policy, without knowing who wrote them (labels A, B, C).
 
+
 | Reviewer, proposal | Requirement fit (x3) | Simplicity (x2) | Risk (x2) | Operability (x1) | Testability (x2) | Maintainability (x1) | Weighted |
-|---|---:|---:|---:|---:|---:|---:|---:|
+| ----------------------------- | -------------------- | --------------- | --------- | ---------------- | ---------------- | -------------------- | -------- |
 | Balthasar on **B** (Melchior) | 5 | 4 | 4 | 5 | 5 | 4 | 4.55 |
 | Casper on **B** (Melchior) | 5 | 4 | 4 | 5 | 5 | 5 | 4.64 |
 | Melchior on **A** (Casper) | 5 | 4 | 4 | 4 | 5 | 4 | 4.45 |
 | Balthasar on **A** (Casper) | 5 | 5 | 4 | 4 | 5 | 5 | 4.73 |
 | Melchior on **C** (Balthasar) | 4 | 4 | 3 | 4 | 4 | 4 | 3.82 |
 | Casper on **C** (Balthasar) | 4 | 4 | 3 | 4 | 4 | 4 | 3.82 |
+
 
 {{< mermaid >}}
 xychart-beta
@@ -311,11 +321,13 @@ The verifier checked 290 claims against `e3920b5` in 11 seconds: 240 supported, 
 
 Code then computed admissibility and rank:
 
+
 | Proposal | Admissible | Score | Rank | Reason |
-|---|---|---:|---:|---|
+| ------------ | ---------- | ------ | ----- | -------------------------------------------------------------------------------------------- |
 | B, Melchior | yes | 4.5909 | **1** | none |
 | A, Casper | yes | 4.5909 | 2 | none |
 | C, Balthasar | no | n/a | n/a | refuted critical claim about protected paths; unresolved critical unknown about write scopes |
+
 
 A and B tied exactly. The policy's tie-break (`fewer_planned_changes`, `fewer_assumptions`, `magi_order`) chose B: 21 planned changes against 23. No vote was taken at any point.
 
@@ -399,13 +411,15 @@ The distinction between *missing* and *explicitly risky* configuration is encode
 
 DEV1 wrote 67 tests in five files:
 
+
 | File | Tests | Covers |
-|---|---:|---|
+| ------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `test_toolbox_k8s_manifest.py` | 29 | clean and dirty manifests, multi-document, empty documents, unsupported kind, missing kind, unexpected structure, non-mapping document, requests/limits, probes, untagged / `latest` / digest images, privileged, privilege escalation true vs absent, non-root at pod level, init containers (no probes, security still checked), StatefulSet and DaemonSet, unsafe YAML tag, aliases, invalid YAML as negative outcome, document/depth/findings/size limits, determinism |
 | `test_toolbox_api.py` | 13 | auth on catalog and runs, wrong credentials, uniform schema, finding not an HTTP error, unknown tool 404, malformed 422, invalid tool input 422, over-limit 413, sanitized internal error, OpenAPI exposure, determinism |
 | `test_toolbox_json_validate.py` | 10 | valid object and scalar, error position, empty and whitespace input, URL-like and path-like strings treated as text, oversized input, determinism |
 | `test_toolbox_text_diff.py` | 9 | identical, changed, empty inputs, context 0, context above limit, oversized left/right, determinism |
 | `test_toolbox_regression.py` | 6 | contexts, fibonacci, health, debug auth, unchanged 400 envelope, route mappings |
+
 
 The sanitized-error test, for example, injects a tool that raises `RuntimeError("secret internal detail")` and asserts that the response contains neither the message nor a traceback.
 
@@ -437,8 +451,9 @@ DEV2 also fixed the order of the docs index and escalated what it could not do: 
 
 QA had defined 12 acceptance scenarios during the preventive review, each linked to requirement ids and to a command. Eleven had a command and were run in the container on `d93229e` and again on `5cce890`. The twelfth ("no superfluous infrastructure is introduced") has no mechanical check and was assessed in the reviews.
 
+
 | Scenario | Command | Verdict |
-|---|---|---|
+| ---------------------------------------------------------- | --------------------------------------------- | ------------------ |
 | acc-01 the app still compiles and starts | `python -m compileall -q app` | PASS |
 | acc-02 new and existing tests pass | `python -m pytest -q -p no:cacheprovider` | PASS |
 | acc-03 lint gate passes | `ruff check --select E9,F63,F7,F82 app tests` | PASS |
@@ -451,6 +466,7 @@ QA had defined 12 acceptance scenarios during the preventive review, each linked
 | acc-10 text.diff contract | `python -m pytest -q -k toolbox` | PASS |
 | acc-11 k8s.manifest.inspect contract | `python -m pytest -q -k toolbox` | PASS |
 | acc-12 no superfluous infrastructure | none | assessed in review |
+
 
 Eight scenarios share the same command, which runs every toolbox test. They are weaker than they look: each one passes if the whole toolbox suite passes, not because a test specific to that scenario passed.
 
@@ -510,8 +526,9 @@ flowchart LR
 
 ### Requirement-by-requirement outcome
 
+
 | Functional requirement | Implementation in the final commit | Verified by |
-|---|---|---|
+| ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Modular feature inside the existing app, no new service, no rewrite | Package `app/toolbox/` + router `app/routers/toolbox.py`, mounted in `create_app()` behind `TOOLBOX_ENABLED` (default `true`); `app/main.py` +8 lines | Scenario "application compiles/starts without regressions"; regression tests; 79 pre-existing tests pass |
 | Reuse conventions and dependencies | Prefix adapted to the repo: `/api/toolbox/...` (the repo has no `/api/v1`); settings in the existing Pydantic `Settings`; `loop.run_in_executor` pattern copied from `/api/fib/{x}`; PyYAML pinned in `requirements.txt` | Claims verified at analysis (`loop.run_in_executor` present in `app/routers/api.py`, `verify_credentials` in `app/auth.py`) |
 | Common tool contract and explicit registry | `Tool` protocol (`name`, `version`, input model, `execute(params, limits) -> ToolResult`) in `app/toolbox/base.py`; `app/toolbox/registry.py` with a dict keyed by unique id, duplicate registration rejected, deterministic order | Catalog scenario; unit tests |
@@ -529,6 +546,7 @@ flowchart LR
 | Logs without payloads; reuse observability | `logger.info` with `run_id`, tool, status, duration only; no new observability stack | SRE review (5 non-blocking findings) |
 | Tests: units per tool, API, Kubernetes cases, regression | 5 new test files, 67 new tests | `project.test`: 146 passed, 25 skipped |
 | Documentation: feature, curl, responses, limits, how to add a tool, k8s limitations, ADR note | `docs/14-dev-sre-toolbox.md` (360 lines), README section, `docs/README.md` index, `CHANGELOG.md` | `docs.updated` gate; Tech Writer preventive review asked for Basic Auth in every curl example |
+
 
 ### Findings overall
 
@@ -584,8 +602,9 @@ It ended **SUCCESS** in **25 min 44 s** and **US$ 1.35** of model cost, plus abo
 
 One run is one AgentCore Runtime session. The graph is the same, the surroundings are not:
 
+
 | Concern | Local run | AgentCore run |
-|---|---|---|
+| ------------------------- | --------------------------- | ----------------------------------------------------------------------------------- |
 | Orchestrator | local process | one Runtime microVM per run (2 vCPU, 8 GB), kept alive with `/ping` = `HealthyBusy` |
 | Workspace and artifacts | local disk | Amazon EFS, `/magi/<run_id>/...` |
 | Run state and checkpoints | SQLite | DynamoDB, plus S3 for large checkpoints |
@@ -593,6 +612,7 @@ One run is one AgentCore Runtime session. The graph is the same, the surrounding
 | Toolchain in the sandbox | image with the dependencies | wheels installed by the Runtime (which has NAT) into `.git/magi-toolchain` |
 | Code deployment | `uv run` | image with the locked dependencies, code bundle in S3 loaded at session start |
 | Observability | files | CloudWatch Logs, 15 metric filters, a dashboard filtered by run id |
+
 
 The sandbox is the part I care about. It has no internet, so the Runtime installs the toolchain for it, and the platform's rule stays the same: a gate is PASS only if a command was executed and succeeded.
 
@@ -626,11 +646,13 @@ The first run selected a plan in round 0. This one did not. **None of the three 
 
 Why they were rejected is the interesting part. Verification of the 491 claims of the run: 359 supported, 77 refuted, 55 unverifiable. In round 0:
 
+
 | Proposal | Why inadmissible |
-|---|---|
+| --------- | ---------------------------------------------------------------------------------------------------- |
 | Melchior | 22 critical claims refuted, 2 critical unknowns unresolved (PyYAML not installed, the 400 handler) |
 | Balthasar | 1 mandatory requirement not covered, 1 critical claim refuted (the protected `.github/workflows/**`) |
 | Casper | 8 critical claims refuted, 2 critical claims unresolved (no network needed, no payload logged) |
+
 
 Two different causes hide here. The first is real: an uncovered requirement, unresolved unknowns. The second is a defect of the platform, not of the agents. Nearly all the refuted critical claims of Melchior and Casper have the form "the router module exists after the change", or "the documentation page exists". The architects wrote claims in the future tense, the verifier checks the **baseline**, and on the baseline those files do not exist yet. In round 0, `file_exists` had 6 supported and 20 refuted, `text_present` 29 and 11. In round 1 the same kinds were all supported, because the architects restated them in a form the baseline can confirm.
 
@@ -646,14 +668,16 @@ Casper, as usual, asked something the others did not: the original Italian text 
 
 This was the tenth run on AgentCore and the first SUCCESS. The earlier nine failed for platform reasons, not model ones:
 
+
 | Defect | Fix |
-|---|---|
+| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | The sandbox had no toolchain (no pytest, no git) | the Runtime installs aarch64 wheels into `.git/magi-toolchain`, which survives `git clean -fdx` and is not scanned by `flake8 .` |
 | Heredocs and tools waited on stdin | commands run with stdin closed |
 | QA scenarios that searched source text or guessed `-k` selectors gave false negatives | text scans and empty selections are advisory, QA can correct a failed scenario once |
 | Claims written as `app/auth.py` instead of `app/auth.py::verify_credentials` were refuted | rejected at the schema, so the agent retries |
 | Warm containers kept serving old code after a new bundle was published | the Runtime reports `commit@bundle`, the launcher compares it with the published pointer and stops a stale start before it spends (4 of 5 starts in this run were stale) |
 | The previous run (US$ 1.44) passed every executed gate and ended FAILED_VERIFICATION: the target had no build or lint command | **preflight at intake**: a mandatory project gate that cannot run stops the run at cost zero, and the target got a `.magi/config.yaml` |
+
 
 The last row is the one I like. A pipeline that spends a dollar and a half to discover that the target has no lint command is not a risk-reduction system.
 
@@ -680,8 +704,9 @@ This check exercised the tools with sample inputs, not the edge cases above.
 
 ### Two runs side by side
 
-| | Local run | AgentCore run |
-|---|---|---|
+
+|  | Local run | AgentCore run |
+| --------------- | --------------------------- | -------------------------------------- |
 | Outcome | SUCCESS | SUCCESS |
 | Wall clock | 19 min 19 s | 25 min 44 s |
 | Model cost | US$ 1.05 | US$ 1.35 (+ about 0.12 infrastructure) |
@@ -692,6 +717,7 @@ This check exercised the tools with sample inputs, not the edge cases above.
 | Tests | 67 new, 146 passed | 54 new, 133 passed |
 | Mandatory gates | 10 of 10 | 10 of 10 |
 | Shared defect | empty image tag not flagged | empty image tag not flagged |
+
 
 Two runs, one pass each, a different plan chosen each time. It is still not a success rate. What it does say is that the move to a managed runtime did not change the verdicts: the gates stay executed commands, the evidence stays bound to a commit, and the same blind spots show up in the same places.
 
@@ -707,8 +733,9 @@ The second run on AgentCore says the same thing from another angle. Different in
 
 All ten, on the final commit `5cce890`:
 
+
 | Gate | Verdict | Detail |
-|---|---|---|
+| ------------------------- | ------- | ----------------------------------------------------------------- |
 | project.build | PASS | `python -m compileall -q app`, exit 0 |
 | project.test | PASS | `python -m pytest -q -p no:cacheprovider`, 146 passed, 25 skipped |
 | project.lint | PASS | `ruff check --select E9,F63,F7,F82 app tests` |
@@ -719,6 +746,7 @@ All ten, on the final commit `5cce890`:
 | magi.final_review | PASS | 3 reviews, 7 findings, none blocking |
 | integrity.protected_paths | PASS | no protected change |
 | scope.write_scopes | PASS | all changes inside authorized scopes |
+
 
 Machine-specific paths in the run artifacts were replaced by placeholders before writing this post.
 
