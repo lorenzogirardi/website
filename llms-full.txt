@@ -4,7 +4,7 @@
 
 
 ================================================================================
-# MAGI: A Risk-Reduction System Inside an Agentic Loop
+# MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)
 
 URL: https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/
 Date: 2026-11-13

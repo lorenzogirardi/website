@@ -1,4 +1,4 @@
-# MAGI: A Risk-Reduction System Inside an Agentic Loop
+# MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)
 
 ### Table of Contents
 

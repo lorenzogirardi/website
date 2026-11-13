@@ -6,7 +6,7 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
-- [MAGI: A Risk-Reduction System Inside an Agentic Loop](https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/): A risk-reduction system inside an agentic loop: three architects, two developers, QA, SRE and security. One real run, 19 minutes, one dollar, ten gates.
+- [MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)](https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/): A risk-reduction system inside an agentic loop: three architects, two developers, QA, SRE and security. One real run, 19 minutes, one dollar, ten gates.
 - [Autopsy of an Agentic Loop (pt.1) ](https://www.k8s.it/posts/autopsy-of-an-agentic-loop/): A pipeline that works like a team with no person in it: architect, two developers, QA, SRE, security, docs. The graph, the rules, the costs, a real repair.
 - [AI Makes Developers Faster. Does It Make the Team Faster?](https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/): AI-first hands tools to developers and leaves the process alone. A 50% faster developer is a 20% faster team until the operating model goes AI-native.
 - [AD Helper: Who Is in This Group? Answering It Without Opening a Ticket](https://www.k8s.it/posts/ad-helper-who-is-in-this-group-without-opening-a-ticket/): How I wrapped the ldapsearch every domain user can already run into a small read-only web UI, to check Active Directory group members without tickets.
