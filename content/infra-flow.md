@@ -39,9 +39,9 @@ flowchart TB
         MINATO[minato .18, StrongSwan 5.9.13 hub]:::hub
         MADARA[madara .21, Proxmox 9.1.5]:::host
         PAIN[pain .9, Proxmox 9.1.5]:::host
-        IZANAGI[izanagi k3s v1.36.2, .15 VM on madara]:::k8s
+        IZANAGI[izanagi k3s v1.36.5, .15 VM on madara]:::k8s
         ITACHI[itachi microk8s v1.32.9, .22 VM on pain]:::k8s
-        DEVA[deva .28, Grafana 12.3 - InfluxDB - Loki]:::mon
+        DEVA[deva .28, Grafana 13.3 - InfluxDB - Loki]:::mon
         BRAIN[BRAiN Synology, NFS -volume1, 19TB RAID5]:::stor
         MJOLNIR[mjolnir Tinkerboard, Graphite stack]:::host
         MF286D[mf286d, Emergency network, LTE failover WAN, standby]:::inactive
@@ -64,7 +64,7 @@ flowchart TB
     end
 
     subgraph OCI[Public Cloud - 10.77.254.0-24]
-        ORACLE[cloud-instance .135, microk8s v1.27, ARM]:::k8s
+        ORACLE[cloud-instance .135, microk8s v1.27, ARM, OFFLINE - restore pending]:::k8s
     end
 
     USER -->|HTTPS| CF
@@ -94,7 +94,7 @@ flowchart TB
     MATUSA -->|Collectd UDP 25826| DEVA
     MENDR -->|Collectd UDP 25826| DEVA
     ORACLE -->|Collectd UDP 25826| DEVA
-    IZANAGI -->|VMSingle NP 30090 scrape| DEVA
+    DEVA -->|Grafana datasource, VMSingle NP 30090| IZANAGI
 
     ORACLE -.->|Datadog agent| DDOG
     ORACLE -.->|Grafana agent| GCLOUD
@@ -121,7 +121,7 @@ flowchart TB
 - `inactive` (grey dashed) - standby / planned, not live
 - thick `==` = IPsec tunnel, `-->` = data flow, `-.->` = optional / async
 
-**mf286d** - ZTE MF286D LTE router (OpenWrt), planned secondary/failover WAN for Casa via Vodafone SIM. `mwan3` installed and ready but only one node can be powered at a time today: mf286d ships with LAN `192.168.1.1`, same as `router1`, so it's run standalone for now. Also blocked on the modem's PDP session (`wwan` up but data disconnected). Once reassigned to `192.168.1.2/24` with DHCP disabled, it can join Casa as a real dual-WAN failover path.
+**mf286d** - ZTE MF286D LTE router (OpenWrt), planned secondary/failover WAN for Casa via Vodafone SIM. `mwan3` installed and ready but only one node can be powered at a time today: mf286d ships with LAN `192.168.50.1`, same as `router1`, so it's run standalone for now. Also blocked on the modem's PDP session (`wwan` up but data disconnected). Once reassigned to `192.168.50.2/24` with DHCP disabled, it can join Casa as a real dual-WAN failover path.
 
 ## VPN Overlay - StrongSwan IKEv1 Hub-and-Spoke
 
@@ -167,10 +167,10 @@ flowchart LR
     OTOHIBE --- DNAT
 {{< /mermaid >}}
 
-**PKI** - internal root CA, RSA-4096, server cert on internal wildcard domain.
+**PKI** - internal root CA, RSA-4096, server cert on an internal service hostname.
 **SNAT chain** - caronte/judge (192.168.60.x) to otohibe SNAT to 172.20.5.105 to tunnel to minato to Casa LAN.
 
-## izanagi - k3s v1.36.2 Cluster (Casa)
+## izanagi - k3s v1.36.5 Cluster (Casa)
 
 Single-node k3s on VM/madara. Cilium CNI + Hubble, Traefik ingress, cert-manager, VictoriaMetrics stack. Hosts SSO (Keycloak), API gateway (Kong), object storage (MinIO), Argo Workflows, WireGuard, cloudflared tunnel, Cloudflare GraphQL exporter (edge/tunnel metrics on the free plan).
 
@@ -184,7 +184,7 @@ flowchart TB
 
     CF[Cloudflare Edge, wildcard TLS]:::edge
 
-    subgraph IZANAGI[izanagi 192.168.50.15 - k3s v1.36.2]
+    subgraph IZANAGI[izanagi 192.168.50.15 - k3s v1.36.5]
         subgraph KSYS[kube-system]
             CILIUM[Cilium + Hubble]:::sys
             COREDNS[CoreDNS, upstream 192.168.50.254]:::sys
@@ -279,7 +279,7 @@ flowchart TB
 
 ## Monitoring & Observability Flow
 
-Central stack on deva (192.168.50.28): Collectd RX (UDP 25826), InfluxDB (HTTP 8086, DBs `collectd` + `telegraf`), Loki (TCP 3100), Grafana 12.3. izanagi runs self-contained VictoriaMetrics queried via NP 30090.
+Central stack on deva (192.168.50.28): Collectd RX (UDP 25826), InfluxDB (HTTP 8086, DBs `collectd` + `telegraf`), Loki (TCP 3100), Grafana 13.3. izanagi runs self-contained VictoriaMetrics queried via NP 30090.
 
 {{< mermaid >}}
 flowchart LR
@@ -303,7 +303,7 @@ flowchart LR
         COLLD[Collectd RX, UDP :25826]:::store
         INFLUX[InfluxDB :8086, db collectd, db telegraf]:::store
         LOKI[Loki :3100]:::store
-        GRAF[Grafana 12.3]:::ui
+        GRAF[Grafana 13.3]:::ui
         PROM[Prometheus]:::store
     end
 
@@ -336,11 +336,11 @@ flowchart LR
 
 **Why two protocols?** Collectd legacy hosts use native UDP binary to the `collectd` DB. Newer hosts use Telegraf HTTP InfluxDB line protocol to the `telegraf` DB (collectd serializer unavailable in Telegraf).
 
-**Dashboards**: 19 exported, 14 base + 3 izanagi (cluster, pods, cilium) + 2 Cloudflare (tunnels, edge free plan).
+**Dashboards**: 54 in the live Grafana (org 1), exported to the repo; includes izanagi (cluster, pods, cilium) and Cloudflare (tunnels, edge free plan) boards.
 
 ## Backup Topology
 
-Two independent flows. Infra-side: Proxmox vzdump weekly Sunday 03:00, all VMs/LXC on every Proxmox hypervisor - Casa hypervisors (madara, pain) to BRAiN NFS, Milano (amaterasu) to local `/var/lib/vz/dump`. Data-side: an offsite archive of the workstation's own filesystem, pushed via restic to a block volume on the cloud instance - unrelated to vzdump, its own schedule and retention.
+Two independent flows. Infra-side: Proxmox vzdump weekly Sunday 03:00, all VMs/LXC on every Proxmox hypervisor - Casa hypervisors (madara, pain) to BRAiN NFS, Milano (amaterasu) to local `/var/lib/vz/dump`. Data-side: an offsite archive of the workstation's own filesystem, pushed via restic to a block volume on oracolo-micro-2 (temporary AMD cloud instance standing in for the offline A1) - unrelated to vzdump, its own schedule and retention.
 
 {{< mermaid >}}
 flowchart LR
@@ -362,7 +362,7 @@ flowchart LR
     LAPTOP[workstation, macOS, Backrest UI]:::client
     ARCHIVE[cloud instance, dedicated block volume, SFTP chroot target]:::store
 
-    LAPTOP -->|restic via Backrest, SFTP, AES-256 client-side, weekly| ARCHIVE
+    LAPTOP -->|restic via Backrest, SFTP, AES-256 client-side| ARCHIVE
 {{< /mermaid >}}
 
 **Cron** `/etc/cron.d/proxmox-backup` needs `SHELL=/bin/bash`. Script `/root/proxmox-backup.sh`. Log `/var/log/proxmox-backup.log`.
@@ -415,13 +415,13 @@ sequenceDiagram
     participant M as minato 192.168.50.18
     participant T as Target 192.168.50.x
 
-    C->>O: src .100.102 dst 192.168.50.x, route via .100.101
+    C->>O: src .60.102 dst 192.168.50.x, route via .60.101
     Note over O: SNAT src to 172.20.5.105, XFRM encrypt ESP
     O->>R1: ESP-in-UDP dst Casa_public:4500
     R1->>NET: NAT public IP
     NET->>R2: UDP :4500
     R2->>M: PF UDP 4500
-    Note over M: Decrypt ESP, inner src 172.20.5.105 to dst .1.x
+    Note over M: Decrypt ESP, inner src 172.20.5.105 to dst .50.x
     M->>T: deliver LAN
     T->>M: reply dst 172.20.5.105
     Note over M: XFRM match, encrypt
@@ -429,6 +429,6 @@ sequenceDiagram
     R2->>NET: NAT
     NET->>R1: UDP :4500
     R1->>O: forward
-    Note over O: SNAT reverse, dst .100.102
-    O->>C: src .1.x dst .100.102
+    Note over O: SNAT reverse, dst .60.102
+    O->>C: src .50.x dst .60.102
 {{< /mermaid >}}
