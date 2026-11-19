@@ -24,9 +24,15 @@ featuredImage: /images/sherlock-holmes-in-a-bottle/featured.jpg
     * The model
   * The Telegram bridge
   * Health checks: Holmes talks first
+    * Update: five checks became one
   * Watching the watcher
   * Things that bit me
   * What the first runs found
+  * Giving Holmes hands, carefully
+    * The toolsets, one by one
+    * Exec, but only in kube-system
+    * Before and after: the nginx question
+  * Asking about a CVE from my phone
   * Security considerations
   * Conclusion
   * Reflections
@@ -53,7 +59,7 @@ What convinced me for a homelab:
 
 - **It runs in the cluster.** No SaaS in the middle, except the LLM provider I choose.
 - **Bring your own model.** It uses LiteLLM, so any OpenRouter, OpenAI or local model works. I used `~deepseek/deepseek-flash-latest` on OpenRouter: cheap enough to run on a schedule.
-- **Read-only by design.** The chart ships a ClusterRole without writes, and I disabled the `bash` and `internet` toolsets.
+- **Read-only by design.** The chart ships a ClusterRole without writes. I started with the `bash` and `internet` toolsets disabled, and later enabled both in a restricted form (see "Giving Holmes hands, carefully").
 - **It speaks PromQL.** My VictoriaMetrics is already the source of truth, so Holmes can check trends instead of only snapshots.
 - **Scheduled checks are possible.** Holmes ships an operator with CRDs like `ScheduledHealthCheck`, a natural-language query on a cron. I tried it, and it did not work for me (see below), but the chat endpoint is enough to build the same thing.
 
@@ -68,7 +74,7 @@ flowchart LR
     U([Telegram])
     subgraph NS[k3s cluster, single node]
         B[telegram-bridge<br>long polling]
-        S[scheduler<br>5 health checks]
+        S[scheduler<br>health check]
         H[holmes<br>/api/chat]
         K[k3s API<br>read-only]
         V[vmsingle<br>PromQL]
@@ -132,8 +138,8 @@ toolsets:
     config:
       prometheus_url: http://vmsingle-vm-victoria-metrics-k8s-stack.monitoring.svc.cluster.local.:8428
       prometheus_subtype: victoriametrics
-  bash: {enabled: false}
-  internet: {enabled: false}
+  bash: {enabled: false}       # first version; enabled later in a restricted form
+  internet: {enabled: false}   # first version; enabled later with an allowlist
   robusta: {enabled: false}
 
 operator:
@@ -185,6 +191,8 @@ This is a real question, asked in Italian: when does sitespeed.io run? Holmes fo
 ## Health checks: Holmes talks first
 
 This is the part that replaces me staring at a dashboard. A health check is a question with a schedule: "is the node healthy?" every hour. Holmes investigates, answers with a severity, and only a result that is not OK reaches my phone.
+
+> **Update, 19 November:** this section describes the five checks as I first wrote them. They are now a single check, `izanagi-health`, once a night. The reasons and the new query are in "Update: five checks became one" below. I kept the five queries here because the tuning lessons still apply.
 
 I started from five generic "act as a Kubernetes SRE" prompts: nodes, pods, events, control plane, network and storage. Run as they were, they gave excellent reports and terrible alerts. Each took 1 to 4 minutes, made up to 95 tool calls and produced 7000 to 15000 characters with tables. That does not fit on a phone, and a scheduled check needs a verdict, not an essay.
 
@@ -409,6 +417,27 @@ The pattern is always the same: say when the result is **not** OK (with numeric 
 
 The screenshot is a manual `/check nodes`: one OK line per verified item, each with its evidence, and a final coverage note. Holmes says the kubelet and containerd logs were not readable (on k3s they run as a systemd service, not as pods), so runtime errors were verified through Prometheus metrics only. That is exactly the "absence of data must be declared" rule at work.
 
+### Update: five checks became one
+
+After a few days, five checks were more than I needed. Each one still made 60 to 75 tool calls, five of them in a row meant 20 minutes of agent time and five chances to get a false WARNING, and the one that talked most (`events`) was also the one that said the least: generic Warning events and log noise. Almost every real finding of the first runs came from the node, pod and storage checks. I had already cut the schedule to one nightly batch at 21:30 Rome time, so the remaining question was whether five queries earned their keep. They did not.
+
+I replaced them with one check, `izanagi-health`, that looks at the cluster as a whole and reports only what is **really critical**: an active failure, or a concrete risk of failure in the next 24 hours. It covers six areas:
+
+| Area | Not OK when |
+|---|---|
+| Node | not Ready or any pressure, root fs above 85% or +5 points in an hour, inodes below 10%, CPU or memory above 85% for 15 minutes, evictions |
+| Control plane | k3s restarted in the last hour, apiserver 5xx or abnormal p99, `/readyz` or `/livez` failing |
+| DNS and network | CoreDNS unready or SERVFAIL above 5%, Cilium agent, operator or endpoints unready |
+| Storage | a PVC not Bound, repeated mount, attach or CSI errors in the last 15 minutes |
+| Workload | not-ready pods, CrashLoop, ImagePull, OOMKilled, Pending or Terminating for more than 10 minutes, restarts in the last hour, incomplete rollouts, failed Jobs |
+| Ingress and monitoring | an ingress Service with no ready endpoints, Traefik logging `service port not found`, a scrape target down |
+
+The rules I learned the hard way carried over: the explicit thresholds, the edge-case rules ("a reboot before the last hour with a Ready node is not a failure"), the list of known noise, the severity block and the bridge validation. Two things are new. The query names the components the rest depends on (Traefik, Kong, Cilium, CoreDNS, csi-smb, VictoriaMetrics, Keycloak, Bitwarden, Argo, Holmes) so the agent spends its calls there first, and it has a hard cap of 45 tool calls, after which it must write the report.
+
+The `events` check is gone. Its useful signals (repeated mount errors, a component that is not reachable) are now in the storage and workload areas, and what is lost is the generic "more than 100 identical error lines" net. I accept that trade.
+
+I have not measured the cost of the new check yet. The cap says it should be cheaper than any single old check, but the bridge log line (`check izanagi-health: <SEVERITY> tools=<n> secs=<s>`) will tell me after a few nights, and I will not claim a number before then.
+
 ## Watching the watcher
 
 An agent that runs on a schedule and spends tokens needs its own dashboard. Mine is a Grafana board with two rows: the health checks seen from the bridge (last result per check, duration, tool calls, Telegram questions) and the agent itself, from the metrics Holmes exports (tokens, LLM calls, tool calls and errors, time spent).
@@ -454,14 +483,142 @@ I fixed the route anyway (one `kubectl patch`), but the lesson stands. **Holmes 
 
 It also exposed a drift I would not have noticed: the Helm release for that service still declares port 5000, while the live Service had been changed by hand to 8000. A future `helm upgrade` would have broken it again.
 
+## Giving Holmes hands, carefully
+
+For the first weeks Holmes could read the cluster and the metrics, and nothing else. That was enough until the day a new vulnerability write-up, **NGINX2Root** (five CVEs, from an nginx visitor to root on the host), made me ask a simple question in Telegram: are we vulnerable?
+
+Holmes answered that it could not tell. It had found the only nginx in the cluster (the frontend of `hubble-ui`), but it could not read the exact version, because that needs `nginx -v` inside the container, and it could not open the page of the research, because the `internet` toolset was off. Its answer even offered a guess ("probably nginx 1.25.x") that it labelled as unverified. Honest, and useless for a decision.
+
+I had to do the two steps by hand. The real version was **nginx 1.29.0**, so the guess was wrong. That was the moment to decide which tools Holmes should really have.
+
+### The toolsets, one by one
+
+A toolset is a group of tools the agent may call. The rule I keep in mind is that **everything a tool returns goes to the LLM provider**, so every toolset is both a capability and a data flow. This is the state after the change:
+
+| Toolset | State | What it gives Holmes | Guard rail |
+|---|---|---|---|
+| `kubernetes/core`, `kubernetes/logs` | on | `kubectl get`, `describe`, events and container logs | ClusterRole with `get/list/watch` only |
+| `prometheus/metrics` | on | PromQL on VictoriaMetrics | read-only query API |
+| `skills` | on | reusable investigation playbooks | none needed |
+| `bash` | on, restricted | the `core` allowlist (kubectl read verbs, `jq`, `grep`, `head`, `tail`...) plus `kubectl exec` | `sudo` and `su` are blocked by the toolset; exec works only in `kube-system` (RBAC, next section) |
+| `internet` | on, allowlist | fetch a page and read it | `allowed_hosts`: only the sites below; no extra headers, so no credentials leave |
+| `robusta` | off | Robusta SaaS integration | a third party I do not want in the loop |
+| `connectivity_check` | off | outbound probes | not needed |
+
+The values for the two new ones are short:
+
+```yaml
+toolsets:
+  bash:
+    enabled: true
+    config:
+      builtin_allowlist: core     # kubectl get/describe/logs/top, jq, grep, head, tail...
+      allow:
+        - "kubectl exec"
+  internet:
+    enabled: true
+    config:
+      allowed_hosts:              # host and its subdomains; everything else is refused
+        - nvd.nist.gov            # NVD
+        - cve.org                 # CVE records
+        - github.com              # GitHub Advisory Database
+        - osv.dev                 # OSV
+        - cisa.gov                # CISA KEV
+        - kb.cert.org             # CERT/CC
+        - euvd.enisa.europa.eu    # ENISA EUVD
+        - nginx.org               # nginx security advisories
+        - nginx2root.com          # the research I was asking about
+        - xint.io                 # its technical write-up
+```
+
+The first seven are the public vulnerability databases: records, severity, affected products and, with luck, the vendor fix. The last three are specific to the nginx question. I would rather add a host when I need it than open the whole internet to an agent that reads untrusted pages. One honest limit: `github.com` cannot be restricted to `/advisories`, so Holmes can read any GitHub page.
+
+### Exec, but only in kube-system
+
+`kubectl exec` is the dangerous one. A shell inside a pod can read mounted secrets and environment variables, and the output goes to the model. The allowlist only controls the *command* (`kubectl exec ...`), not what runs inside the pod, so the real boundary has to be RBAC. The Holmes ClusterRole stays read-only, and the only exec permission is a namespaced Role that I apply by hand, outside the Helm release:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: holmes-exec
+  namespace: kube-system
+rules:
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: holmes-exec
+  namespace: kube-system
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: holmes-exec}
+subjects:
+  - kind: ServiceAccount
+    name: holmes-holmes-service-account
+    namespace: holmes
+```
+
+Why `kube-system`: that is where `hubble-ui` lives, and version checks such as `nginx -v` were the reason for all of this. Even so, exec can run any command in any pod of that namespace, and I accept it knowingly.
+
+A small trap when verifying it. `kubectl auth can-i create pods/exec` answered **no** for the Holmes ServiceAccount, even in `kube-system`, while the exec worked. The right form uses the subresource flag:
+
+```bash
+SA=system:serviceaccount:holmes:holmes-holmes-service-account
+kubectl auth can-i create pods --subresource=exec -n kube-system --as=$SA   # yes
+kubectl auth can-i create pods --subresource=exec -n monitoring  --as=$SA   # no
+```
+
+### Before and after: the nginx question
+
+Same question after the change. This time Holmes ran `kubectl exec ... -- nginx -v` in the `frontend` container of `hubble-ui`, got **nginx 1.29.0**, and read the NGINX2Root write-up through the `internet` toolset. Instead of stopping at "the version is in the affected range", it checked the real configuration of the container (`nginx -V` and `nginx -T`), because the five CVEs need specific features:
+
+| Attack path | Needs | In this instance |
+|---|---|---|
+| CVE-2026-123007 | HTTP/2 enabled | not enabled: plain HTTP on 8081 |
+| CVE-2026-123633 | HTTP/2 with forwarding to an upstream | not enabled |
+| CVE-2026-121810 | HTTP/3 with forwarding to an upstream | not enabled |
+| CVE-2026-123634 | `resolver`, a `proxy_pass` built from the request and `mirror` | fixed upstream, no `resolver`, no `mirror` |
+| CVE-2026-113425 | mail proxy with `auth_http` | no `mail` or `stream` blocks |
+
+The verdict was the one I would have written by hand, with more evidence: **the vulnerable code is present, but the attack path is disabled**, and the Service is ClusterIP only, with no Ingress. The fix, according to the write-up as Holmes read it, is nginx 1.31.9, and since the binary comes from the Cilium image, the real fix is a newer `hubble-ui` image, not a package upgrade in the container.
+
+## Asking about a CVE from my phone
+
+A few days later a CVE hit the news that mattered more: **CVE-2026-114938, "Java4Shell"**, a memory corruption in the Base64 decoder of OpenJDK that allows unauthenticated remote code execution, and Keycloak is on the list of affected products. I do not remember which of my pods run Java, so I asked Holmes exactly that, in two steps.
+
+First: *do we have a Java app in the cluster?*
+
+![Telegram: Holmes finds Keycloak 24.0 on OpenJDK 17.0.14, flags Guacamole as probably Java but unconfirmed because pods/exec is forbidden there, and lists the other 52 pods by runtime](/images/sherlock-holmes-in-a-bottle/holmes-java-apps.jpg)
+
+Holmes found one confirmed Java application, **Keycloak** (image `keycloak:24.0`, OpenJDK `17.0.14+7-LTS`, read from the `jvm_info` metric that is already scraped), with a flat heap and no restarts. It then marked **Guacamole** as *probably* Java, and said why it could not confirm it: `pods/exec` is forbidden for its ServiceAccount in that namespace. That is the RBAC scoping working in front of me. An agent that could exec anywhere would have confirmed it, and it would have been a worse design. It also classified the other 52 pods by runtime (Go, Python, Node.js, Lua, C, plus Postgres and Redis), which is the kind of inventory I would never have written by hand.
+
+Second: *is it vulnerable to CVE-2026-114938?*
+
+![Telegram: Holmes reads the CVE advisories, says the Keycloak JVM is in the affected range (17.0.14 is below 17.0.21.1) and that the app is internet-facing through the Cloudflare tunnel](/images/sherlock-holmes-in-a-bottle/holmes-cve-keycloak.jpg)
+
+Through the `internet` toolset it read the advisories (NVD, CISA) and answered with the CVE data (published 2026-11-17, CVSS 3.1 8.1, CWE-122, CISA exploitation status "none") and a table for my cluster: `keycloak:24.0`, JVM 17.0.14 against Red Hat's vulnerable range `17.0.0 <= v < 17.0.21.1`, and **internet-facing** through the Cloudflare tunnel, with the public hostname blurred in the screenshot. Verdict: *Affected*.
+
+That is a correct answer to the question I asked, and an incomplete one for the decision. A version in the range is only the first of three conditions in the Keycloak advisory. The other two are that the host exposes the `avx512vbmi` CPU feature to Java and that the JVM has the Base64 intrinsics on. Holmes did not check the CPU, and I did by hand: the node is a VM with a generic QEMU CPU and no `avx512*` flag, so the attack is not practical today. It would become practical the day someone switches the VM to the `host` CPU type, with an internet-facing Keycloak. "Vulnerable by version" and "exploitable here" are different findings, and the agent gave me the first one very well.
+
+### Where Keycloak is now
+
+The JVM flag `-XX:-UseBASE64Intrinsics`, set through `JAVA_OPTS_APPEND`, is the mitigation recommended by the advisory, and I applied it first as a stop-gap. I checked it on the running JVM, not on the environment: the flag is on the command line of the new pod and `UseBASE64Intrinsics` reads `false`.
+
+The real fix was to leave `24.0.5` (unsupported, still in `start-dev` mode) for an image with a patched JDK, and I did it the same day: `26.8.2-3`, on OpenJDK 21.0.13.1. It is not a tag change. The hostname and proxy options of 24 were removed in 26, health and metrics moved to a management port (9000), the metrics SPI I ran is built for 24, and the caches and sessions are reset. So the order was: a database dump, a restore into a temporary namespace, Keycloak 26.8.2-3 started on that copy with the new configuration (the schema migrated cleanly, issuer, health and JDK checked), and only then the cutover on the real Deployment, with `Recreate` instead of `RollingUpdate` so two versions never share a database during a migration. Three things still need work after the upgrade: the old Grafana dashboard was built on the SPI metric names and is now empty, I never checked custom themes, and the service still runs in `start-dev`.
+
 ## Security considerations
 
 1. **Read-only is a property of the ClusterRole, not of the prompt.** The prompt says "do not modify anything", but what matters is that the ServiceAccount cannot. Check the role, not the instructions.
-2. **Treat everything Holmes reads as untrusted.** Logs, events and annotations can contain text written by someone else. The prompts say to ignore instructions found inside them, and the toolsets are limited, so the worst case is a wrong answer, not an action.
+2. **Treat everything Holmes reads as untrusted.** Logs, events and annotations can contain text written by someone else. The prompts say to ignore instructions found inside them. With read-only tools the worst case was a wrong answer. Since `kubectl exec` and `internet` are on, an injected instruction could try to make the agent run a command or fetch a page, so the real limits are the namespaced exec Role and the host allowlist, not the prompt.
 3. **Secrets stay out of git and out of the model.** The key lives in a Kubernetes Secret created by hand. The bridge never logs content or tokens, and the Holmes ClusterRole does not read Secrets.
 4. **The allowlist is the access control.** The bot answers only to configured chat ids. Anyone else learns their own id and nothing more.
 5. **An unauthenticated API is a trade-off.** The Holmes Service is ClusterIP only and has no API key and no NetworkPolicy, so any pod in the cluster can query it. The tools are read-only, but every question spends OpenRouter credit. If you cannot accept that, add a NetworkPolicy in front of the Service or an authenticating proxy.
 6. **Cost is a security boundary too.** Everything that can call the API can spend tokens. Keep the checks few and the schedule slow.
+7. **Every toolset is also a data flow.** Whatever a tool returns, a pod's environment or a page from the web, is sent to the LLM provider. I enable a toolset only for a question I actually need to answer, and the two I added came from a real one (the NGINX2Root check).
+8. **Scope exec by namespace and verify it with the right command.** `bash` is on with the `core` allowlist and `sudo` and `su` are blocked, but the allowlist cannot see what runs inside a pod. The boundary is a Role that grants `pods/exec` only in `kube-system`, and the proof is `kubectl auth can-i create pods --subresource=exec` (yes there, no elsewhere). The plain `pods/exec` form gives a misleading *no*.
+9. **Allowlist the internet, do not open it.** The `internet` toolset can fetch only the hosts I listed, with no extra headers. `github.com` is the weak spot, since it cannot be narrowed to the advisories path.
 
 ## Conclusion
 
