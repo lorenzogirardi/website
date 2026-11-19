@@ -35,7 +35,7 @@ featuredImage: /images/sherlock-holmes-in-a-bottle/featured.jpg
   * What the first runs found
   * Giving Holmes hands, carefully
     * The toolsets, one by one
-    * Exec, but only in kube-system
+    * Exec: first one namespace, then all
     * Before and after: the nginx question
   * Asking about a CVE from my phone
   * Security considerations
@@ -437,7 +437,7 @@ A toolset is a group of tools the agent may call. The rule I keep in mind is tha
 | `kubernetes/core`, `kubernetes/logs` | on | `kubectl get`, `describe`, events and container logs | ClusterRole with `get/list/watch` only |
 | `prometheus/metrics` | on | PromQL on VictoriaMetrics | read-only query API |
 | `skills` | on | reusable investigation playbooks | none needed |
-| `bash` | on, restricted | the `core` allowlist (kubectl read verbs, `jq`, `grep`, `head`, `tail`...) plus `kubectl exec` | `sudo` and `su` are blocked by the toolset; exec works only in `kube-system` (RBAC, next section) |
+| `bash` | on, restricted | the `core` allowlist (kubectl read verbs, `jq`, `grep`, `head`, `tail`...) plus `kubectl exec` | `sudo` and `su` are blocked by the toolset; exec works in every namespace through its own ClusterRole (RBAC, next section) |
 | `internet` | on, allowlist | fetch a page and read it | `allowed_hosts`: only the sites below; no extra headers, so no credentials leave |
 | `robusta` | off | Robusta SaaS integration | a third party I do not want in the loop |
 | `connectivity_check` | off | outbound probes | not needed |
@@ -470,41 +470,44 @@ toolsets:
 
 The first seven are the public vulnerability databases: records, severity, affected products and, with luck, the vendor fix. The last three are specific to the nginx question. I would rather add a host when I need it than open the whole internet to an agent that reads untrusted pages. One honest limit: `github.com` cannot be restricted to `/advisories`, so Holmes can read any GitHub page.
 
-### Exec, but only in kube-system
+### Exec: first one namespace, then all
 
-`kubectl exec` is the dangerous one. A shell inside a pod can read mounted secrets and environment variables, and the output goes to the model. The allowlist only controls the *command* (`kubectl exec ...`), not what runs inside the pod, so the real boundary has to be RBAC. The Holmes ClusterRole stays read-only, and the only exec permission is a namespaced Role that I apply by hand, outside the Helm release:
+`kubectl exec` is the dangerous one. A shell inside a pod can read mounted secrets and environment variables, and the output goes to the model. The allowlist only controls the *command* (`kubectl exec ...`), not what runs inside the pod, so the real boundary has to be RBAC. The main Holmes ClusterRole stays read-only, and the exec permission lives in a separate object that I apply by hand, outside the Helm release.
+
+I started as careful as I could: a namespaced Role that granted `pods/exec` only in `kube-system`, because that is where `hubble-ui` lives and a version check such as `nginx -v` was the reason for all of this. It worked, and it also showed me the limit on the same day. I asked Holmes which pods run Java. It found Keycloak from a JVM metric, said Guacamole was probably Java too, and could not confirm it: the Guacamole app exposes no JVM metrics and exec was forbidden in its namespace. The scoping did exactly what I had written, and it made the agent worse at the questions I actually ask, which are about the whole cluster (which runtime, which version, am I exposed to this CVE).
+
+So I widened it, knowingly. Today the permission is one ClusterRole and one binding:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   name: holmes-exec
-  namespace: kube-system
 rules:
   - apiGroups: [""]
     resources: ["pods/exec"]
     verbs: ["create"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: holmes-exec
-  namespace: kube-system
-roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: holmes-exec}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: holmes-exec}
 subjects:
   - kind: ServiceAccount
     name: holmes-holmes-service-account
     namespace: holmes
 ```
 
-Why `kube-system`: that is where `hubble-ui` lives, and version checks such as `nginx -v` were the reason for all of this. Even so, exec can run any command in any pod of that namespace, and I accept it knowingly.
+This is a real trade, and I want it written down. Exec can run any command in any pod, including pods that keep credentials in environment variables or files (my Keycloak, my password manager, the Postgres instances), and what it prints goes to the LLM provider. A line planted in a log or an event could try to make the agent exec something. What still limits it is small but real: the `bash` allowlist only lets a command start with `kubectl exec` or a read-only verb, `sudo` and `su` are blocked by the toolset, and the ClusterRole grants nothing else. It cannot delete, patch or read Secrets through the API, and I checked that.
 
-A small trap when verifying it. `kubectl auth can-i create pods/exec` answered **no** for the Holmes ServiceAccount, even in `kube-system`, while the exec worked. The right form uses the subresource flag:
+A small trap when verifying it. `kubectl auth can-i create pods/exec` answered **no** for the Holmes ServiceAccount even where the exec worked. The right form uses the subresource flag:
 
 ```bash
 SA=system:serviceaccount:holmes:holmes-holmes-service-account
-kubectl auth can-i create pods --subresource=exec -n kube-system --as=$SA   # yes
-kubectl auth can-i create pods --subresource=exec -n monitoring  --as=$SA   # no
+kubectl auth can-i create pods --subresource=exec -n guacamole --as=$SA   # yes
+kubectl auth can-i delete pods -A --as=$SA                                  # no
+kubectl auth can-i get secrets -A --as=$SA                                  # no
 ```
 
 ### Before and after: the nginx question
@@ -529,7 +532,7 @@ First: *do we have a Java app in the cluster?*
 
 ![Telegram: Holmes finds Keycloak 24.0 on OpenJDK 17.0.14, flags Guacamole as probably Java but unconfirmed because pods/exec is forbidden there, and lists the other 52 pods by runtime](/images/sherlock-holmes-in-a-bottle/holmes-java-apps.jpg)
 
-Holmes found one confirmed Java application, **Keycloak** (image `keycloak:24.0`, OpenJDK `17.0.14+7-LTS`, read from the `jvm_info` metric that is already scraped), with a flat heap and no restarts. It then marked **Guacamole** as *probably* Java, and said why it could not confirm it: `pods/exec` is forbidden for its ServiceAccount in that namespace. That is the RBAC scoping working in front of me. An agent that could exec anywhere would have confirmed it, and it would have been a worse design. It also classified the other 52 pods by runtime (Go, Python, Node.js, Lua, C, plus Postgres and Redis), which is the kind of inventory I would never have written by hand.
+Holmes found one confirmed Java application, **Keycloak** (image `keycloak:24.0`, OpenJDK `17.0.14+7-LTS`, read from the `jvm_info` metric that is already scraped), with a flat heap and no restarts. It then marked **Guacamole** as *probably* Java, and said why it could not confirm it: at that moment `pods/exec` was allowed only in `kube-system`, and the app exposes no JVM metrics. That screenshot is the reason exec is now allowed in every namespace: an agent that cannot look inside the pod can only guess, and for a CVE question a guess is not an answer. It also classified the other 52 pods by runtime (Go, Python, Node.js, Lua, C, plus Postgres and Redis), which is the kind of inventory I would never have written by hand.
 
 Second: *is it vulnerable to CVE-2026-114938?*
 
@@ -548,13 +551,13 @@ The real fix was to leave `24.0.5` (unsupported, still in `start-dev` mode) for 
 ## Security considerations
 
 1. **Read-only is a property of the ClusterRole, not of the prompt.** The prompt says "do not modify anything", but what matters is that the ServiceAccount cannot. Check the role, not the instructions.
-2. **Treat everything Holmes reads as untrusted.** Logs, events and annotations can contain text written by someone else. The prompts say to ignore instructions found inside them. With read-only tools the worst case was a wrong answer. Since `kubectl exec` and `internet` are on, an injected instruction could try to make the agent run a command or fetch a page, so the real limits are the namespaced exec Role and the host allowlist, not the prompt.
+2. **Treat everything Holmes reads as untrusted.** Logs, events and annotations can contain text written by someone else. The prompts say to ignore instructions found inside them. With read-only tools the worst case was a wrong answer. Since `kubectl exec` and `internet` are on, an injected instruction could try to make the agent run a command or fetch a page, so the real limits are the command allowlist, the exec-only ClusterRole and the host allowlist, not the prompt. I widened exec to every namespace on purpose, which makes this point more important, not less.
 3. **Secrets stay out of git and out of the model.** The key lives in a Kubernetes Secret created by hand. The bridge never logs content or tokens, and the Holmes ClusterRole does not read Secrets.
 4. **The allowlist is the access control.** The bot answers only to configured chat ids. Anyone else learns their own id and nothing more.
 5. **An unauthenticated API is a trade-off.** The Holmes Service is ClusterIP only and has no API key and no NetworkPolicy, so any pod in the cluster can query it. The tools are read-only, but every question spends OpenRouter credit. If you cannot accept that, add a NetworkPolicy in front of the Service or an authenticating proxy.
 6. **Cost is a security boundary too.** Everything that can call the API can spend tokens. Keep the checks few and the schedule slow.
 7. **Every toolset is also a data flow.** Whatever a tool returns, a pod's environment or a page from the web, is sent to the LLM provider. I enable a toolset only for a question I actually need to answer, and the two I added came from a real one (the NGINX2Root check).
-8. **Scope exec by namespace and verify it with the right command.** `bash` is on with the `core` allowlist and `sudo` and `su` are blocked, but the allowlist cannot see what runs inside a pod. The boundary is a Role that grants `pods/exec` only in `kube-system`, and the proof is `kubectl auth can-i create pods --subresource=exec` (yes there, no elsewhere). The plain `pods/exec` form gives a misleading *no*.
+8. **Decide the exec scope on purpose, and verify it with the right command.** `bash` is on with the `core` allowlist and `sudo` and `su` are blocked, but the allowlist cannot see what runs inside a pod. I started with a Role limited to one namespace, found it too narrow for cluster-wide questions, and moved to a ClusterRole that grants `pods/exec` and nothing else. Whichever you pick, the proof is `kubectl auth can-i create pods --subresource=exec` (the plain `pods/exec` form gives a misleading *no*), plus `no` for delete and for Secrets.
 9. **Allowlist the internet, do not open it.** The `internet` toolset can fetch only the hosts I listed, with no extra headers. `github.com` is the weak spot, since it cannot be narrowed to the advisories path.
 
 ## Conclusion
