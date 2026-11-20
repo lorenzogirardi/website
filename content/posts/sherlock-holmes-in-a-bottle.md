@@ -377,15 +377,36 @@ I tested the evaluation with synthetic data before trusting it: a node not Ready
 
 ## Watching the watcher
 
-An agent that runs on a schedule and spends tokens needs its own dashboard. Mine is a Grafana board with two rows. The first is the health checks seen from the bridge: last result per check, time since the last non-UNKNOWN result, runs by severity, failed Holmes attempts by reason, per-check averages, duration and tool calls of the last run, and the Telegram questions. The second is the agent itself, from the metrics Holmes exports: tokens (total, per 5 minutes and per LLM call), LLM calls and their duration, tool calls and errors, where the time goes, and a per-tool breakdown of calls, average duration and error rate.
+An agent that runs on a schedule and spends tokens needs its own dashboard, and the most useful part of mine is the one that shows **which tools the agent really calls**. The LLM does not touch the cluster: it decides which tool to call, the tool runs, and the result goes back into the context. So what an investigation can see, and what it costs, is defined by its tools. The board has two rows. The first is the health checks seen from the bridge (last result per check, runs by severity, failed attempts, duration, Telegram questions). The second is the agent itself, from the metrics Holmes exports: tokens, LLM calls, time, and a per-tool breakdown of calls, average duration and error rate.
 
 ![Grafana dashboard Izanagi - Holmes Agent: health check results, token usage, LLM calls and tool errors](/images/sherlock-holmes-in-a-bottle/grafana-dashboard.jpg)
 
-The window in the screenshot is about one hour and a half, with the checks running on their schedule plus a couple of questions from Telegram: 72 LLM calls, 2.5 million input tokens against 55 thousand output, and 186 tool calls. No failed Holmes attempt in the range. Three things stand out:
+### What the tools do
 
-- **Time goes to the model, not to the tools.** 5 minutes of LLM time against 1 minute of tools. The tools are local and fast, the model is the slow and costly part.
-- **Input tokens grow with the investigation.** The average input per call climbs from about 10 thousand to over 60 thousand within a single run, because every tool result stays in the context for the next call. That is why the input side is 45 times the output side.
-- **Some tool calls fail.** 18 of 186, almost 10%, mostly PromQL queries (19% of the instant queries, 11% of the range ones). The checks still completed, but those failures are wasted calls and tokens that you only see if you measure them. The per-tool panel also shows where the calls go: `kubernetes_jq_query` and the instant PromQL tool account for more than half of them, while `fetch_pod_logs` is the slowest tool, around 3 seconds per call.
+These are the tools in the per-tool panels, and the toolset each one comes from:
+
+| Tool | Toolset | What it does |
+|---|---|---|
+| `kubernetes_jq_query` | `kubernetes/core` | lists resources of a kind and filters them with a `jq` expression, so only the fields that matter come back |
+| `kubernetes_count` | `kubernetes/core` | counts the resources matching a `jq` filter (how many pods are not Running) |
+| `kubernetes_tabular_query` | `kubernetes/core` | returns selected fields of a resource kind as a compact table |
+| `fetch_pod_logs` | `kubernetes/logs` | reads the logs of a container, current or previous |
+| `execute_prometheus_instant_query` | `prometheus/metrics` | PromQL at a single point in time: "what is the value now" |
+| `execute_prometheus_range_query` | `prometheus/metrics` | PromQL over a time range: "how did it change in the last hour" |
+| `get_metric_names`, `get_label_values`, `get_series` | `prometheus/metrics` | discovery: which metrics exist, which labels and values they have, which series match |
+| `bash` | `bash` | runs an allowlisted command: kubectl read verbs, `jq`, `grep`, and `kubectl exec` inside a pod |
+| `fetch_webpage` | `internet` | downloads a page from an allowlisted host and returns its text |
+
+The discovery tools explain most of the failures. Holmes does not know my metric names in advance, so it first asks VictoriaMetrics what exists, then queries it, and when a PromQL expression is wrong the query tool returns an error and the model tries again.
+
+### What the dashboard says
+
+The window is about one hour and a half, with the checks running on their schedule plus a couple of questions from Telegram: 72 LLM calls, 2.5 million input tokens against 55 thousand output, and 186 tool calls. No failed Holmes attempt in the range. Four things stand out:
+
+- **The tools are cheap, the model is not.** 5 minutes of LLM time against 1 minute of tools. Even the slowest tool, `fetch_pod_logs`, takes about 3 seconds per call, while a single LLM call can take more than 20.
+- **Most calls go through two tools.** `kubernetes_jq_query` and the instant PromQL query are more than half of the 186 calls. The model reads the cluster mostly by filtering resources and asking for current values, and it uses `bash` or the web only when those are not enough.
+- **Input tokens grow with the investigation.** Every tool result stays in the context for the next call, so the average input per call climbs from about 10 thousand to over 60 thousand tokens within a single run. That is why input is 45 times the output. It is also why tools that return less (`jq` filters, `count`) are worth more than tools that return a lot (full logs, whole pages).
+- **Some tool calls fail.** 18 of 186, almost 10%, mostly PromQL: 19% of the instant queries and 11% of the range ones, against 4% for `jq` queries. The checks still completed, but those are wasted calls and tokens that you only see if you measure them.
 
 ## Things that bit me
 
