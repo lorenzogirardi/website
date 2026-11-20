@@ -377,11 +377,11 @@ I tested the evaluation with synthetic data before trusting it: a node not Ready
 
 ## Watching the watcher
 
-An agent that runs on a schedule and spends tokens needs its own dashboard, and the part I would not skip is the one on its tools. The LLM never touches the cluster: it decides which tool to call, the tool runs, and the result goes back into the context. What the agent can see, what it costs and where it fails all depend on its tools, so those are what you have to monitor: how many calls each tool gets, how long it takes, how often it fails.
+An AI agent that does things on its own, on a schedule, with access to a cluster, has to be monitored like any other production workload. More than most, in fact: it is non-deterministic, it spends money on every step, and it can fail while still looking fine from the outside. A green check tells you the answer arrived, not how it got there.
 
 ![Grafana dashboard Izanagi - Holmes Agent: health check results, token usage, LLM calls and tool errors](/images/sherlock-holmes-in-a-bottle/grafana-dashboard.jpg)
 
-The board has two rows: the health checks seen from the bridge, and the agent itself, from the metrics Holmes exports (tokens, LLM calls, time, and calls, duration and error rate per tool). Without the per-tool panels I would have seen a green check and a token bill, and nothing in between. With them I can see that some tools fail often, and that those failures are wasted calls and tokens that stay invisible unless you measure them.
+Mine is a Grafana board with two rows: the health checks seen from the bridge (results, duration, Telegram questions), and the agent itself, from the metrics Holmes exports (tokens, LLM calls, time spent, calls and errors per tool). Without it I would have a green check and a token bill, and nothing in between. With it I can see what the agent actually does, what each run costs, and which of its actions fail, wasted calls and tokens that stay invisible unless you measure them.
 
 ## Things that bit me
 
