@@ -377,14 +377,15 @@ I tested the evaluation with synthetic data before trusting it: a node not Ready
 
 ## Watching the watcher
 
-An agent that runs on a schedule and spends tokens needs its own dashboard. Mine is a Grafana board with two rows: the health checks seen from the bridge (last result per check, duration, tool calls, Telegram questions) and the agent itself, from the metrics Holmes exports (tokens, LLM calls, tool calls and errors, time spent).
+An agent that runs on a schedule and spends tokens needs its own dashboard. Mine is a Grafana board with two rows. The first is the health checks seen from the bridge: last result per check, time since the last non-UNKNOWN result, runs by severity, failed Holmes attempts by reason, per-check averages, duration and tool calls of the last run, and the Telegram questions. The second is the agent itself, from the metrics Holmes exports: tokens (total, per 5 minutes and per LLM call), LLM calls and their duration, tool calls and errors, where the time goes, and a per-tool breakdown of calls, average duration and error rate.
 
 ![Grafana dashboard Izanagi - Holmes Agent: health check results, token usage, LLM calls and tool errors](/images/sherlock-holmes-in-a-bottle/grafana-dashboard.jpg)
 
-The window in the screenshot is one hour: a single nodes check, one question from Telegram, 47 LLM calls, about 1 million input tokens against 77 thousand output, and 115 tool calls. Two things stand out:
+The window in the screenshot is about one hour and a half, with the checks running on their schedule plus a couple of questions from Telegram: 72 LLM calls, 2.5 million input tokens against 55 thousand output, and 186 tool calls. No failed Holmes attempt in the range. Three things stand out:
 
-- **Time goes to the model, not to the tools.** 4.5 minutes of LLM time against 12 seconds of tools. The tools are local and fast, the model is the slow and costly part.
-- **Some tool calls fail.** 10 of 115, mostly PromQL queries (15% of the instant queries, 7.7% of the range ones). The checks still completed, but those failures are wasted calls and tokens that you only see if you measure them.
+- **Time goes to the model, not to the tools.** 5 minutes of LLM time against 1 minute of tools. The tools are local and fast, the model is the slow and costly part.
+- **Input tokens grow with the investigation.** The average input per call climbs from about 10 thousand to over 60 thousand within a single run, because every tool result stays in the context for the next call. That is why the input side is 45 times the output side.
+- **Some tool calls fail.** 18 of 186, almost 10%, mostly PromQL queries (19% of the instant queries, 11% of the range ones). The checks still completed, but those failures are wasted calls and tokens that you only see if you measure them. The per-tool panel also shows where the calls go: `kubernetes_jq_query` and the instant PromQL tool account for more than half of them, while `fetch_pod_logs` is the slowest tool, around 3 seconds per call.
 
 ## Things that bit me
 
