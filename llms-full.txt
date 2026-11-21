@@ -32,7 +32,9 @@ Description: How I replaced a Debian base image with distroless layers that rebu
 
 Here we are.
 
-Last week I scanned `pytbak`, my debug/test API, with Trivy. The image was `lgirardi/pytbak:v2.0.425`, built on `python:3.15.2-slim`, and the report said **444 vulnerabilities, 4 of them CRITICAL**. The application code had nothing to do with it. Almost all of it was the operating system sitting underneath: 436 findings in Debian packages that the app never calls, plus 8 in Python dependencies.
+Last week I scanned `pytbak`, my debug/test API, with Trivy. The release I had been running for a long time, `lgirardi/pytbak:v2.0.3`, sat on Debian 12.9 and the report said **842 vulnerabilities, 16 of them CRITICAL**. So I did the obvious thing: I updated. New release, `v2.0.425`, rebuilt on the current public `python:3.15.2-slim` (Debian 13.7). The count dropped to **444, 4 of them CRITICAL**. Better, and still not good.
+
+The application code had nothing to do with it. Almost all of it was the operating system sitting underneath: 808 findings in Debian packages for the old image and 436 for the updated one, packages the app never calls, plus a few dozen in Python dependencies. And here is the uncomfortable part: that update was a **one-off**. It is a snapshot of today, and in a month it will have rotted again, exactly like v2.0.3 did.
 
 Now multiply that by the number of containers you run. I have a handful in the homelab. A company has hundreds. Every one of them carries its own copy of the same glibc, the same OpenSSL, the same tzdata, and every one of them needs a rebuild the day one of those gets a CVE. That is the real problem of this post: not "how do I make one image smaller", but **how do I patch the operating system of many containers without touching each one by hand**.
 
@@ -291,21 +293,29 @@ Started next to PostgreSQL and Redis, the log said what I wanted to read:
 Startup complete | pg=connected redis=connected env=development
 ```
 
-`/api/mgmt/ready`, `/api/mgmt/health` and `/metrics` all answered 200. Then I ran Trivy on both versions, the old one and the new one:
+`/api/mgmt/ready`, `/api/mgmt/health` and `/metrics` all answered 200. Then I ran Trivy on the three images: the old release, the manually updated one and the new one on `lg-python`:
 
-| | `pytbak:v2.0.425` (python slim) | `pytbak` on `lg-python` |
-|---|---|---|
-| Image size | 356 MB | 241 MB |
-| Base | Debian 13.7 | Debian 13.8 |
-| OS packages | 436 | **74** |
-| Python packages | 8 | 8 |
-| CRITICAL | 4 | **0** |
-| HIGH | 125 | **15** |
-| MEDIUM | 148 | 45 |
-| LOW | 167 | 22 |
-| **Total** | **444** | **82** |
+| | `v2.0.3` (old) | `v2.0.425` (updated by hand, python slim) | `pytbak` on `lg-python` (workflow) |
+|---|---|---|---|
+| Image size | 323 MB | 356 MB | 241 MB |
+| Base | Debian 12.9 | Debian 13.7 | Debian 13.8 |
+| OS packages | 808 | 436 | **74** |
+| Python packages | 34 | 8 | 8 |
+| CRITICAL | 16 | 4 | **0** |
+| HIGH | 261 | 125 | **15** |
+| MEDIUM | 333 | 148 | 45 |
+| LOW | 232 | 167 | 22 |
+| **Total** | **842** | **444** | **82** |
 
-From 444 to 82, with no change to a single line of application code. And the 4 CRITICAL are gone. The 8 Python findings are identical in both columns because they come from `requirements.txt`, and a base image cannot patch those.
+All three scans were run with the same command (`trivy image --scanners vuln`, every severity) on the same day, so the Trivy database is the same for all of them.
+
+Read the three columns as three stages of the same story:
+
+1. **`v2.0.3`**: the old image. Nobody decided to leave it there, it just stayed. 842 findings, 16 CRITICAL.
+2. **`v2.0.425`**: the manual update, new release on the current public `python:slim`. The same code and the same `requirements.txt` as the third column, only the base differs. It already halves the count, which says a lot about how much of the problem is simply age.
+3. **`pytbak` on `lg-python`**: the result of the structured workflow described in this post, a minimal base built from the packages the runtime needs, scanned before it is published, rebuilt every week. 82 findings, none CRITICAL.
+
+The jump from the second to the third column is the one the base image buys you (444 to 82, with no change to the application code). But the real difference between them is not the number, it is what happens next month. The updated image is frozen at today's packages and waits for somebody to remember it. The workflow image is rebuilt every Sunday and a bot opens the pull request when it moves. The Python findings of the last two columns are identical because they come from `requirements.txt`, and a base image cannot patch those.
 
 Of the 15 HIGH that remain:
 
@@ -347,7 +357,7 @@ I would watch four things:
 
 The container image is not the unit to patch. The **layer** is. Put the operating system in one place, build it from the packages and nothing else, pin the versions you choose, rebuild on a schedule, scan before you publish, and let a bot propose the version bumps while a pipeline reviews them. Then a CVE in OpenSSL is one rebuild of one base, not N tickets.
 
-For `pytbak` the first proof is encouraging: 444 vulnerabilities down to 82, 4 CRITICAL down to zero, 356 MB down to 241 MB, same application, same endpoints, except the ones that shelled out to `ping`.
+For `pytbak` the first proof is encouraging: updating by hand took me from 842 vulnerabilities to 444, and the structured base took it to 82, with 4 CRITICAL down to zero and 356 MB down to 241 MB on the same code, same endpoints, except the ones that shelled out to `ping`. The manual update is a good afternoon. The workflow is what you still have in six months.
 
 ## Reflections
 
