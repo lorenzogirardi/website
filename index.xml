@@ -1,4 +1,25 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)</title><link>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</link><pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lorenzo's Blog</title><link>https://www.k8s.it/</link><description>Personal blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/index.xml" rel="self" type="application/rss+xml"/><item><title>Patch Once, Rebuild Everywhere: A Distroless Base Image Pipeline</title><link>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</link><pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem: N containers, one CVE</li>
+<li>What I Had</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Idea: Layers That Patch Themselves</li>
+<li>Building a Distroless Base Without Google</li>
+<li>The Single Source of Versions</li>
+<li>The Cascade</li>
+<li>Trivy as the Gate</li>
+<li>Who Keeps It Alive: Renovate and the Agents</li>
+<li>The Test: pytbak on the New Base</li>
+<li>What Broke on the Way</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>Last week I scanned <code>pytbak</code>, my debug/test API, with Trivy. The image was <code>lgirardi/pytbak:v2.0.425</code>, built on <code>python:3.15.2-slim</code>, and the report said <strong>444 vulnerabilities, 4 of them CRITICAL</strong>. The application code had nothing to do with it. Almost all of it was the operating system sitting underneath: 436 findings in Debian packages that the app never calls, plus 8 in Python dependencies.</p>]]></description></item><item><title>MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)</title><link>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</link><pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -264,50 +285,4 @@
 <p>Here we are.</p>
 <h2 id="introduction">Introduction</h2>
 <p>I love Cloudflare. I use it for all my projects. The free tier is generous, the API is clean, and the developer experience is miles ahead of competitors. If you&rsquo;re building anything on the internet, Cloudflare should be your first stop.</p>
-<p>But here&rsquo;s the thing: Cloudflare&rsquo;s trusted reputation can be used against you.</p>]]></description></item><item><title>From Contract to Promise: Turning a Platform Contract Into a Skill</title><link>https://www.k8s.it/posts/from-contract-to-promise/</link><pubDate>Mon, 17 Aug 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/from-contract-to-promise/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/from-contract-to-promise/featured.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>Introduction</li>
-<li>The Problem: A PDF Is Not an Interface</li>
-<li>The Architecture: From Contract to Skill</li>
-<li>Part One: What the App Must Be
-<ul>
-<li>Example 1: A Health-Check Clause Becomes Four Endpoints</li>
-<li>Example 2: &ldquo;No Root&rdquo; Becomes a securityContext Block</li>
-<li>Example 3: &ldquo;No Persistent Data in a Container&rdquo; Becomes Three Manifests</li>
-<li>Example 4: A Four-Layer Image Hierarchy Becomes a Dockerfile and a Tag Strategy</li>
-</ul>
-</li>
-<li>Part Two: What the App Must Say
-<ul>
-<li>Example 5: &ldquo;Logs MUST Be JSON on stdout&rdquo; Becomes a Logger and a Field Contract</li>
-<li>Example 6: A Three-Tier Metrics Rule Becomes an Annotation and a NetworkPolicy</li>
-<li>Example 7: &ldquo;MUST Send Traces to a Collector&rdquo; Becomes an SDK Init and an Egress Policy</li>
-<li>Example 8: &ldquo;Alert on Trends, Not Numbers&rdquo; Becomes a Recording Rule and an HPA</li>
-</ul>
-</li>
-<li>Part Three: Where the App Lives
-<ul>
-<li>Example 9: A Naming Convention Becomes a Derivation Rule</li>
-<li>Example 10: &ldquo;Never Commit a Plain Secret&rdquo; Becomes Vault or AWS Secrets Manager</li>
-<li>Example 11: &ldquo;The Management Port MUST NOT Be Public&rdquo; Becomes Three Absences</li>
-</ul>
-</li>
-<li>Part Four: How the App Ships
-<ul>
-<li>Example 12: &ldquo;No Human Tampering With the Artifact&rdquo; Becomes a CI Workflow With Teeth</li>
-<li>Example 13: Terraform Guardrails Become a Module Call You Cannot Widen</li>
-<li>Example 14: &ldquo;MUST Be in the Service Catalog First&rdquo; Becomes Labels and a Generated Entry</li>
-</ul>
-</li>
-<li>The Real Speedup: Building Something the Contract Never Anticipated</li>
-<li>How to Make Skills Actually Respected: The Gate</li>
-<li>From a Working App to a Platform Citizen</li>
-<li>Does the AI Actually Comply?</li>
-<li>Security Considerations</li>
-<li>Download the Skills</li>
-<li>Conclusion</li>
-<li>Reflections</li>
-</ul>
-<p>Well. Every platform team eventually writes the same document: a PDF (or a Confluence page pretending to be one) that says what an application must do before it&rsquo;s allowed to run on the shared cluster. Containerized. Non-root. Health endpoints on a specific port. No plain secrets in Git. It&rsquo;s correct, it&rsquo;s thorough, and almost nobody who needs to follow it has actually read it end to end.</p>]]></description></item></channel></rss>
+<p>But here&rsquo;s the thing: Cloudflare&rsquo;s trusted reputation can be used against you.</p>]]></description></item></channel></rss>

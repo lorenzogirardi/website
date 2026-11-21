@@ -1,4 +1,25 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Automation - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/automation/</link><description>Automation - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/automation/" rel="self" type="application/rss+xml"/><item><title>MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)</title><link>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</link><pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Automation - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/automation/</link><description>Automation - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/automation/" rel="self" type="application/rss+xml"/><item><title>Patch Once, Rebuild Everywhere: A Distroless Base Image Pipeline</title><link>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</link><pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem: N containers, one CVE</li>
+<li>What I Had</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Idea: Layers That Patch Themselves</li>
+<li>Building a Distroless Base Without Google</li>
+<li>The Single Source of Versions</li>
+<li>The Cascade</li>
+<li>Trivy as the Gate</li>
+<li>Who Keeps It Alive: Renovate and the Agents</li>
+<li>The Test: pytbak on the New Base</li>
+<li>What Broke on the Way</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>Last week I scanned <code>pytbak</code>, my debug/test API, with Trivy. The image was <code>lgirardi/pytbak:v2.0.425</code>, built on <code>python:3.15.2-slim</code>, and the report said <strong>444 vulnerabilities, 4 of them CRITICAL</strong>. The application code had nothing to do with it. Almost all of it was the operating system sitting underneath: 436 findings in Debian packages that the app never calls, plus 8 in Python dependencies.</p>]]></description></item><item><title>MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)</title><link>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</link><pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/magi-a-risk-reduction-system-inside-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -322,36 +343,4 @@
 <li>Conclusion</li>
 <li>Reflections</li>
 </ul>
-<p>Here we are. Every conversation about AI in engineering right now runs on vibes. It&rsquo;s faster. It&rsquo;s cheaper. It&rsquo;s transformative. Ask for a number and the room goes quiet.</p>]]></description></item><item><title>The Safe Zone: Where AI Actually Belongs in Business Processes</title><link>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</link><pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/the-safe-zone-where-ai-actually-belongs-in-business-processes/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/the-safe-zone-where-ai-actually-belongs-in-business-processes/featured.jpg" referrerpolicy="no-referrer">
-            </div><h3 id="table-of-contents">Table of Contents</h3>
-<ul>
-<li>Introduction</li>
-<li>The Problem With Urgency</li>
-<li>The Safe Zone Framework</li>
-<li>The Case: Algolia Usage Exporter
-<ul>
-<li>Before / After</li>
-<li>How It&rsquo;s Built</li>
-<li>The Skill Framework: Three Skills, Not One Prompt</li>
-<li>From API Schema to Natural-Language Contract</li>
-<li>What It Exposes</li>
-<li>Numbers That Weren&rsquo;t Visible Before</li>
-</ul>
-</li>
-<li>Why the Pattern Replicates</li>
-<li>The Honest Challenges
-<ul>
-<li>AI Amplifies Whatever Maturity Already Exists</li>
-<li>Tech Debt Doesn&rsquo;t Disappear</li>
-<li>Creating Is Easy. Deploying on Shared Platform Isn&rsquo;t</li>
-<li>Ownership Is Still Informal</li>
-<li>The Escalation Risk: Safe Today, Critical Tomorrow</li>
-</ul>
-</li>
-<li>A Maturity Model, Not a Tech Roadmap</li>
-<li>Security Considerations</li>
-<li>Conclusion</li>
-<li>Reflections</li>
-</ul>
-<p>Here we are. I recently put together an internal presentation on introducing AI into business processes, and the hardest part wasn&rsquo;t the technology. It was convincing people to look in the opposite direction of where they instinctively point AI.</p>]]></description></item></channel></rss>
+<p>Here we are. Every conversation about AI in engineering right now runs on vibes. It&rsquo;s faster. It&rsquo;s cheaper. It&rsquo;s transformative. Ask for a number and the room goes quiet.</p>]]></description></item></channel></rss>

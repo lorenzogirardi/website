@@ -1,4 +1,25 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/kubernetes/</link><description>Kubernetes - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/kubernetes/</link><description>Kubernetes - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Patch Once, Rebuild Everywhere: A Distroless Base Image Pipeline</title><link>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</link><pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem: N containers, one CVE</li>
+<li>What I Had</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Idea: Layers That Patch Themselves</li>
+<li>Building a Distroless Base Without Google</li>
+<li>The Single Source of Versions</li>
+<li>The Cascade</li>
+<li>Trivy as the Gate</li>
+<li>Who Keeps It Alive: Renovate and the Agents</li>
+<li>The Test: pytbak on the New Base</li>
+<li>What Broke on the Way</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>Last week I scanned <code>pytbak</code>, my debug/test API, with Trivy. The image was <code>lgirardi/pytbak:v2.0.425</code>, built on <code>python:3.15.2-slim</code>, and the report said <strong>444 vulnerabilities, 4 of them CRITICAL</strong>. The application code had nothing to do with it. Almost all of it was the operating system sitting underneath: 436 findings in Debian packages that the app never calls, plus 8 in Python dependencies.</p>]]></description></item><item><title>Autopsy of an Agentic Loop (pt.1)</title><link>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</link><pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/autopsy-of-an-agentic-loop/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/autopsy-of-an-agentic-loop/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -279,8 +300,4 @@
 </ol>
 <p>Both work. Both have trade-offs. Let me go through each one.</p>
 <h2 id="the-code-way">The Code Way</h2>
-<p>This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce <em>false</em> metrics if you&rsquo;re not tracking it carefully.</p>]]></description></item><item><title>YA VPN Service in Kubernetes</title><link>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</link><pubDate>Mon, 18 Jul 2022 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ya-vpn-service-in-kubernetes/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/ya-vpn-service-in-kubernetes/wirecardmobile.jpg" referrerpolicy="no-referrer">
-            </div><h2 id="why">Why</h2>
-<p>I had my beloved IPsec setup based on strongswan running in Kubernetes for a while — you can read about that <a href="/posts/kubernetes-strongswan/" rel="">here</a>. It worked fine. I wasn&rsquo;t looking to change it. Then a colleague pointed out WireGuard&rsquo;s overhead numbers and I got curious enough to evaluate it myself.</p>
-<p>WireGuard is a modern VPN protocol that lives in the Linux kernel. It&rsquo;s designed to be simple, fast, and have a minimal attack surface compared to IPsec or OpenVPN. The numbers people throw around are impressive, but I wanted to see them in practice.</p>]]></description></item></channel></rss>
+<p>This is the simpler approach on the surface, but it comes with some annoying limitations. It can only be reused for applications in the same programming language. And adding rate limiting logic inside the application creates a secondary role — meaning the request interceptor will consume CPU and may produce <em>false</em> metrics if you&rsquo;re not tracking it carefully.</p>]]></description></item></channel></rss>

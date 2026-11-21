@@ -6,6 +6,7 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
+- [Patch Once, Rebuild Everywhere: A Distroless Base Image Pipeline](https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/): How I replaced a Debian base image with distroless layers that rebuild themselves, pin every runtime version in one file, and cut pytbak from 444 vulnerabilities to 82, with Trivy as the gate.
 - [MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)](https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/): A risk-reduction system inside an agentic loop: three architects, two developers, QA, SRE and security. One real run, 19 minutes, one dollar, ten gates.
 - [Autopsy of an Agentic Loop (pt.1) ](https://www.k8s.it/posts/autopsy-of-an-agentic-loop/): A pipeline that works like a team with no person in it: architect, two developers, QA, SRE, security, docs. The graph, the rules, the costs, a real repair.
 - [AI Makes Developers Faster. Does It Make the Team Faster?](https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/): AI-first hands tools to developers and leaves the process alone. A 50% faster developer is a 20% faster team until the operating model goes AI-native.

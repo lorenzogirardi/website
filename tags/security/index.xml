@@ -1,4 +1,25 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Security - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/security/</link><description>Security - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/security/" rel="self" type="application/rss+xml"/><item><title>AI Makes Developers Faster. Does It Make the Team Faster?</title><link>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</link><pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Security - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/security/</link><description>Security - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/security/" rel="self" type="application/rss+xml"/><item><title>Patch Once, Rebuild Everywhere: A Distroless Base Image Pipeline</title><link>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</link><pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/featured.jpg" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>The Problem: N containers, one CVE</li>
+<li>What I Had</li>
+<li>Naaa&hellip; the alternatives</li>
+<li>The Idea: Layers That Patch Themselves</li>
+<li>Building a Distroless Base Without Google</li>
+<li>The Single Source of Versions</li>
+<li>The Cascade</li>
+<li>Trivy as the Gate</li>
+<li>Who Keeps It Alive: Renovate and the Agents</li>
+<li>The Test: pytbak on the New Base</li>
+<li>What Broke on the Way</li>
+<li>Security Considerations</li>
+<li>Monitoring and Observability</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are.</p>
+<p>Last week I scanned <code>pytbak</code>, my debug/test API, with Trivy. The image was <code>lgirardi/pytbak:v2.0.425</code>, built on <code>python:3.15.2-slim</code>, and the report said <strong>444 vulnerabilities, 4 of them CRITICAL</strong>. The application code had nothing to do with it. Almost all of it was the operating system sitting underneath: 436 findings in Debian packages that the app never calls, plus 8 in Python dependencies.</p>]]></description></item><item><title>AI Makes Developers Faster. Does It Make the Team Faster?</title><link>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</link><pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/ai-makes-developers-faster-does-it-make-the-team-faster/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/ai-makes-developers-faster-does-it-make-the-team-faster/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -213,16 +234,4 @@
                 <img src="/images/websocket-cloudflare-tunnel-apache-and-irritation/Screenshot-2025-04-26-at-00.35.02.jpg" referrerpolicy="no-referrer">
             </div><h2 id="the-infrastructure-overview">The Infrastructure Overview</h2>
 <p>Exposing home lab services to the internet can be both necessary and risky. Traditional methods — port forwarding, VPNs, reverse proxies with open inbound ports — come with their own set of challenges. This is where Cloudflare Tunnel (formerly Argo Tunnel) comes in as an elegant solution.</p>
-<p>In this article, I&rsquo;ll walk you through how I&rsquo;ve implemented a secure infrastructure using Cloudflare Tunnel with WebSocket support, running on a Kubernetes cluster with Apache HTTPD as a reverse proxy. This setup allows me to securely expose internal services without opening ports on my residential firewall.</p>]]></description></item><item><title>Maximum Yield with Minimum Expense</title><link>https://www.k8s.it/posts/maximum-yield-with-minimum-expense/</link><pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/maximum-yield-with-minimum-expense/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/maximum-yield-with-minimum-expense/Screenshot-2020-12-26-at-16.43.11.jpg" referrerpolicy="no-referrer">
-            </div><p></p>
-<p>Great marketing quote in the title — but honestly, the underlying principle is always true: <em>keep it simple, keep it safe.</em></p>
-<p>I want to structure this around four topics:</p>
-<ul>
-<li>Static website</li>
-<li>Tools</li>
-<li>Security</li>
-<li>Monitor</li>
-</ul>
-<p>Each could be its own post. This one will cut across all of them because they&rsquo;re connected.</p>
-<p><em>This is not a post about how to create a blog. This post inspects some technology that can simplify your life or your work with small but important concepts.</em></p>]]></description></item></channel></rss>
+<p>In this article, I&rsquo;ll walk you through how I&rsquo;ve implemented a secure infrastructure using Cloudflare Tunnel with WebSocket support, running on a Kubernetes cluster with Apache HTTPD as a reverse proxy. This setup allows me to securely expose internal services without opening ports on my residential firewall.</p>]]></description></item></channel></rss>
