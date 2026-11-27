@@ -1,4 +1,21 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Monitoring - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/monitoring/</link><description>Monitoring - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 26 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/monitoring/" rel="self" type="application/rss+xml"/><item><title>Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read the Docs, Not the Code</title><link>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</link><pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Monitoring - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/monitoring/</link><description>Monitoring - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/monitoring/" rel="self" type="application/rss+xml"/><item><title>Who Is My Pod Talking To? Per-Peer Network Visibility with a Sidecar</title><link>https://www.k8s.it/posts/who-is-my-pod-talking-to-per-peer-network-visibility-with-a-sidecar/</link><pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-my-pod-talking-to-per-peer-network-visibility-with-a-sidecar/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/who-is-my-pod-talking-to-per-peer-network-visibility-with-a-sidecar/featured.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem</li>
+<li>What nstats Does</li>
+<li>How It Works</li>
+<li>Names, Not Numbers</li>
+<li>What You Get in Grafana</li>
+<li>Footprint and Security</li>
+<li>What It Taught Me</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are, with another weird sidecar container.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Every Kubernetes dashboard I have ever opened shows the same two lines for a pod: network in and network out. Nice lines. Completely useless the moment someone asks the only question that matters: <strong>where is that traffic going?</strong></p>]]></description></item><item><title>Active Documentation: How I Run a Multi-Site Homelab by Letting AI Read the Docs, Not the Code</title><link>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</link><pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/active-documentation-multi-site-homelab-ai-reads-docs-not-code/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/active-documentation-multi-site-homelab-ai-reads-docs-not-code/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>
@@ -229,16 +246,4 @@
 <li>Grafana</li>
 </ul>
 <h2 id="hardware">Hardware</h2>
-<p>I initially considered Arduino but followed a colleague&rsquo;s suggestion to use NodeMCU instead. NodeMCU is an open source platform developed for IoT where you can compile firmware with the sensors you need. Its primary advantage is Lua support, which is significantly simpler than Arduino&rsquo;s C implementation for this kind of work.</p>]]></description></item><item><title>The Monitoring Paper</title><link>https://www.k8s.it/posts/the-monitoring-paper/</link><pubDate>Tue, 05 Jan 2021 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/the-monitoring-paper/</guid><description><![CDATA[<div class="featured-image">
-                <img src="/images/the-monitoring-paper/Screenshot-2021-01-05-at-17.47.24.jpg" referrerpolicy="no-referrer">
-            </div><p>Contrary to popular belief, monitoring an infrastructure is the opposite of just having some metrics about applications and network.</p>
-<p>There are many excellent resources on this topic. One of the most interesting is just a few pages from Google — <a href="https://static.googleusercontent.com/media/sre.google/it//static/pdf/art-of-slos-slides.pdf" target="_blank" rel="noopener noreffer ">the art of SLOs</a>. I took the book version from a Google on-site deep dive.</p>
-<p>To structure this properly, I want to use four simple statements:</p>
-<ul>
-<li><strong>WHAT</strong></li>
-<li><strong>WHY</strong></li>
-<li><strong>WHO</strong></li>
-<li><strong>HOW</strong></li>
-</ul>
-<h2 id="what">WHAT</h2>
-<p>This is probably the main argument we&rsquo;ll discuss here.</p>]]></description></item></channel></rss>
+<p>I initially considered Arduino but followed a colleague&rsquo;s suggestion to use NodeMCU instead. NodeMCU is an open source platform developed for IoT where you can compile firmware with the sensors you need. Its primary advantage is Lua support, which is significantly simpler than Arduino&rsquo;s C implementation for this kind of work.</p>]]></description></item></channel></rss>

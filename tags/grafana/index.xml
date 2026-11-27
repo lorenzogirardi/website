@@ -1,4 +1,21 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Grafana - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/grafana/</link><description>Grafana - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 18 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/grafana/" rel="self" type="application/rss+xml"/><item><title>Who Is Your AI Agent Acting For? RFC 8693 On-Behalf-Of Delegation</title><link>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</link><pubDate>Sat, 18 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Grafana - Tag - Lorenzo's Blog</title><link>https://www.k8s.it/tags/grafana/</link><description>Grafana - Tag - Lorenzo's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.k8s.it/tags/grafana/" rel="self" type="application/rss+xml"/><item><title>Who Is My Pod Talking To? Per-Peer Network Visibility with a Sidecar</title><link>https://www.k8s.it/posts/who-is-my-pod-talking-to-per-peer-network-visibility-with-a-sidecar/</link><pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-my-pod-talking-to-per-peer-network-visibility-with-a-sidecar/</guid><description><![CDATA[<div class="featured-image">
+                <img src="/images/who-is-my-pod-talking-to-per-peer-network-visibility-with-a-sidecar/featured.png" referrerpolicy="no-referrer">
+            </div><h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li>Introduction</li>
+<li>The Problem</li>
+<li>What nstats Does</li>
+<li>How It Works</li>
+<li>Names, Not Numbers</li>
+<li>What You Get in Grafana</li>
+<li>Footprint and Security</li>
+<li>What It Taught Me</li>
+<li>Conclusion</li>
+<li>Reflections</li>
+</ul>
+<p>Here we are, with another weird sidecar container.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Every Kubernetes dashboard I have ever opened shows the same two lines for a pod: network in and network out. Nice lines. Completely useless the moment someone asks the only question that matters: <strong>where is that traffic going?</strong></p>]]></description></item><item><title>Who Is Your AI Agent Acting For? RFC 8693 On-Behalf-Of Delegation</title><link>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</link><pubDate>Sat, 18 Jul 2026 00:00:00 +0000</pubDate><author>Lorenzo Girardi</author><guid>https://www.k8s.it/posts/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/</guid><description><![CDATA[<div class="featured-image">
                 <img src="/images/who-is-your-ai-agent-acting-for-rfc-8693-on-behalf-of-delegation/featured.jpg" referrerpolicy="no-referrer">
             </div><h3 id="table-of-contents">Table of Contents</h3>
 <ul>

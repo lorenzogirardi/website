@@ -6,6 +6,7 @@ This file follows the llms.txt convention (https://llmstxt.org). Each post is al
 
 ## Posts
 
+- [Who Is My Pod Talking To? Per-Peer Network Visibility with a Sidecar](https://www.k8s.it/posts/who-is-my-pod-talking-to-per-peer-network-visibility-with-a-sidecar/): How a tiny sidecar turns raw pod traffic into a per-peer view with real FQDNs, and why knowing who your pod talks to is worth more than knowing how much.
 - [Patch Once, Rebuild Everywhere: A Distroless Base Image Pipeline](https://www.k8s.it/posts/patch-once-rebuild-everywhere-a-distroless-base-image-pipeline/): How I replaced a Debian base image with distroless layers that rebuild themselves, pin every runtime version in one file, and cut pytbak from 444 vulnerabilities to 82, with Trivy as the gate.
 - [MAGI: A Risk-Reduction System Inside an Agentic Loop (pt.2)](https://www.k8s.it/posts/magi-a-risk-reduction-system-inside-an-agentic-loop/): A risk-reduction system inside an agentic loop: three architects, two developers, QA, SRE and security. One real run, 19 minutes, one dollar, ten gates.
 - [Autopsy of an Agentic Loop (pt.1) ](https://www.k8s.it/posts/autopsy-of-an-agentic-loop/): A pipeline that works like a team with no person in it: architect, two developers, QA, SRE, security, docs. The graph, the rules, the costs, a real repair.
